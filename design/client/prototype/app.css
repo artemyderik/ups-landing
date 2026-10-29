@@ -1,0 +1,536 @@
+/* Приложение клиента «Апс!»: общие стили каркаса и компонентов всех экранов (README, «Соглашения по CSS»):
+   стили экрана - в css/<экран>.css. Компоненты и классы - из прототипа тренера c2 (design/directions/c2/app.css) и системы
+   C 2.0 (design/system-c2/DESIGN.md, раздел 5). Значения - только токены (tokens.css, parts/make-tokens.py).
+   Вёрстка только под телефон (решение пользователя 2026-10-28): размеры - телефонные из системы, без -desk и без медиазапросов
+   под компьютер. На широком экране - та же колонка по центру. */
+
+/* ---------- База ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--shell);
+  color: var(--ink);
+  font: var(--t-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+h1, h2, h3, h4, p, ul, ol, figure, blockquote { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+b, strong { font-weight: 800; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.i { width: var(--icon-l); height: var(--icon-l); flex: none; display: inline-block; vertical-align: middle; }
+.i--xs { width: var(--icon-xs); height: var(--icon-xs); }
+.i--s { width: var(--icon-s); height: var(--icon-s); }
+.i--m { width: var(--icon-m); height: var(--icon-m); }
+
+:focus-visible { outline: var(--focus-w) solid var(--focus); outline-offset: var(--focus-offset); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ---------- Типографика ---------- */
+.label { font: var(--t-label); text-transform: uppercase; letter-spacing: var(--ls-label); }
+.h1 { font: var(--t-h1-m); letter-spacing: var(--ls-h1); }
+.h2 { font: var(--t-h2); letter-spacing: var(--ls-h2); }
+.h3 { font: var(--t-h3); letter-spacing: var(--ls-h3); }
+.small { font: var(--t-small); }
+.muted { color: var(--text-2); }
+.on-dark-2 { color: var(--on-dark-2); }
+.num, .set, .count, .grow, .week b { font-variant-numeric: tabular-nums; }
+.num { white-space: nowrap; }
+.nowrap { white-space: nowrap; }
+.mark { background: var(--accent); color: var(--on-accent); padding: 0 .15em; border-radius: var(--r-mark); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.mark--attn { background: var(--attn); color: var(--on-attn); }
+
+/* ---------- Каркас приложения клиента (DESIGN.md 5.1, «Каркас приложения клиента») ----------
+   Одна телефонная раскладка во всю ширину экрана (решение пользователя 2026-10-28: «растягивался под ширину экрана»);
+   эталон экранов - 390 px. Чёрная полоса .band, белый лист .work наезжает на неё на --s6, внизу таббар или панель действий. */
+.capp { --gutter: var(--gutter-phone); display: flex; flex-direction: column; width: 100%; min-height: 100vh; min-height: 100dvh; background: var(--shell); }
+
+.band { background: var(--shell); color: var(--on-dark); padding: var(--s3) var(--gutter) calc(var(--s10) + var(--s6)); }
+.band__top { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); min-height: var(--tap); margin-bottom: var(--s5); }
+.band__tools { display: flex; align-items: center; gap: var(--s2); margin-left: auto; }
+.band__eyebrow { color: var(--on-dark-2); }
+.band__title { font: var(--t-h1-m); letter-spacing: var(--ls-h1); color: var(--on-dark); margin-top: var(--s2); overflow-wrap: anywhere; }
+.band__title--num { font: var(--t-num-xl-m); letter-spacing: var(--ls-h1); }
+.band__meta { color: var(--on-dark-2); margin-top: var(--s3); }
+.band__meta b { color: var(--on-dark); font-weight: 700; }
+.band__acts { display: flex; flex-direction: column; gap: var(--s2); margin-top: var(--s5); }
+
+.wordmark { position: relative; display: inline-flex; align-items: flex-end; min-height: var(--tap-min); text-decoration: none; color: var(--on-dark); padding: 14px var(--s3) 0; margin-left: calc(-1 * var(--s3)); }
+.wordmark span { font: var(--t-wordmark); letter-spacing: var(--ls-wordmark); }
+.wordmark__crown { position: absolute; left: 10px; top: -2px; width: 22px; height: 22px; transform: rotate(-10deg); }
+.crumbs { display: inline-flex; align-items: center; gap: var(--s2); min-height: var(--tap-min); margin-left: calc(-1 * var(--s1)); color: var(--on-dark-2); text-decoration: none; font-weight: 700; }
+.crumbs:hover { color: var(--on-dark); }
+/* Аватар тренера в полосе - вход в «Тренер и профиль» (решение сессии 1: лицо тренера, а не клиента - «приложение на образ тренера») */
+.capp-ava { display: grid; place-items: center; width: var(--tap-min); height: var(--tap-min); border-radius: var(--r-pill); text-decoration: none; }
+.capp-ava:hover .ava { box-shadow: 0 0 0 var(--focus-w) var(--shell-line); }
+
+/* Рабочий лист: наезжает на полосу скруглённым верхом */
+.work { position: relative; flex: 1; margin-top: calc(-1 * var(--s6)); padding: var(--s6) var(--gutter) var(--s12); border-radius: var(--r-card) var(--r-card) 0 0; background: var(--bg); color: var(--ink); }
+.stack { display: flex; flex-direction: column; gap: var(--s8); }
+.stack--s { gap: var(--s3); }
+.sec { display: flex; flex-direction: column; }
+
+/* ---------- Кнопки: все - пилюли (DESIGN.md 5.2; на телефоне --tap) ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s2);
+  height: var(--tap); padding: 0 var(--s5);
+  border: 0; border-radius: var(--r-pill);
+  background: var(--control); color: var(--ink);
+  font: var(--t-body); font-weight: 700; white-space: nowrap; text-decoration: none;
+}
+.btn .i { width: var(--icon-m); height: var(--icon-m); }
+.btn:hover { background: var(--control-hover); }
+.btn--primary { background: var(--accent); color: var(--on-accent); }
+.btn--primary:hover, .btn--primary:active { background: var(--accent); box-shadow: inset 0 0 0 var(--focus-w) var(--on-accent); }
+.btn--dark { background: var(--ink); color: var(--on-ink); }
+.btn--dark:hover { background: var(--ink-hover); }
+.btn--soft { background: var(--surface); }
+.btn--soft:hover { background: var(--surface-2); }
+.btn--ghost { background: transparent; padding: 0 var(--s3); }
+.btn--ghost:hover { background: var(--control-hover); }
+.btn--lg { height: var(--ctl-lg); padding: 0 var(--s8); font: var(--t-h3); }
+.btn--icon { width: var(--tap); padding: 0; }
+.btn--block { width: 100%; }
+.btn--shell { background: var(--shell-2); color: var(--on-dark); }
+.btn--shell:hover { background: var(--shell-line); }
+.btn[disabled] { opacity: var(--opacity-disabled); cursor: not-allowed; }
+.link { display: inline-flex; align-items: center; gap: var(--s1); min-height: var(--tap-min); font-weight: 700; text-decoration: none; }
+.link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.link .i { width: var(--icon-m); height: var(--icon-m); }
+
+/* ---------- Метки, теги, рост ---------- */
+.tag { display: inline-flex; align-items: center; gap: var(--s1); height: var(--sig-h); padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--control); color: var(--text-2); font: var(--t-small); font-weight: 700; white-space: nowrap; }
+.tag .i { width: var(--icon-s); height: var(--icon-s); }
+.tag--soft { background: var(--surface); }
+.tag--dark { background: var(--ink); color: var(--on-ink); }
+.tag--shell { background: var(--shell-2); color: var(--on-dark-2); }
+.tag--lime { background: var(--accent); color: var(--on-accent); }
+.tags { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.grow { display: inline-flex; align-items: center; gap: var(--s1); height: 26px; padding: 0 10px; border-radius: var(--r-pill); background: var(--accent); color: var(--on-accent); font: var(--t-small); font-weight: 800; white-space: nowrap; }
+.grow .i { width: var(--icon-xs); height: var(--icon-xs); stroke-width: 2.5; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--attn); flex: none; }
+.count { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 7px; border-radius: var(--r-pill); background: var(--ink); color: var(--on-ink); font: var(--t-label); letter-spacing: 0; }
+
+/* Статус: иконка и слово (DESIGN.md 5.4, состояния 3.6 - без цвета статуса) */
+.status { display: inline-flex; align-items: center; gap: var(--s1); font: var(--t-small); font-weight: 700; color: var(--state-ok); white-space: nowrap; }
+.status .i { width: var(--icon-m); height: var(--icon-m); }
+.status--muted { color: var(--state-info); }
+/* «Не отмечена» (DESIGN.md 5.4, приложение клиента): пустая точка 8 px с контуром 1,5 px в поле иконки - тот же знак, что в ленте недели */
+.status__open { display: inline-grid; place-items: center; width: var(--icon-m); height: var(--icon-m); flex: none; color: var(--state-info); }
+.status__open::before { content: ""; width: 8px; height: 8px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px currentColor; }
+.banner > .status__open { width: var(--icon-l); height: var(--icon-l); }
+
+/* Аватар-инициалы */
+.ava { width: 40px; height: 40px; flex: none; border-radius: 50%; display: inline-grid; place-items: center; background: var(--ink); color: var(--on-ink); font: var(--t-small); font-weight: 800; letter-spacing: .02em; }
+.ava--light { background: var(--bg); color: var(--ink); }
+.ava--s { width: 32px; height: 32px; font: var(--t-label); font-weight: 800; letter-spacing: 0; }
+
+/* ---------- Карточки и разделы ---------- */
+.card { background: var(--surface); border-radius: var(--r-card); padding: var(--s4); }
+.card--md { border-radius: var(--r-md); }
+.card--dark { background: var(--inset); color: var(--on-dark); }   /* тёмная вставка на листе: содержимое вне темы */
+.sec-h { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); min-height: 32px; margin-bottom: var(--s3); }
+.sec-h__title { display: inline-flex; align-items: center; gap: var(--s2); color: var(--text-2); }
+
+/* Индикатор сохранения и сети (DESIGN.md 5.7) - на чёрном */
+.sync { display: inline-flex; align-items: center; gap: var(--s2); min-height: 36px; padding: 6px var(--s4) 6px var(--s3); border-radius: var(--r-pill); background: var(--shell-2); color: var(--on-dark-2); font: var(--t-small); font-weight: 600; }
+.sync b { color: var(--on-dark); font-weight: 700; }
+.sync .i { width: var(--icon-m); height: var(--icon-m); color: var(--on-dark); }
+
+/* Сегменты (DESIGN.md 5.2; на телефоне сегмент --tap-min) */
+.seg { display: inline-flex; gap: 2px; padding: var(--s1); border-radius: var(--r-pill); background: var(--surface); }
+.seg button, .seg a { display: inline-flex; align-items: center; justify-content: center; gap: var(--s1); height: var(--tap-min); min-width: var(--tap-min); padding: 0 var(--s4); border: 0; border-radius: var(--r-pill); background: transparent; font: var(--t-small); font-weight: 700; color: var(--text-2); text-decoration: none; white-space: nowrap; }
+.seg [aria-pressed="true"], .seg [aria-selected="true"], .seg [aria-checked="true"], .seg [aria-current="page"] { background: var(--ink); color: var(--on-ink); }
+.seg--dark { background: var(--shell-2); }
+.seg--dark button, .seg--dark a { color: var(--on-dark-2); }
+.seg--dark [aria-pressed="true"], .seg--dark [aria-checked="true"] { background: var(--bg); color: var(--ink); }
+@media (hover: hover) {
+  .seg button:not([aria-pressed="true"]):not([aria-checked="true"]):not([aria-selected="true"]):hover { background: var(--surface-2); color: var(--ink); }
+  .seg.seg--dark button:not([aria-pressed="true"]):not([aria-checked="true"]):hover { background: var(--shell-line); color: var(--on-dark); }
+}
+
+/* Меню (DESIGN.md 5.6) - details с кнопкой */
+.menu { position: relative; }
+.menu summary { list-style: none; }
+.menu summary::-webkit-details-marker { display: none; }
+.menu__pop { position: absolute; right: 0; top: calc(100% + var(--s2)); z-index: var(--z-menu); min-width: 260px; max-width: calc(100vw - 2 * var(--gutter-phone)); padding: var(--s2); border-radius: var(--r-card); background: var(--bg); color: var(--ink); box-shadow: var(--shadow-float); }
+.menu__pop a { display: flex; align-items: center; gap: var(--s3); min-height: var(--row); padding: var(--s2) var(--s4); border-radius: var(--r-pill); text-decoration: none; font-weight: 700; }
+.menu__pop a:hover { background: var(--surface); }
+.menu__pop a[aria-current] { background: var(--surface); }
+.menu__pop .i { width: var(--icon-m); height: var(--icon-m); }
+.menu__pop hr { margin: var(--s2) var(--s4); border: 0; border-top: 1px solid var(--line); }
+
+/* ---------- Данные ---------- */
+/* Пилюля подхода (DESIGN.md 5.4): «70 × 8»; рекорд - лайм и корона */
+.sets { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.set { display: inline-flex; align-items: center; gap: var(--s1); height: 32px; padding: 0 var(--s3); border-radius: var(--r-pill); background: var(--control); font: var(--t-num); white-space: nowrap; }
+.set .i { width: var(--icon-xs); height: var(--icon-xs); }
+.set--pr { background: var(--accent); color: var(--on-accent); }
+.set--pr .i { width: var(--icon-s); height: var(--icon-s); }
+.set--low .i { color: var(--attn); stroke-width: 2.5; }
+/* Буква упражнения в группе: A1, A2, B1 */
+.grp { display: inline-grid; place-items: center; min-width: 30px; height: 24px; padding: 0 6px; border-radius: var(--r-pill); background: var(--ink); color: var(--on-ink); font: var(--t-label); letter-spacing: .02em; flex: none; }
+/* Группа упражнений: лаймовая черта слева и пилюля «СУПЕРСЕТ» (лайм на суперсете - решение пользователя 2026-10-26) */
+.grp-b { position: relative; padding-left: var(--s3); }
+.grp-b::before { content: ""; position: absolute; left: 0; top: var(--s1); bottom: var(--s1); width: 3px; border-radius: var(--r-pill); background: var(--accent); }
+.grp-b__h { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); min-height: 32px; margin-bottom: var(--s2); }
+.grp-b__h .tag--lime { font: var(--t-label); text-transform: uppercase; letter-spacing: var(--ls-label); height: 28px; }
+.legend { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s5); color: var(--text-2); font: var(--t-small); }
+.legend span { display: inline-flex; align-items: center; gap: var(--s1); }
+
+/* Комментарий: аватар и пузырь (DESIGN.md 5.4). На карточке --surface пузырь --bg, на листе - --surface */
+.comment { display: flex; gap: var(--s3); align-items: flex-start; }
+.comment__b { min-width: 0; padding: var(--s3) var(--s4); border-radius: var(--r-sm); background: var(--bg); }
+.work > .stack .comment__b, .sec > .comment .comment__b { background: var(--surface); }
+.comment__b p + p { margin-top: var(--s1); }
+.comment__m { margin-top: var(--s1); font: var(--t-small); color: var(--text-2); }
+.comment--me { flex-direction: row-reverse; }
+.comment--me .comment__b { background: var(--surface-2); }
+
+/* Пара «подпись - значение» */
+.kv { display: flex; align-items: flex-start; gap: var(--s3); padding: var(--s3) 0; border-top: 1px solid var(--line); }
+.kv:first-child { border-top: 0; padding-top: 0; }
+.kv:last-child { padding-bottom: 0; }
+.kv > .i { width: var(--icon-m); height: var(--icon-m); margin-top: 2px; color: var(--text-2); }
+.kv__l { font: var(--t-small); color: var(--text-2); }
+
+/* Сегменты прогресса (DESIGN.md 5.4): выполнено, текущий - лайм, впереди. На чёрном */
+.segbar { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--s1); }
+.segbar span { height: 10px; border-radius: var(--r-pill); background: var(--shell-line); }
+.segbar .is-done { background: var(--on-dark); }
+.segbar .is-now { background: var(--accent); }
+
+/* Праздник на листе: «Хорошие новости» - тёмная вставка с лаймовыми цифрами и короной (DESIGN.md 5.7) */
+.good { position: relative; padding: var(--s5) var(--s4); }
+.good__crown { width: 34px; height: 34px; color: var(--accent); display: block; }
+.good__badge { position: relative; display: inline-block; }
+.good .rays { position: absolute; width: 30px; height: 30px; color: var(--accent); top: -10px; left: -6px; }
+.good__num { font: var(--t-h1-m); letter-spacing: var(--ls-h1); display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; padding-top: var(--s2); }
+.good__delta { font: var(--t-h2); letter-spacing: var(--ls-h2); color: var(--accent); }
+.good__who { margin-top: var(--s2); color: var(--on-dark-2); font: var(--t-small); }
+.good__who b { color: var(--on-dark); font-weight: 700; }
+.good__list { margin-top: var(--s4); border-top: 1px solid var(--shell-line); }
+.good__list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--s3); align-items: center; padding: var(--s3) 0 0; }
+.good__list li + li { margin-top: var(--s3); border-top: 1px solid var(--shell-line); }
+.good__t { color: var(--on-dark-2); font: var(--t-small); }
+.good__t b { color: var(--on-dark); font-weight: 700; }
+.good__n { font: var(--t-h3); white-space: nowrap; color: var(--accent); }
+/* Кот-бейдж cat-happy в белом круге с наклоном - только праздник */
+.cat-badge { display: grid; place-items: center; width: var(--s16); height: var(--s16); border-radius: var(--r-pill); background: var(--bg); overflow: hidden; transform: rotate(6deg); flex: none; }
+.cat-badge img { width: 120%; max-width: none; height: auto; margin-top: 6%; }
+.good__cat { position: absolute; right: var(--s4); top: calc(-1 * var(--s3)); }
+.good .good__num { padding-right: calc(var(--s16) + var(--s2)); }
+
+/* Пустое состояние, ошибка (DESIGN.md 5.7). Кот - только пустое, ошибка, праздник; один на экран */
+.st__empty { display: grid; gap: var(--s4); justify-items: start; }
+.st__empty img { width: 144px; height: 144px; object-fit: contain; }
+.st__empty h3 { font: var(--t-h2); letter-spacing: var(--ls-h2); }
+.st__empty p { margin-top: var(--s2); color: var(--text-2); }
+.err { display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: var(--s4); align-items: center; padding: var(--s4); border-radius: var(--r-card); background: var(--surface); }
+.err img { width: 80px; height: 80px; object-fit: contain; }
+/* Коты для светлого фона (набор v2, прозрачный фон): в тёмной теме - стикеры с белым контуром (DESIGN.md 3.17) */
+img[src*="cat-happy"] { content: var(--illus-cat-happy); mix-blend-mode: var(--illus-blend); }
+img[src*="cat-grumpy"] { content: var(--illus-cat-grumpy); }
+img[src*="cat-overload"] { content: var(--illus-cat-overload); }
+
+/* Баннер в потоке (DESIGN.md 5.7): иконка цвета состояния, текст чернилами, без цветной заливки */
+.banner { display: flex; align-items: flex-start; gap: var(--s3); padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--surface); }
+.banner > .i { margin-top: 1px; color: var(--state-info); }
+.banner--ok > .i { color: var(--state-ok); }
+.banner__t { flex: 1; min-width: 0; }
+.banner__t b { font-weight: 700; }
+.banner__acts { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s3); }
+
+/* ---------- Лента недели (DESIGN.md 5.4, «Сетка Календаря»; вариант приложения клиента - статус дня) ----------
+   На чёрной полосе: семь дней, сегодня - белая пилюля (aria-current), под датой - статус тренировки дня:
+   выполнена - circle-check, запланирована - точка, прошла без отметки - пустая точка. Пустой день - не ссылка. */
+.week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--s1); margin: var(--s4) calc(-1 * var(--s2)) 0; }   /* выходит в поле экрана: на 360 день 44 px */
+.week > li { display: flex; }
+.week__d { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 64px; padding: var(--s2) 0; border-radius: var(--r-pill); color: var(--on-dark); text-decoration: none; }
+.week__d > span:first-child { font: var(--t-small); color: var(--on-dark-2); }
+.week__d b { font: var(--t-h3); }
+a.week__d:hover { background: var(--shell-2); }
+.week__st { display: grid; place-items: center; height: var(--icon-s); color: var(--on-dark); }
+.week__st .i { width: var(--icon-s); height: var(--icon-s); }
+.week__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--on-dark-2); }
+.week__dot--open { background: transparent; box-shadow: inset 0 0 0 1.5px var(--on-dark-2); }
+.week__d[aria-current] { background: var(--bg); color: var(--ink); }
+.week__d[aria-current] > span:first-child { color: var(--text-2); }
+.week__d[aria-current] .week__st { color: var(--ink); }
+.week__d[aria-current] .week__dot { background: var(--ink); }
+a.week__d[aria-current]:hover { background: var(--bg); box-shadow: inset 0 0 0 var(--focus-w) var(--shell-line); }
+
+/* ---------- Нижняя навигация и панель действий (DESIGN.md 5.5) ----------
+   Таббар приложения клиента - 3 пункта: Сегодня, План, Прогресс. Закреплён внизу сразу (в c2 - после прокрутки, из-за снимков). */
+.tabbar { position: sticky; bottom: 0; z-index: var(--z-bar); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: var(--s2) var(--s2) calc(var(--s2) + env(safe-area-inset-bottom)); background: var(--shell); }
+.tabbar__item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 56px; color: var(--on-dark-2); text-decoration: none; }
+.tabbar__ico { position: relative; display: grid; place-items: center; width: 56px; height: 32px; border-radius: var(--r-pill); color: var(--on-dark); }
+.tabbar__label { font: var(--t-small); font-weight: 700; }
+.tabbar__item[aria-current="page"] { color: var(--on-dark); }
+.tabbar__item[aria-current="page"] .tabbar__ico { background: var(--accent); color: var(--on-accent); }
+@media (hover: hover) { .tabbar__item:not([aria-current="page"]):hover .tabbar__ico { background: var(--shell-2); } }
+/* Панель действий вместо таббара - на экранах деталей и в тренировке */
+.assign-bar { position: sticky; bottom: 0; z-index: var(--z-bar); display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); padding: var(--s3) var(--s4) calc(var(--s3) + env(safe-area-inset-bottom)); background: var(--shell); color: var(--on-dark); }
+.assign-bar .btn { flex: 1 1 auto; }
+.assign-bar__note { flex: 1 1 100%; font: var(--t-small); color: var(--on-dark-2); text-align: center; }
+
+/* ---------- Служебная полоса прототипа: оглавление, состояние экрана, тема ----------
+   Инструмент просмотра, а не часть продукта (в продукте тема - в «Тренер и профиль»). Стоит над колонкой, не плавает:
+   на 390 внизу таббар, плавающая плашка закрывала бы его. */
+.proto-bar { background: var(--shell-2); color: var(--on-dark); border-bottom: 1px solid var(--shell-line); }
+.proto-bar__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "now theme" "home state"; align-items: center; gap: var(--s2); padding: var(--s2) var(--gutter-phone); }
+.proto-bar__now { grid-area: now; font: var(--t-small); color: var(--on-dark-2); }
+.proto-bar__now b { display: block; color: var(--on-dark); font-weight: 700; }
+.proto-bar__home { grid-area: home; }
+.proto-bar .menu { grid-area: state; }
+.proto-bar .btn { width: 100%; height: var(--tap-min); padding: 0 var(--s3); background: var(--shell); color: var(--on-dark); }
+.proto-bar .btn:hover { background: var(--shell-line); }
+.proto-bar .seg { grid-area: theme; justify-self: end; background: var(--shell); }
+.proto-bar .seg button { padding: 0; }
+.proto-bar .seg .i { width: var(--icon-m); height: var(--icon-m); }
+.proto-bar .menu__pop { width: min(320px, calc(100vw - 2 * var(--gutter-phone))); }
+.proto-bar .menu__pop small { display: block; font: var(--t-small); color: var(--text-2); font-weight: 500; }
+.i--hide { visibility: hidden; }
+.capp-net { margin-bottom: var(--s4); }
+
+
+/* ========== Компоненты экранов (сведены при ревью 2026-10-28 из css/session-kit.css и css/s3-kit.css) ==========
+   Одна копия на все экраны: чип, поле и подпись, многострочное поле, селект-кнопка, сетка подходов с полями, лист формы,
+   тост, бегунок усилия клиента и шкала боли, степпер настроек, чекбокс, запись о боли. Описание - DESIGN.md 5.2-5.7. */
+
+/* ---------- Чип (DESIGN.md 5.2) ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.chip { display: inline-flex; align-items: center; gap: var(--s2); height: var(--tap-min); padding: 0 var(--s4); border: 0; border-radius: var(--r-pill); background: var(--control); color: var(--ink); font: var(--t-small); font-weight: 700; white-space: nowrap; }
+.chip .i { width: var(--icon-s); height: var(--icon-s); }
+.chip:hover { background: var(--control-hover); }
+.chip[aria-pressed="true"], .chip[aria-checked="true"] { background: var(--ink); color: var(--on-ink); }
+.chips--soft .chip:not([aria-pressed="true"]):not([aria-checked="true"]) { background: var(--surface); }
+.chips--soft .chip:not([aria-pressed="true"]):not([aria-checked="true"]):hover { background: var(--surface-2); }
+
+/* ---------- Поле, подпись и многострочное поле (DESIGN.md 5.3) ----------
+   Заливкой, без обводки: --bg на сером (карточка --surface), --soft - --surface на белом листе. Фокус - рамка --ink внутри.
+   .fl - и fieldset с legend (группа чипов). */
+.fl { display: flex; flex-direction: column; gap: var(--s2); min-width: 0; border: 0; padding: 0; margin: 0; }
+.fl__l { font: var(--t-small); font-weight: 700; padding: 0; }
+.fl__l .muted, .fl__l small { font: inherit; font-weight: 500; color: var(--text-2); }
+.fl__hint { font: var(--t-small); color: var(--text-2); }
+.field { display: flex; align-items: center; gap: var(--s2); height: var(--tap); padding: 0 var(--s4); border-radius: var(--r-sm); background: var(--bg); }
+.field--soft { background: var(--surface); }
+.field:hover { background: var(--surface-2); }
+.field:focus-within { box-shadow: inset 0 0 0 var(--focus-w) var(--ink); }
+.field > .i { width: var(--icon-m); height: var(--icon-m); color: var(--text-2); }
+.field input { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; background: transparent; font: var(--t-body); font-weight: 600; color: var(--ink); outline: none; }
+.field input::placeholder, .area::placeholder { color: var(--text-2); opacity: 1; }
+.field__u { color: var(--text-2); font-weight: 600; }
+.field[aria-invalid="true"] { box-shadow: inset 0 0 0 var(--focus-w) var(--ink); }
+.fl__err { display: flex; align-items: flex-start; gap: var(--s2); font: var(--t-small); }
+.fl__err .i { width: var(--icon-s); height: var(--icon-s); margin-top: 2px; color: var(--state-error); }
+.fl__err[hidden] { display: none; }
+
+/* Многострочное поле: минимум 112, ответ на телефоне - 160 */
+.area { display: block; width: 100%; min-height: 112px; padding: var(--s3) var(--s4); border: 0; border-radius: var(--r-sm); background: var(--bg); color: var(--ink); font: var(--t-body); resize: vertical; }
+.area--soft { background: var(--surface); }
+.area:hover { background: var(--surface-2); }
+.area:focus { outline: none; box-shadow: inset 0 0 0 var(--focus-w) var(--ink); }
+
+/* ---------- Селект-кнопка (5.2) ----------
+   Пилюля с chevron-down, открывает меню (.menu__pop) со списком; на телефоне --tap-min. */
+.select { display: inline-flex; align-items: center; gap: var(--s2); max-width: 100%; height: var(--tap-min); padding: 0 var(--s3) 0 var(--s4); border: 0; border-radius: var(--r-pill); background: var(--surface); color: var(--ink); font: var(--t-small); font-weight: 700; white-space: nowrap; cursor: pointer; }
+.select:hover { background: var(--surface-2); }
+.select > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.select .i { width: var(--icon-m); height: var(--icon-m); }
+.menu[open] > .select .i { transform: rotate(180deg); }
+.menu__pop [role="option"] { display: flex; align-items: center; gap: var(--s3); width: 100%; min-height: var(--row); padding: var(--s2) var(--s4); border: 0; border-radius: var(--r-pill); background: transparent; color: var(--ink); font: var(--t-body); font-weight: 700; text-align: left; }
+.menu__pop [role="option"]:hover, .menu__pop [role="option"][aria-selected="true"] { background: var(--surface); }
+.menu__pop [role="option"] .i { width: var(--icon-m); height: var(--icon-m); }
+
+/* ---------- Сетка подходов с полями (5.3 «Поле подхода», 5.4 «Сетка подходов») ----------
+   Подходы столбцами, величины строками; подпись строки 64, столбец 56 на телефоне. Поле - --bg на сером (карточка). */
+.sets-x { display: grid; grid-template-columns: 64px repeat(var(--sx-n, 4), 56px); gap: var(--s2); align-items: center; }
+.sets-x__h { font: var(--t-label); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--text-2); text-align: center; }
+.sets-x__h:first-child { text-align: left; }
+.sets-x__l { font: var(--t-small); color: var(--text-2); }
+.inp { width: 56px; height: var(--tap); padding: 0 var(--s1); border: 0; border-radius: var(--r-sm); background: var(--bg); color: var(--ink); font: var(--t-h3); font-variant-numeric: tabular-nums; text-align: center; }
+.inp:hover { background: var(--surface-2); }
+.inp:focus { outline: none; box-shadow: inset 0 0 0 var(--focus-w) var(--ink); }
+.inp[aria-invalid="true"] { box-shadow: inset 0 0 0 var(--focus-w) var(--ink); }
+.inp::placeholder { color: var(--text-2); opacity: 1; }
+
+/* ---------- Лист формы .sheet (DESIGN.md 5.6, «Нижний лист») ----------
+   Над колонкой телефона; в тёмной теме - поднятый слой (.sheet в scope:raised, 3.17). Ширина - во всю ширину экрана, как каркас .capp. */
+.sheet-layer { position: fixed; inset: 0; z-index: var(--z-overlay); display: flex; align-items: flex-end; justify-content: center; background: var(--scrim); }
+.sheet { position: relative; display: flex; flex-direction: column; width: 100%; max-height: 90vh; max-height: 90dvh; overflow: auto; overscroll-behavior: contain; border-radius: var(--r-card) var(--r-card) 0 0; background: var(--bg); color: var(--ink); box-shadow: var(--shadow-float); animation: sheet-in var(--dur-slow) var(--easing-out); }
+.sheet::before { content: ""; flex: none; display: block; width: 36px; height: 4px; margin: var(--s2) auto 0; border-radius: var(--r-pill); background: var(--surface-2); }
+.sheet__head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: var(--s2); padding: var(--s2) var(--s3) 0 var(--s5); }
+.sheet__title { font: var(--t-h3); letter-spacing: var(--ls-h3); padding-top: var(--s3); }
+.sheet__sub { margin-top: var(--s1); font: var(--t-small); color: var(--text-2); }
+.sheet__x { width: var(--tap-min); height: var(--tap-min); background: transparent; }
+.sheet__body { display: flex; flex-direction: column; gap: var(--s5); padding: var(--s4) var(--s5) var(--s5); }
+.sheet__foot { position: sticky; bottom: 0; display: flex; gap: var(--s2); margin-top: auto; padding: var(--s3) var(--s5) calc(var(--s4) + env(safe-area-inset-bottom)); background: var(--bg); }
+.sheet__foot .btn { flex: 1 1 0; }
+.sheet__foot .btn--ghost { flex: 0 0 auto; }
+@keyframes sheet-in { from { transform: translateY(var(--s8)); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ---------- Тост (DESIGN.md 5.6): над панелью действий, по ширине колонки ---------- */
+.toast { position: fixed; left: 50%; bottom: calc(var(--s16) + var(--s8) + env(safe-area-inset-bottom)); z-index: var(--z-toast); display: inline-flex; align-items: center; gap: var(--s3); width: max-content; max-width: min(350px, calc(100vw - 2 * var(--gutter-phone))); min-height: var(--row); padding: var(--s1) var(--s1) var(--s1) var(--s4); border-radius: var(--r-pill); background: var(--ink); color: var(--on-ink); font: var(--t-small); font-weight: 700; box-shadow: var(--shadow-float); transform: translateX(-50%); animation: toast-in var(--dur-slow) var(--easing-out); }
+.toast > .i { width: var(--icon-m); height: var(--icon-m); }
+.toast > span { min-width: 0; padding: var(--s2) 0; }
+.toast__act { flex: none; height: var(--tap-min); padding: 0 var(--s3); border: 0; border-radius: var(--r-pill); background: transparent; color: var(--on-ink); font: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.toast__act:hover { background: var(--ink-hover); }
+.toast:not(:has(.toast__act)) { padding-right: var(--s4); }
+@keyframes toast-in { from { transform: translate(-50%, var(--s2)); opacity: 0; } to { transform: translateX(-50%); opacity: 1; } }
+
+/* ---------- Бегунок усилия клиента .eff и шкала боли .eff--pain (DESIGN.md 5.3; плавный бегунок - решение пользователя 2026-10-28,
+   концепция design/client/concepts/effort-slider/, прежняя версия - design/client/archive/eff-v1-2026-10-28/) ----------
+   Дорожка --tap-min с бегунком-пилюлей внутри, бегунок идёт за пальцем без шагов; подпись - барабан по положению бегунка.
+   Усилие: огонёк разгорается, на чёрном (.pult, .dark) дорожка наливается от лаймовой дымки к лайму. Боль - нейтрально.
+   Геометрия компонента (ширина бегунка, сдвиги искр) - переменные компонента. */
+
+@property --live { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --grab { syntax: "<number>"; inherits: true; initial-value: 1; }
+
+.eff {
+  --th: var(--tap-min);                             /* бегунок 44 с кольцом = зона касания */
+  --tk: calc(var(--th) - 2 * var(--s3));            /* дорожка 20: бегунок выходит за неё на --s3 сверху и снизу (замечания пользователя 2026-10-28, 2026-10-29: 28 толстовато) */
+  --tw: var(--th);                                  /* ручка - круг 44: огонёк до 29 помещается (замечание пользователя 2026-10-29) */
+  --run: calc(100% - var(--tw));                    /* ход бегунка: края бегунка совпадают с концами дорожки */
+  --p: 0; --h: 0; --fl: .15; --st: 0; --st-o: 50%;
+  --amp: calc(var(--live) * (.35 + .65 * var(--h)));  /* размах дрожания огонька: живой и чем выше усилие, тем сильнее */
+  --eff-track: var(--surface-2); --eff-fill-from: var(--data-fill); --eff-fill: var(--data-fill);   /* в тёмной теме приглушено, как столбики графика (ревью 2026-10-29) */
+  --eff-thumb: var(--control); --eff-flame: var(--flame-edge); --eff-flame-fill: var(--flame); --eff-spark: var(--flame); --eff-ember: block; --eff-ember-bg: var(--flame); --eff-ember-edge: transparent; --eff-ray-w: 3px;   /* огонь оранжевый --flame, искры вверх без обводки (решение пользователя 2026-10-29); лучики на листе толще */
+  --eff-fg: var(--ink); --eff-fg-2: var(--text-2); --eff-ring: var(--focus);
+  position: relative;
+  transition: --live var(--dur-slow) var(--easing);
+}
+.eff.is-live { --live: 1; }
+/* На чёрном («Выполнение тренировки»): дорожка разгорается от лаймовой дымки к лайму, бегунок белый */
+.pult .eff, .dark .eff { --eff-track: var(--shell-line); --eff-fill-from: var(--accent-tint); --eff-fill: var(--accent); --eff-thumb: var(--on-dark); --eff-ray-w: 2px; --eff-fg: var(--on-dark); --eff-fg-2: var(--on-dark-2); --eff-ring: var(--focus-on-dark); }
+/* Боль - нейтрально: серое заполнение, белая круглая ручка, без огонька, без искр и пружины */
+.eff--pain { --eff-fill-from: var(--text-3); --eff-fill: var(--text-3); }
+/* Ручка - круг 44 над полосой, белая с мягкой тенью, у усилия и у боли (замечания пользователя 2026-10-29: бегунок в цвет
+   заполнения выглядел утолщением полосы) */
+.eff__body { box-shadow: var(--shadow-float); }
+/* Ручка боли: видимый круг 40 из 44 (зона касания 44) и точка цвета заполнения - пустой белый круг казался крупнее ручки
+   с огоньком (выбор пользователя 2026-10-29 из design/client/concepts/effort-slider/pain-knob-variants.html) */
+.eff--pain .eff__body { scale: .91; }
+.eff__dot { width: var(--s3); height: var(--s3); border-radius: var(--r-pill); background: var(--eff-fill); }
+/* Подпись - на всю ширину, над «x»; дорожка уступает место кнопке (ревью 2026-10-29: «Максимум. Больше ни одного повторения» обрезалась на 360-390) */
+.eff:not(.eff--solo) .eff__track { margin-right: calc(var(--tap-min) + var(--s2)); }
+
+.eff__range { display: flex; flex-direction: column; gap: var(--s2); min-width: 0; cursor: pointer; touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; outline: 0; }
+
+/* ---------- Подпись: барабан, привязанный к положению бегунка ---------- */
+.eff__cap { position: relative; height: 1lh; font: var(--t-small); font-weight: 700; color: var(--eff-fg); white-space: nowrap; }
+.eff--pain .eff__cap { font: var(--t-h3); letter-spacing: var(--ls-h3); }
+.eff__hint { position: absolute; left: 0; bottom: 0; font: var(--t-small); color: var(--eff-fg-2); transition: opacity var(--dur) var(--easing), transform var(--dur) var(--easing-out); }
+.eff__val { display: block; opacity: 0; transition: opacity var(--dur) var(--easing); }
+.eff.has-v .eff__hint { opacity: 0; transform: translateY(-50%); }
+.eff.has-v .eff__val { opacity: 1; }
+/* Окно барабана выше строки на полстроки сверху и снизу: уходящая и приходящая подписи не режутся краем,
+   а растворяются в мягкой маске (замечание пользователя 2026-10-28: текст обрезался сверху и снизу).
+   Окно шире слова на запас по горизонтали: на переходе «9 → 10» и «слабая → умеренная» длинное не режется справа или слева. */
+.eff__drum { position: relative; display: inline-block; height: 2lh; margin: -.5lh 0; vertical-align: top;
+  -webkit-mask-image: linear-gradient(transparent, currentColor .4lh, currentColor 1.6lh, transparent); mask-image: linear-gradient(transparent, currentColor .4lh, currentColor 1.6lh, transparent); }
+.eff__drum--block { display: block; overflow: hidden; }
+.eff__drum--num { font-variant-numeric: tabular-nums; padding-left: 1ch; margin-left: -1ch; box-sizing: content-box; }
+.eff__drum--word { padding-right: 3em; margin-right: -3em; box-sizing: content-box; }
+.eff__item { position: absolute; left: 0; top: .5lh; height: 1lh; white-space: nowrap; will-change: transform, opacity; }
+.eff__drum--block .eff__item { right: 0; overflow: hidden; text-overflow: ellipsis; }
+.eff__drum--num .eff__item { left: auto; right: 0; }
+
+/* ---------- Дорожка, заполнение, бегунок ---------- */
+.eff__track { position: relative; height: var(--th); }
+.eff__track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: var(--tk); margin-top: calc(var(--tk) / -2); border-radius: var(--r-pill); background: var(--eff-track); }
+.eff__fill { position: absolute; left: 0; top: 50%; height: var(--tk); margin-top: calc(var(--tk) / -2); width: calc(var(--tw) / 2 + var(--p) * var(--run)); border-radius: var(--r-pill); overflow: hidden; }
+.eff__fill::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: var(--track-w, 100%); background: linear-gradient(90deg, var(--eff-fill-from), var(--eff-fill)); }
+.eff__thumb { position: absolute; top: 0; left: calc(var(--p) * var(--run)); width: var(--tw); height: var(--th); }
+.eff__body { width: 100%; height: 100%; display: grid; place-items: center; border-radius: var(--r-pill); background: var(--eff-thumb);
+  transform: scaleX(calc(1 + var(--st))) scale(var(--grab)); transform-origin: var(--st-o) 50%; transition: --grab var(--dur) var(--easing-out); }
+.eff__range.is-drag .eff__body { --grab: 1.1; }
+.eff:not(.has-v) .eff__fill, .eff:not(.has-v) .eff__thumb { visibility: hidden; }
+.eff.is-born .eff__body { animation: eff-born var(--dur-spring) var(--easing-spring); }
+.eff.is-born .eff__fill { animation: eff-fill-in var(--dur-slow) var(--easing-out); }
+@keyframes eff-born { from { scale: .3; opacity: 0; } }
+@keyframes eff-fill-in { from { clip-path: inset(0 100% 0 0 round var(--r-pill)); } to { clip-path: inset(0 0 0 0 round var(--r-pill)); } }
+
+.eff__range:focus-visible:not(.is-touch) .eff__body { outline: var(--focus-w) solid var(--eff-ring); outline-offset: var(--focus-offset); }
+.eff:not(.has-v) .eff__range:focus-visible:not(.is-touch) .eff__track::before { outline: var(--focus-w) solid var(--eff-ring); outline-offset: var(--focus-offset); }
+.eff[aria-disabled="true"] { opacity: var(--opacity-disabled); pointer-events: none; }
+
+/* ---------- Огонёк: разгорается с усилием, дрожит, пока клиент двигает ---------- */
+.eff__pop { display: grid; place-items: center; }
+.eff.is-pop .eff__pop { animation: eff-pop var(--dur-spring) var(--easing-spring); }
+@keyframes eff-pop { 40% { scale: 1.22; } }
+.eff__flick { display: grid; place-items: center; transform-origin: 50% 90%; animation: eff-flick calc(var(--dur) * 3) linear infinite; }
+@keyframes eff-flick {
+  0%, 100% { transform: rotate(0deg) scaleY(1); }
+  20% { transform: rotate(calc(var(--amp) * -8deg)) scaleY(calc(1 + var(--amp) * .1)); }
+  45% { transform: rotate(calc(var(--amp) * 5deg)) scaleY(calc(1 - var(--amp) * .06)); }
+  70% { transform: rotate(calc(var(--amp) * -4deg)) scaleY(calc(1 + var(--amp) * .08)); }
+}
+.eff__flame { position: relative; width: var(--icon-l); height: var(--icon-l); transform: scale(calc(.8 + .42 * var(--h))); transform-origin: 50% 90%; }
+.eff__flame > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.eff__flame-fill { color: var(--eff-flame-fill); clip-path: inset(calc((3 + (1 - var(--fl)) * 19) / 24 * 100%) 0 0 0); }
+.eff__flame-line { color: var(--eff-flame); }
+.eff__flame-tint { color: var(--flame-tint); }   /* подложка пустой части огонька: светлая тема и чёрный экран, в тёмной - нет */
+
+/* ---------- Искры и вспышка (только усилие) ---------- */
+.eff__fx { position: absolute; top: 50%; left: calc(var(--tw) / 2 + var(--p) * var(--run)); width: 0; height: 0; pointer-events: none; }
+.eff__ember { position: absolute; left: calc(var(--s1) / -2); top: calc(var(--th) / -2 + var(--s1)); width: var(--s1); height: var(--s1); border-radius: var(--r-pill); background: var(--eff-ember-bg); box-shadow: 0 0 0 1px var(--eff-ember-edge); display: var(--eff-ember);
+  animation: eff-ember calc(var(--dur-slow) * 2.5) var(--easing-out) forwards; }
+@keyframes eff-ember { from { transform: translate(0, 0) scale(1); opacity: 1; } to { transform: translate(var(--dx), calc(var(--rise) * -1)) scale(.3); opacity: 0; } }
+.eff__ray { position: absolute; left: calc(var(--eff-ray-w) / -2); top: calc(var(--s2) / -2); width: var(--eff-ray-w); height: var(--s2); border-radius: var(--r-pill); background: var(--eff-spark);
+  animation: eff-ray calc(var(--dur-slow) * 1.8) var(--easing-out) forwards; }
+@keyframes eff-ray {
+  from { transform: rotate(var(--a)) translateY(calc(var(--th) * -.75)) scaleY(.4); opacity: 0; }
+  25% { opacity: var(--peak, 1); transform: rotate(var(--a)) translateY(calc(var(--th) * -.95)) scaleY(var(--len, 1)); }
+  to { transform: rotate(var(--a)) translateY(calc(var(--th) * -1 * var(--reach, 1.5))) scaleY(.3); opacity: 0; }
+}
+
+.eff__skip { position: absolute; right: 0; bottom: 0; width: var(--tap-min); height: var(--tap-min); padding: 0; }
+/* «Сбросить оценку» на «Завершении»: место занято всегда (дорожка не прыгает), кнопка появляется после выбора */
+.eff--skip-after .eff__skip { transition: opacity var(--dur) var(--easing), visibility var(--dur) var(--easing); }
+.eff--skip-after:not(.has-v) .eff__skip { opacity: 0; visibility: hidden; }
+.pult .eff__skip, .dark .eff__skip { background: var(--shell-line); color: var(--on-dark); }
+.pult .eff__skip:hover, .dark .eff__skip:hover { background: var(--shell-2); }
+
+/* Карточка бегунка в «Выполнении тренировки» (замечания пользователя 2026-10-29: бегунок был уже строки и сворачивался, пока клиент
+   смотрел на него; появившись, он не бросался в глаза - клиент пропускал оценку). Карточка на всю ширину строки, «x» в углу над дорожкой,
+   дорожка во всю ширину. Радиус - --r-card, как у карточки отдыха под ней; «x» (круг 44) с отступом --s1 ложится в угол почти концентрично (зазор 4 по сторонам, ~5 по диагонали). Пока значения нет - лаймовый контур, жирная подпись и призрак ручки, который подталкивает вправо. */
+.eff.eff--card { padding: var(--s4); border-radius: var(--r-card); background: var(--shell-2); animation: eff-card-in var(--dur-slow) var(--easing-out); }
+.eff--card:not(.has-v) { box-shadow: inset 0 0 0 2px var(--accent); }
+.eff.eff--card .eff__cap { margin-right: var(--tap-min); margin-bottom: var(--s1); }
+.eff.eff--card .eff__track { margin-right: 0; }
+.eff.eff--card .eff__skip { top: var(--s1); right: var(--s1); bottom: auto; background: var(--shell-line); }
+.eff.eff--card:not(.has-v) .eff__hint { color: var(--eff-fg); font-weight: 700; }
+.eff.eff--card:not(.has-v) .eff__track::after { content: ""; position: absolute; left: 0; top: 0; width: var(--tw); height: var(--th); box-sizing: border-box; border-radius: var(--r-pill); border: 2px solid var(--accent); pointer-events: none; animation: eff-nudge calc(var(--dur-slow) * 5) var(--easing) infinite; }
+@keyframes eff-card-in { from { opacity: 0; transform: translateY(var(--s2)); } }
+@keyframes eff-nudge { 0%, 100% { transform: translateX(0); opacity: 1; } 50% { transform: translateX(var(--s10)); opacity: .45; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .eff__flick, .eff.is-pop .eff__pop, .eff.is-born .eff__body, .eff.is-born .eff__fill, .eff.eff--card, .eff.eff--card:not(.has-v) .eff__track::after { animation: none; }
+}
+
+/* ---------- Степпер настроек .lb-step (DESIGN.md 5.3): кнопки --tap-min на телефоне, значение output ---------- */
+.lb-step { display: inline-grid; grid-template-columns: var(--tap-min) minmax(72px, auto) var(--tap-min); align-items: center; gap: var(--s1); }
+.lb-step button { display: grid; place-items: center; width: var(--tap-min); height: var(--tap-min); padding: 0; border: 0; border-radius: var(--r-pill); background: var(--control); color: var(--ink); }
+.lb-step button:hover { background: var(--control-hover); }
+.lb-step button[disabled] { opacity: var(--opacity-disabled); cursor: not-allowed; }
+.lb-step button .i { width: var(--icon-m); height: var(--icon-m); }
+.lb-step output { text-align: center; font: var(--t-num); white-space: nowrap; }
+.lb-step output small { font: var(--t-small); color: var(--text-2); }
+
+/* ---------- Чекбокс .cbox (DESIGN.md 5.3): круглый 24, строка кликабельна целиком ---------- */
+.cbox { display: grid; place-items: center; width: 24px; height: 24px; flex: none; border-radius: 50%; background: var(--bg); box-shadow: inset 0 0 0 2px var(--text-3); color: var(--on-ink); }
+.cbox .i { width: var(--icon-xs); height: var(--icon-xs); stroke-width: 3; visibility: hidden; }
+[aria-checked="true"] > .cbox, .cbox.is-on { background: var(--ink); box-shadow: none; }
+[aria-checked="true"] > .cbox .i, .cbox.is-on .i { visibility: visible; }
+
+/* Запись о боли: оранжевый - только иконка-маркер 16 рядом с текстом чернилами (DESIGN.md, раздел 6) */
+.pain-mark { display: inline-flex; align-items: center; gap: var(--s2); }
+.pain-mark > .i { width: var(--icon-s); height: var(--icon-s); color: var(--attn); }

@@ -1,0 +1,25 @@
+/* «Тренировка: обзор». Общие компоненты - app.css; здесь только раскладка экрана. Значения - токены C 2.0. */
+
+/* Полоса: три числа тренировки - плитки на чёрном (--shell-2) */
+.w-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s2); margin-top: var(--s5); }
+.w-facts li { display: flex; flex-direction: column; gap: 2px; padding: var(--s3); border-radius: var(--r-md); background: var(--shell-2); }
+.w-facts b { font: var(--t-h2); letter-spacing: var(--ls-h2); color: var(--on-dark); }
+.w-facts span { font: var(--t-small); color: var(--on-dark-2); }
+
+/* Список упражнений: строка-ссылка с номером в тренировке, планом и состоянием */
+.w-list { display: flex; flex-direction: column; gap: var(--s2); }
+.w-ex { border-radius: var(--r-md); background: var(--surface); }
+.w-ex__a { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; align-items: center; gap: var(--s3); min-height: 64px; padding: var(--s3) var(--s4) var(--s3) var(--s3); border-radius: var(--r-md); text-decoration: none; }
+.w-ex__a:hover { background: var(--surface-2); }
+.w-ex__n { font: var(--t-small); font-weight: 700; color: var(--text-2); text-align: center; }
+.w-ex__b { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.w-ex__name { display: flex; align-items: center; gap: var(--s2); font-weight: 700; }
+.w-ex__plan { font: var(--t-small); color: var(--text-2); white-space: normal; }
+.w-ex__go { color: var(--text-2); }
+.w-ex__st { display: inline-flex; align-items: center; color: var(--state-ok); }
+.w-ex.is-done .w-ex__name > span:last-child { color: var(--text-2); }
+/* Заметка тренера к упражнению - под строкой, на ступень темнее */
+.w-ex__note { display: flex; gap: var(--s2); margin: 0 var(--s3) var(--s3) calc(24px + var(--s3) * 2); padding: var(--s2) var(--s3); border-radius: var(--r-sm); background: var(--bg); font: var(--t-small); }
+.w-ex__note > .i { margin-top: 2px; }
+/* Группа: черта и подпись, строки внутри */
+.w-grp .grp-b__h { margin-bottom: var(--s2); }

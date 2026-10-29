@@ -1,0 +1,38 @@
+/* Сцена «Клиент отмечает - вы видите»: слой сцены поверх настоящих экранов C 2.0 (образец - screens/ev-screen.css «Единого вида»).
+   Экран - разметка и стили прототипа; здесь только то, чего в продукте нет: экран-картинка без прокрутки пользователем,
+   состояния слоями (session.html) и наведение и нажатие (зеркало :hover прототипов). Значения - токены C 2.0. */
+
+/* Экран не прокручивается пользователем: прокрутку и камеру ставит сцена */
+html.cs-on { overflow: hidden; scrollbar-width: none; }
+html.cs-on::-webkit-scrollbar { display: none; }
+.theme-fab { display: none; }
+
+/* ?safe=1 - поле снизу экрана под жест «домой» (рамка телефона новых блоков, DESIGN.md 5.9): в iframe safe-area равна 0,
+   поэтому нижние панели прототипов поднимаем сами, как env(safe-area-inset-bottom) в их app.css - угол экрана не срезает кнопки */
+html.cs-safe { --cs-safe: var(--s8); }
+html.cs-safe .tabbar { padding-bottom: calc(var(--s2) + var(--cs-safe)); }
+html.cs-safe .assign-bar { padding-bottom: calc(var(--s3) + var(--cs-safe)); }
+/* ?flat=1 - панель действий цвета экрана под ней (cs-screen.js считает цвет): на белом листе - белая, на тёмном экране клиента -
+   отдельной полосы нет; поле под жест «домой» - того же цвета. Таббар не меняется. Только копии на странице, прототипы - как были. */
+html.cs-flat .assign-bar { background: var(--cs-bar-bg, var(--shell)); box-shadow: 0 -2px 0 var(--cs-bar-bg, var(--shell)); }
+/* тень своего цвета вверх на 2 px: панель - отдельный слой, на её верхнем крае и низе листа под ней на дробном пикселе проступал
+   тёмный фон экрана - серая нить между белым листом и белой панелью */
+
+/* Состояния экрана - слои одного документа, виден один (screens/cs-screen.js). Снимок без собственных анимаций прототипа:
+   переходы между слоями ведёт сцена, иначе при загрузке все листы и тосты проиграли бы появление разом. */
+body.cs-scr { display: grid; }
+.cs-st { grid-area: 1 / 1; min-width: 0; }
+.cs-st:not(.is-on):not(.is-out) { visibility: hidden; }
+.cs-scr .cs-st *, .cs-scr .cs-st *::before, .cs-scr .cs-st *::after { animation: none !important; }
+
+/* Наведение и нажатие - те же состояния, что :hover в прототипах (app.css: .btn--primary:hover, .btn--dark:hover, .chip:hover;
+   session.css: .ses-act:hover, .step - кнопка на --shell-line, нажатие светлее, как .btn--shell) */
+.btn.cs-hover, .btn.cs-down { background: var(--control-hover); }
+.btn--primary.cs-hover, .btn--primary.cs-down { background: var(--accent); box-shadow: inset 0 0 0 var(--focus-w) var(--on-accent); }
+.btn--dark.cs-hover, .btn--dark.cs-down { background: var(--ink-hover); }
+.ses-act.cs-down, .step.cs-down { background: var(--shell-line); }
+.step.cs-down { box-shadow: inset 0 0 0 var(--focus-w) var(--on-dark); }
+.chips--soft .chip.cs-down:not([aria-checked="true"]) { background: var(--surface-2); }
+
+/* Сброс сцены и кадр без движения */
+.cs-instant *, .cs-instant *::before, .cs-instant *::after { transition: none !important; }

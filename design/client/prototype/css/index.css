@@ -1,0 +1,10 @@
+/* Оглавление прототипа клиента. Строки - строка-карточка (DESIGN.md 5.4) на листе. */
+.ix-list { display: flex; flex-direction: column; gap: var(--s2); }
+.ix-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s3); min-height: 64px; padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--surface); text-decoration: none; }
+.ix-row:hover { background: var(--surface-2); }
+.ix-row__n { font: var(--t-h3); min-width: 24px; text-align: center; }
+.ix-row__b { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s1); min-width: 0; }
+.ix-row__b b { font-weight: 700; }
+.ix-row__b .status { margin-top: var(--s1); white-space: normal; }
+.ix-row__go { color: var(--text-2); }
+.ix-list li:not(:has(.ix-row__n)) .ix-row { grid-template-columns: minmax(0, 1fr) auto; }

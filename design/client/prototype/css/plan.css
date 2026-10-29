@@ -1,0 +1,52 @@
+/* «План» клиента. Общие компоненты - app.css и css/s3-kit.css; здесь только раскладка экрана. Значения - токены C 2.0. */
+
+/* Строка-карточка «Плана» (DESIGN.md 5.4, вариант телефона, как .wo-row c2 ниже 600):
+   дата и › сверху, название с метой, формат и статус; ссылка на названии растянута на строку, кнопки - поверх. */
+.pln-list { display: flex; flex-direction: column; gap: var(--s2); }
+.pln-row {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr) var(--icon-m);
+  grid-template-areas: "d go" "w w" "st st" "acts acts";
+  gap: var(--s1) var(--s3); padding: var(--s4); border-radius: var(--r-sm); background: var(--surface);
+}
+.pln-row:hover { box-shadow: inset 0 0 0 var(--focus-w) var(--ink); }
+.pln-row__d { grid-area: d; display: flex; align-items: baseline; gap: var(--s2); color: var(--text-2); white-space: nowrap; }
+.pln-row__d b { color: var(--ink); font-weight: 700; }
+.pln-row.is-today .pln-row__d .small { color: var(--ink); font-weight: 700; }
+.pln-row__w { grid-area: w; display: flex; flex-direction: column; min-width: 0; }
+.pln-row__a { text-decoration: none; }
+.pln-row__a b { font-weight: 700; }
+.pln-row__a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.pln-row__a:focus-visible { outline: none; }
+.pln-row__a:focus-visible::after { outline: var(--focus-w) solid var(--focus); outline-offset: var(--focus-offset); }
+.pln-row__where { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 var(--s1); }
+.pln-row__where .i { color: var(--text-2); }
+.pln-row__where .i:not(:first-child) { margin-left: var(--s1); }
+.pln-row__st { grid-area: st; display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); margin-top: var(--s2); }
+.pln-row__st .tag { min-width: 56px; justify-content: center; }
+.pln-row .i.pln-row__go { grid-area: go; color: var(--text-2); }
+.pln-by, .pln-re { display: inline-flex; align-items: center; gap: var(--s1); }
+.pln-re.is-new { color: var(--ink); font-weight: 700; }
+/* Прошедшая без отметки: действия - поверх ссылки строки */
+.pln-row__acts { grid-area: acts; position: relative; z-index: var(--z-raise); display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s3); }
+.pln-row__acts .btn { flex: 1 1 auto; padding: 0 var(--s4); }
+
+/* «Не отмечена»: пустая точка с контуром вместо иконки - тот же знак, что в ленте недели (DESIGN.md 5.4, BEHAVIOR.md 5.8) */
+
+/* Неделя, которую тренер ещё не собрал: пустой слот пунктиром (как .wo-row--empty c2) */
+.pln-empty { display: flex; flex-direction: column; gap: var(--s1); padding: calc(var(--s4) - 2px); border: 2px dashed var(--text-3); border-radius: var(--r-sm); }
+
+/* «Пропустил»: форма причины над списком */
+.pln-miss { display: flex; flex-direction: column; gap: var(--s3); scroll-margin-top: var(--s4); }
+.pln-miss__f { display: flex; flex-direction: column; gap: var(--s4); margin-top: var(--s1); }
+.pln-miss fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.pln-miss legend { padding: 0; margin-bottom: var(--s2); }
+.pln-miss .area { margin-top: var(--s1); }
+.pln-miss__acts { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.pln-miss__acts .btn--primary { flex: 1 1 auto; }
+.pln-miss.is-done { padding: 0; background: none; }
+.pln-miss__ok { align-items: center; }
+.pln-miss__ok .btn { flex: none; }
+
+/* Старые недели и «до программы» */
+.pln-old { display: flex; flex-direction: column; gap: var(--s8); }
+.pln-before { display: flex; align-items: center; gap: var(--s2); }

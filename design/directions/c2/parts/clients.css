@@ -1,0 +1,304 @@
+/* =========================================================
+   C 2.0 · Правки ревью · «Клиенты» и экраны клиента (2026-10-25).
+   Подключается после app.css только в clients.html, client-plan.html, client-history.html, client-profile.html,
+   k2-client.html, workout-result.html, client-new.html, client-edit.html. Значения - из tokens.css.
+   Основания - review-applicability.md, разделы «Клиенты», «Клиент: результат и прогресс», «Системные правки».
+   Телефон (< 1024) - как в C: все раскладочные правки ниже внутри @media (min-width: 1024px).
+   ========================================================= */
+
+/* ---------- Список клиентов: клиенты-T-05, клиенты-A-01, клиенты-T-01, клиенты-A-07; сжатый вид (правка пользователя 2026-10-26) ----------
+   Было: 6 колонок 280/168/197/161/112/202 на 1440 по содержимому, заголовок «Выполнение, 4 нед» длиннее колонки,
+   9 полос 72×6 чернилами одинаковы у 100% и у 58%, 15 ячеек «-», на 1024 таблица 960 в контейнере 704 - прокрутка вбок.
+   Стало: 5 колонок, table-layout: fixed. «Клиент» - 216 px в списке до 900 px и 30% шире, четыре колонки данных делят остаток поровну
+   (1440: 336 + 4 × 196; 1280: 288 + 4 × 168; 1024: 216 + 4 × 128). Заголовки - одно короткое слово в одну строку.
+   Выполнение - кольцо 20 px и число: норма (от 90%) тихая (кольцо --text-3, число --text-2), отставание - чернилами и «ниже нормы».
+   «Последняя тренировка» и «План до» - одна колонка в две строки. Пустая ячейка вместо «-».
+
+   Сжатый вид. Было: ниже 1024 окна таблица становилась карточками ~210 px (подписи «ПЛАН», «ПОСЛЕДНЯЯ», разделитель,
+   кольцо у правого края), на ~1000 px карточка растягивалась с пустой серединой. Стало: решает ширина списка (container query «cl»), не окно.
+   - Список от 680 px (окно от 720, включая телефонную раскладку 720-1023 с полем 32): таблица, как на компьютере, без прокрутки вбок.
+   - Уже 680: компактная строка на --surface, радиус 16, отступ 16, зазор 12 - не больше поля экрана; три строки без подписей:
+     1) аватар | имя ... кольцо 20 и процент в колонке 64 px - на одном x во всех строках;
+     2) серым: формат · последняя тренировка; расписание - от 600 px списка, «план до» - от 520 (иначе - в карточке клиента);
+     3) только если есть: группа сигналов .sigs (иконка и значение, вся группа - одна цель 44 px, нажатие - нижний лист)
+        и статус плана, если он не норма («Отстаёт»).
+     «В плане», «Только в календаре» (есть заголовок группы), «ниже нормы» (объясняют строка над списком и тёмное кольцо;
+     у кольца aria-label «83%, ниже нормы») в строке не пишутся. */
+.cl-tblwrap { container: cl / inline-size; margin: 0 calc(-1 * var(--s3)); overflow-x: visible; }
+/* строка 2 сжатого вида: в таблице - формат и расписание, «последняя» и «план до» - в своей колонке */
+.cl-who__m, .cl-who__p { display: none; }
+
+@container cl (min-width: 680px) {
+  .cl-tbl { min-width: 0; table-layout: fixed; }
+  .cl-tbl th.cl-c-who, .cl-tbl th.cl-c-st, .cl-tbl th.cl-c-last, .cl-tbl th.cl-c-done, .cl-tbl th.cl-c-plan { width: auto; }
+  /* 216 = аватар 40 + зазор 12 + самое длинное имя 136 + поля 12 и 16. Chrome не применяет к колонке calc и max с процентами */
+  .cl-col-who { width: 216px; }
+  .cl-tbl .status { white-space: normal; }
+}
+@container cl (min-width: 900px) { .cl-col-who { width: 30%; } }
+
+/* легенда над таблицей: период и норма - один раз, а не в длинном заголовке */
+.cl-key { display: flex; align-items: center; gap: var(--s2); margin: calc(-1 * var(--s2)) 0 var(--s4); font: var(--t-small); color: var(--text-2); }
+.cl-key .cl-ring { width: 16px; height: 16px; }
+
+/* кольцо выполнения: дорожка --surface-2, дуга - доля (pathLength 100) */
+.cl-ring { width: var(--s5); height: var(--s5); flex: none; transform: rotate(-90deg); }
+.cl-ring circle { fill: none; stroke-width: 3; }
+.cl-ring__t { stroke: var(--surface-2); }
+.cl-ring__v { stroke: var(--text-3); }
+.cl-done { display: grid; grid-template-columns: var(--s5) auto; align-items: center; justify-content: start; column-gap: var(--s2); }
+.cl-done b { font-weight: 600; color: var(--text-2); }
+.cl-done__s { grid-column: 2; font: var(--t-small); color: var(--text-2); }
+.cl-done--low .cl-ring__v { stroke: var(--ink); }
+.cl-done--low b { font-weight: 700; color: var(--ink); }
+/* колонка «Выполнение» 122-128 px: подпись начинается под кольцом (после базовых правил .cl-done - иначе они перебивают) */
+@container cl (min-width: 680px) and (max-width: 899px) { .cl-done__s { grid-column: 1 / -1; } }
+/* неброская заметка в колонке флагов: не сигнал, а время ближайшей тренировки */
+.cl-when { display: inline-flex; align-items: flex-start; gap: 6px; font: var(--t-small); color: var(--text-2); }
+.cl-when .i { width: var(--icon-s); height: var(--icon-s); margin-top: 2px; }
+
+@media (max-width: 1023px) {
+  .cl-key { margin-top: 0; }
+  .cl-row .cl-c-done::after { content: none; }
+
+  /* Таблица в телефонной раскладке (список от 680): снимаем превращение строк в карточки из app.css */
+  @container cl (min-width: 680px) {
+    .cl-tbl { display: table; }
+    .cl-tbl tbody { display: table-row-group; }
+    .cl-tbl thead { display: table-header-group; position: static; width: auto; height: auto; overflow: visible; clip: auto; }
+    .cl-tbl .cl-row { display: table-row; margin: 0; padding: 0; border-radius: 0; background: none; }
+    .cl-tbl .cl-row > td, .cl-tbl .cl-row > .cl-c-st, .cl-tbl .cl-row > .cl-c-last, .cl-tbl .cl-row > .cl-c-plan,
+    .cl-tbl .cl-row > .cl-c-flag, .cl-tbl .cl-row > .cl-c-flag--none, .cl-tbl .cl-row > .cl-c-done {
+      display: table-cell; height: 72px; margin: 0; padding: var(--s3) var(--s4) var(--s3) 0;
+      border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; text-align: left;
+    }
+    .cl-tbl .cl-row > td:first-child { padding-left: var(--s3); border-radius: var(--r-sm) 0 0 var(--r-sm); }
+    .cl-tbl .cl-row > td:last-child { padding-right: var(--s3); border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+    .cl-tbl .cl-row:hover > td { background: var(--surface); }
+    .cl-tbl .cl-row .cl-c-st::before, .cl-tbl .cl-row .cl-c-last::before, .cl-tbl .cl-row .cl-c-plan::before { content: none; }
+    .cl-tbl .cl-grp { display: table-row; margin: 0; }
+    .cl-tbl .cl-grp td { display: table-cell; padding: var(--s8) var(--s3) var(--s3); }
+    .cl-tbl .cl-grp .small { display: inline; margin-top: 0; }
+  }
+
+  /* Компактная строка (список уже 680) */
+  @container cl (max-width: 679px) {
+    .cl-tbl { width: auto; margin: 0 var(--s3); }
+    .cl-tbl .cl-row {
+      --cl-done-w: 64px;   /* кольцо 20 + 8 + «100%» 36 */
+      display: grid; grid-template-columns: 40px auto minmax(0, 1fr) var(--cl-done-w); column-gap: var(--s3); align-items: start;
+      margin-top: var(--s3); padding: var(--s4); border-radius: var(--r-md); background: var(--surface);
+    }
+    .cl-tbl .cl-row:hover { background: var(--surface-2); }
+    .cl-tbl .cl-row > .cl-c-who { grid-column: 1 / -1; grid-row: 1; }
+    .cl-tbl .cl-row > .cl-c-done { grid-column: 4; grid-row: 1; justify-self: stretch; text-align: left; }
+    /* строка 3: ячейки - flex, без строки-распорки 22,5 px от кегля ячейки */
+    .cl-tbl .cl-row > .cl-c-flag { display: flex; grid-column: 2; grid-row: 2; margin-top: var(--s2); }
+    .cl-tbl .cl-row > .cl-c-st--x { display: flex; grid-column: 3 / -1; grid-row: 2; margin-top: var(--s2); padding: 0; border: 0; }
+    .cl-tbl .cl-row:has(> .cl-c-flag--none) > .cl-c-st--x { grid-column: 2 / -1; }
+    /* без статуса в строке 3 группа сигналов занимает всю ширину под именем (иначе колонка auto сжимает её до двух пилюль) */
+    .cl-tbl .cl-row:not(:has(> .cl-c-st--x)) > .cl-c-flag { grid-column: 2 / -1; }
+    .cl-tbl .cl-row > .cl-c-last, .cl-tbl .cl-row > .cl-c-st:not(.cl-c-st--x), .cl-tbl .cl-row > .cl-c-flag--none { display: none; }
+    .cl-tbl .cl-row .cl-c-st::before { content: none; }
+    /* имя не заходит под кольцо; кольцо - по центру строки имени */
+    .cl-tbl .cl-row .cl-who__n { padding-right: calc(var(--cl-done-w) + var(--s3)); }
+    .cl-done__s { display: none; }
+    .cl-who:focus-visible::after { border-radius: var(--r-md); }
+    .cl-who__s { display: none; }
+    .cl-who__m, .cl-who__s--keep { display: inline; }
+  }
+  @container cl (min-width: 520px) and (max-width: 679px) { .cl-who__p { display: inline; } }
+  @container cl (min-width: 600px) and (max-width: 679px) { .cl-who__s { display: inline; } }
+}
+
+/* ---------- Вкладки «План» и «История»: строка тренировки (клиенты-T-02, клиенты-A-05, клиенты-T-03, клиенты-A-03;
+   правки пользователя 2026-10-26) ----------
+   Было: формат, статус и сигналы в одной обёртке справа; при нехватке места сигналы уходили второй строкой под чужие колонки
+   («боль 4/10» под форматом, «рекорд» на 22 px левее статуса, «клиент не видит» под статусом), формат и статус стояли
+   по центру строки - от верха 13-16, 22-26 или 30-33 px; у «Не собрана» - пунктирная рамка 2 px.
+   Стало: сетка «дата | название с метой | формат | статус | ›».
+   - Сигналы («перенесена», боль, рекорд, причина пропуска) - строкой под метой в колонке названия, никогда под форматом и статусом.
+     Сигналы - группа .sigs v2 (иконка и значение, слова - в подсказке и окошке), рекорд - лаймовая пилюля 22 px.
+   - Первая строка - 28 px (высота тега): дата, название, формат, статус и › по центру этой строки, от верха строки 12 px у всех.
+   - «Черновик» - один статус с иконкой «не видит клиент» (подпись - в title и для скринридера), без второй строки.
+   - «Не собрана» - без рамки, тоном --surface-2; маркер - оранжевая иконка i-sig-notready на месте иконки статуса.
+   Раскладка зависит от ширины списка (container query), а не окна:
+   - от 760 px («История» на 1280 и 1440, «План» на 1440): дата 120, зазоры 16;
+   - 600-759 (обе вкладки на 1024-1279): дата 88, зазоры 12 - название 204 px и шире;
+   - до 600 («План» на 1280-1360): дата - строкой над названием («пт, 23 окт  сегодня»), колонке названия остаётся 188 px;
+     формат и статус - по-прежнему на строке названия и в своих колонках. */
+.wo-row__x { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s3); margin-top: var(--s1); font: var(--t-small); color: var(--ink); }
+.wo-row__x > * { white-space: nowrap; }
+.wo-row__mv { display: inline-flex; align-items: center; gap: var(--s1); color: var(--text-2); }
+.wo-row__x .i { width: var(--icon-s); height: var(--icon-s); flex: none; }
+/* рекорд - маленькая пилюля, не выше строки меты */
+.wo-row__x .grow { height: 22px; padding: 0 var(--s2); }
+.wo-row__x .grow .i { width: var(--icon-xs); height: var(--icon-xs); }
+/* слот без тренировки: тон вместо пунктирной рамки */
+.wo-row--empty { border: 0; padding: var(--s3) var(--s4); background: var(--surface-2); }
+.wo-row--empty .tag--soft { background: var(--control); }
+
+@media (max-width: 1023px) {
+  .wo-row--empty { padding: var(--s4); }
+}
+
+@media (min-width: 1024px) {
+  .wo-list { container-type: inline-size; }
+  .wo-list .wo-row {
+    --wo-d: 120px;     /* «пт, 23 окт» - 71 px */
+    --wo-tag: 104px;   /* «очно 19:00» - 99 px */
+    --wo-st: 136px;    /* иконка 18 + 6 + «Запланирована» 109 */
+    --wo-gap: var(--s4);
+    --wo-l1: 28px;     /* первая строка = высота тега */
+    /* название не шире 440: на широком списке («История» на 1440) свободное место уходит за статус, а не между названием и форматом */
+    grid-template-columns: var(--wo-d) minmax(0, 440px) minmax(calc(var(--wo-tag) + var(--wo-st) + var(--wo-gap)), 1fr) 20px;
+    grid-template-areas: "d w st go";
+    align-items: start; column-gap: var(--wo-gap);
+  }
+  .wo-row__d > b, .wo-row__w > b { display: flex; align-items: center; min-height: var(--wo-l1); }
+  .wo-row__st { display: grid; grid-template-columns: var(--wo-tag) var(--wo-st); justify-content: start; align-items: center; column-gap: var(--wo-gap); }
+  .wo-row__st > .tag { justify-self: start; }
+  .wo-row__st > .status { height: var(--wo-l1); min-width: 0; }
+  /* статус без иконки («Готова») держит место иконки - текст статусов на одной линии */
+  .wo-row__st > .status:not(:has(.i))::before { content: ""; width: 18px; flex: none; }
+  .wo-row .i.wo-row__go { align-self: start; margin-top: calc((var(--wo-l1) - 20px) / 2); }
+
+  @container (max-width: 759px) {
+    .wo-list .wo-row { --wo-d: 88px; --wo-gap: var(--s3); }
+  }
+  @container (max-width: 599px) {
+    .wo-list .wo-row {
+      grid-template-columns: minmax(0, 1fr) var(--wo-tag) var(--wo-st) 20px;
+      grid-template-areas: "d d d d" "w st st go";
+      row-gap: var(--s1);
+    }
+    .wo-row__d { flex-direction: row; align-items: baseline; gap: var(--s2); }
+    /* дата над названием - мельче названия: 14 px жирным, «сегодня» - серым */
+    .wo-row__d > b { display: inline; min-height: 0; font: var(--t-small); font-weight: 700; }
+  }
+}
+
+/* ---------- Таблица план/факт: прогресс-T-09, нумерация конструктор-T-06; колонка «Усилие» (правка пользователя 2026-10-26) ----------
+   Было: 30% / 18% / остаток / 17% - таблица 1032 px на 1440, от последнего подхода до «Прошлого раза» 33-250 px.
+   Стало: фиксированные «План», «Факт», «Усилие» и «Прошлый раз», остаток - названию.
+   1280 и шире: 136 / 328 / 80 / 136 (четыре подхода, два «ниже плана» - 306 px); названию на 1280 - 192, на 1440 - 352.
+   1024-1279: «как сейчас» - 112 / 208 / 120, отдельной колонки «Усилие» нет (ей не хватает места: названию нужно 172 - «Горизонтальная»
+   рядом с буквой, «План» и «Прошлый раз» неразрывны, 95 и 110 px). Усилие - строкой под подходами в «Факте» (копия значения в разметке,
+   колонка схлопнута до 0); скринридер читает одну из копий - вторая скрыта.
+   Усилие: огонёк 16 и «9/10». Оранжевый - только выше цели («RPE 7-8» второй строкой в «Плане»), в норме и без цели огонёк --text-3:
+   норма не кричит. Как спрашивали (после каждого подхода / после последнего) - в подсказке и для скринридера; не спрашивали - пустая ячейка.
+   Дата прошлого раза ушла из заголовка в легенду или подзаголовок - заголовки в одну строку. */
+.pf-eff { display: inline-flex; align-items: center; gap: var(--s1); font: var(--t-num); color: var(--ink); white-space: nowrap; }
+.pf-eff .i { width: var(--icon-s); height: var(--icon-s); flex: none; color: var(--text-3); }
+.pf-eff--hi .i { color: var(--attn); }
+.pf__rpe { display: block; font: var(--t-small); font-weight: 500; color: var(--text-2); }
+.pf-eff--in { display: none; }
+@media (min-width: 1024px) {
+  .pf { table-layout: fixed; }
+  .pf th, .wo-pf th:nth-child(n) { width: auto; white-space: nowrap; }
+  .pf .pf-c-plan { width: 112px; }
+  .pf .pf-c-fact { width: 208px; }
+  .pf .pf-c-eff { width: 0; }
+  .pf .pf-c-last { width: 120px; }
+  .pf__plan { white-space: normal; }
+  .pf th.pf__eff-h, .pf td.pf__eff { padding: 0; font-size: 0; }
+  .pf td.pf__eff > * { display: none; }
+  .pf-eff--in { display: flex; width: max-content; margin-top: 6px; }
+}
+@media (min-width: 1280px) {
+  .pf .pf-c-plan { width: 136px; }
+  .pf .pf-c-fact { width: 328px; }
+  .pf .pf-c-eff { width: 80px; }
+  .pf .pf-c-last { width: 136px; }
+  .pf__plan { white-space: nowrap; }
+  .pf th.pf__eff-h { padding: 0 var(--s3) var(--s3) 0; font: var(--t-label); }
+  .pf td.pf__eff { padding: var(--s3) var(--s3) var(--s3) 0; font-size: inherit; }
+  .pf td.pf__eff > * { display: inline-flex; }
+  .pf-eff--in { display: none; }
+}
+/* телефон: таблица - блоками; усилие - строкой «Усилие 9/10», не спрашивали - строки нет */
+@media (max-width: 1023px) {
+  .pf-eff--in { display: none; }
+  .pf td.pf__eff { display: flex; align-items: center; gap: 6px; }
+  .pf td.pf__eff:empty { display: none; }
+  .pf td.pf__eff::before { content: "Усилие"; color: var(--text-2); font: var(--t-small); }
+  .pf__rpe { display: inline; }
+  .pf__rpe::before { content: " · "; }
+}
+
+/* ---------- Недельный объём: прогресс-A-10 ----------
+   Подписи оси как у графика линии («нед 1 … нед 8»); разгрузка - не подписью оси, а ключом в легенде. */
+.cl-bar-key { display: inline-block; width: 12px; height: var(--s4); border-radius: var(--r-xs) var(--r-xs) 0 0; background: var(--surface-2); box-shadow: inset 0 0 0 2px var(--text-3); }
+
+/* ---------- Главное действие на «Прогрессе»: сквозное-A-07 ----------
+   На компьютере «Скорректировать следующую» - лаймом в инструментах шапки, как на «Результате».
+   Копия в карточке последнего результата - белой пилюлей 40 px (одна залитая кнопка на экран). На телефоне - как было. */
+@media (min-width: 1024px) {
+  .app .res__actions .btn--lg.cl-dup { height: var(--row); padding: 0 var(--s5); font: var(--t-body); font-weight: 700; background: var(--control); color: var(--ink); }
+  .app .res__actions .btn--lg.cl-dup:hover { background: var(--control-hover); box-shadow: none; }
+}
+
+/* ---------- Меню «Ещё» в шапке клиента: qa-16, клиенты-A-08, клиенты-A-09 ----------
+   Образец - details.menu «Конструктора». Пункты - кнопки действия, вид как у ссылок меню. */
+.menu__pop button { display: flex; align-items: center; gap: var(--s3); width: 100%; height: var(--row); padding: 0 var(--s4); border: 0; border-radius: var(--r-pill); background: transparent; color: var(--ink); font: var(--t-body); font-weight: 700; text-align: left; white-space: nowrap; }
+.menu__pop button:hover { background: var(--surface); }
+
+/* ---------- Заметки: сквозное-T-05, клиенты-T-07 ----------
+   «Только я» - тон --surface-2 и метка с замком; «Видит клиент» - белый --bg и метка с глазом. Нового цвета нет. */
+.cl-private { background: var(--surface-2); }
+.cl-private .cl-note--pin { background: var(--surface); }
+.fl__hint.cl-vis { display: inline-flex; align-items: center; gap: 6px; }
+.fl__hint.cl-vis .i { width: var(--icon-s); height: var(--icon-s); color: var(--ink); }
+
+/* ---------- «Профиль и заметки»: клиенты-A-06, клиенты-T-04, клиенты-T-06 ----------
+   Плитка «С тренером» убрана (стаж - в шапке и в «Основном»). «Выполнение за 4 недели» - во всю ширину сводки. */
+.cl-sum__wide { grid-column: 1 / -1; }
+
+/* ---------- Шапка клиента на 1024-1279 ----------
+   Было: имя и цифра героя в две колонки - на 1024 имени оставалось ~200 px, «Игорь Петров» в две строки, мета в четыре.
+   Стало: цифра героя под именем, как на телефоне, но без подложки. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .k2-head { grid-template-columns: minmax(0, 1fr); gap: var(--s6); }
+  .k2-hero { justify-content: start; }
+}
+
+/* ---------- Оранжевый - только маркер: экраны клиента (правки пользователя 2026-10-26) ----------
+   Системное правило - в конце app.css. Здесь - остатки на экранах клиента.
+   - Плитка боли в шапке результата: после снятия оранжевой заливки число и подпись остались чернилами на чёрной полосе (1:1).
+     Стало: как соседние плитки - число белым, подпись --on-dark-2; оранжевая только точка у числа.
+   - «Ниже плана» в шапке результата, в сводке «Прогресса» и в легенде таблицы: было точка и стрелка рядом;
+     стало как у самих подходов - сигнал одна оранжевая стрелка.
+   - Сигналы внимания - иконкой и коротким текстом (README, «Сигналы внимания C 2.0»): боль - i-sig-pain, RPE выше плана - i-sig-effort,
+     усилие - «9/10», подпись плитки «Усилие · план 7-8»; в шапке клиента плашка «Боль 4/10 · сегодня» заменена группой сигналов .sigs v2.
+     Один маркер: точки там, где стоит иконка, убраны. */
+/* без подложки плитка выравнивается по верху, как соседние (было по центру и с полями 12 сверху и снизу - на 12 px ниже ряда) */
+.wo-pain { justify-content: flex-start; padding: 0; }
+.wo-pain .wo-sum__v { color: var(--on-dark); }
+.wo-pain .wo-sum__l { color: var(--on-dark-2); }
+/* .cl-mark - оранжевая иконка-маркер внутри показателя или статуса (стрелка «ниже плана», i-sig-*); текст рядом чернилами */
+.cl-mark .i { color: var(--attn); }
+/* боль в шапке результата: маркер - иконка i-sig-pain в разметке, точка из app.css не нужна (один маркер) */
+.wo-pain .wo-sum__v::before { content: none; }
+
+
+/* ---------- Сигналы v2 на экранах клиента (правка пользователя 2026-10-26) ----------
+   Компонент .sigs / .sig - в app.css («сигналы внимания v2»), окошко и нижний лист - parts/signals.js.
+   Здесь - только то, что зависит от экранов клиента:
+   - строка тренировки была ссылкой <a> целиком - кнопка сигнала внутри ссылки недопустима (вложенные интерактивные элементы).
+     Стало: строка - <div>, ссылка - на названии и растянута на всю строку (::after), группа сигналов - над ней (z-index из app.css);
+   - заливка пилюли по фону: на белой строке тренировки и в таблице на белом - --surface, в компактной строке на --surface - белая;
+     в строке таблицы при наведении (фон --surface) пилюля становится белой, чтобы не сливаться. */
+.wo-row { position: relative; --sig-bg: var(--surface); --sig-bg-hover: var(--surface-2); }
+.wo-row__a { color: inherit; text-decoration: none; }
+.wo-row__a::after { content: ""; position: absolute; inset: 0; border-radius: var(--r-sm); }
+.wo-row__a:focus-visible { outline: 0; }
+.wo-row__a:focus-visible::after { outline: var(--focus-w) solid var(--focus); outline-offset: calc(-1 * var(--focus-w)); }
+.cl-tbl .cl-row { --sig-bg: var(--surface); --sig-bg-hover: var(--surface-2); }
+/* мини-история на «Прогрессе» стоит на белом фоне: пилюля - --surface, иначе белая на белом */
+.hist { --sig-bg: var(--surface); --sig-bg-hover: var(--surface-2); }
+.cl-tbl .cl-row:hover { --sig-bg: var(--control); --sig-bg-hover: var(--control-hover); }
+@media (max-width: 1023px) {
+  @container cl (max-width: 679px) {
+    .cl-tbl .cl-row, .cl-tbl .cl-row:hover { --sig-bg: var(--control); --sig-bg-hover: var(--control-hover); }
+  }
+}

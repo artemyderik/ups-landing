@@ -1,0 +1,147 @@
+/* Первый экран с колодой из трёх экранов продукта: DESIGN.md 5.9 «Колода первого экрана .lp-deck», поведение - BEHAVIOR.md 5.3.
+   Блок страницы на утверждение (Лендинг/Новые блоки/README.md): при переносе в лендинг правила переезжают в lp.css.
+   Текстовая часть, знак, кот и «Попробовать» - компоненты lp.css (.lp-hero, .lp-mark, .lp-cta); здесь - раскладка с колодой.
+   Значения - только токены C 2.0; геометрия колоды - переменными --lp-deck-* (как --lp-* у компонентов 5.9).
+   Стили самих экранов - screens.css: копия CSS прототипов с ограничением области (tools/scope_css.py). */
+
+/* ---------- Первый экран с колодой ---------- */
+/* На всех ширинах первая строка - знак «АПС!» и кот-волна 96 (.lp-hero__top), под ней текст и «Попробовать».
+   Телефон и 600-1023: ниже - колода, подпись и «колбаски»; текст на телефоне по левому краю, от 600 - по центру (lp.css).
+   От 1024 - две колонки: слева строка знака и текст шириной «Попробовать» (--lp-cta-w), по левому краю; справа колода
+   по центру высоты и ниже на --s12: по центру всей колонки (со строкой знака) она висела выше текста, сдвиг ставит её центр
+   вровень с центром текста (решение пользователя 2026-10-29: «опустят чуть вниз»; сдвиг не меняет высоту первого экрана,
+   низ колоды остаётся в нижнем поле полосы). Колода может выйти за колонку контента вправо, но не больше чем на два поля (--gutter): на широком
+   окне она крупнее, от края окна остаётся поле. Кот мельче прежнего (240): главная картинка - колода, кот рядом со знаком
+   не спорит с ней (решение пользователя 2026-10-28: «можно мельче, но не поверх экранов»). */
+.lp-hero--deck { overflow-x: clip; }
+.lp-hero--deck .lp-hero__in { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "text" "deck"; }
+.lp-hero__top { grid-area: top; display: flex; align-items: center; justify-content: space-between; gap: var(--s4); min-width: 0; }
+.lp-hero--deck .lp-hero__cat { width: var(--lp-hero-cat-m); height: var(--lp-hero-cat-m); }
+.lp-hero--deck .lp-deck { grid-area: deck; min-width: 0; margin-top: var(--s12); }
+@media (min-width: 600px) {
+  .lp-hero--deck .lp-hero__in { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "text" "deck"; }
+  .lp-hero--deck .lp-hero__eyebrow { margin-top: var(--s4); }
+  .lp-hero--deck .lp-deck { margin-top: var(--s16); }
+}
+@media (min-width: 1024px) {
+  .lp-hero--deck .lp-hero__in {
+    grid-template-columns: var(--lp-cta-w) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "top deck" "text deck";
+    align-items: start;
+    column-gap: var(--s8);
+  }
+  .lp-hero--deck .lp-hero__text { align-self: center; justify-items: start; text-align: start; }
+  .lp-hero--deck .lp-hero__eyebrow { margin-top: var(--s6); }
+  .lp-hero--deck .lp-hero__title { margin-top: var(--s4); }
+  .lp-hero--deck .lp-hero__lead { margin-top: var(--s6); }
+  .lp-hero--deck .lp-cta { margin-top: var(--s10); }
+  .lp-hero--deck .lp-deck {
+    align-self: center; margin-top: 0; translate: 0 var(--s12);
+    margin-right: calc(-1 * min(2 * var(--gutter), max(0px, (100vw - var(--wrap-max) - 2 * var(--gutter)) / 2)));
+  }
+}
+@media (min-width: 1280px) {
+  .lp-hero--deck .lp-hero__in { column-gap: var(--s12); }
+}
+
+/* ---------- Колода .lp-deck ---------- */
+/* Сцена постоянного вида: календарь сзади по центру, телефоны спереди по краям, нижние углы календаря под телефонами.
+   Сцена считается в пикселях экранов и масштабируется целиком (hero.js) - на телефоне и компьютере одна композиция. */
+.lp-deck {
+  --lp-deck-phone: .95;     /* телефон в масштабе календаря: чуть крупнее настоящей пропорции (.8), чтобы цифры телефона читались */
+  --lp-deck-out: .4;        /* телефон выходит за край календаря на 40 % своей ширины */
+  --lp-deck-drop: .14;      /* низ телефонов ниже низа календаря на 14 % высоты календаря */
+  --lp-deck-back: .94;      /* карточки под текущей - чуть меньше */
+  --lp-deck-shift: .2;      /* смена: следующая выходит вбок на 20 % ширины телефона - крайний телефон остаётся в окне */
+  --lp-deck-dwell: 3000ms;  /* показ карточки, BEHAVIOR.md 5.3 */
+  --lp-deck-phone-r: 55px;  /* угол экрана телефона - около 14 % ширины экрана 390, как у iPhone (47-55 pt при 390-393) */
+  --lp-deck-phone-safe: var(--s8); /* поле снизу экрана телефона под жест «домой», как safe-area iPhone */
+  display: grid;
+}
+.lp-deck__stage { position: relative; width: 100%; aspect-ratio: 1610 / 1003; } /* до расчёта сцены (hero.js) - её пропорция, без скачка */
+.lp-deck__world { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.lp-deck__card { position: absolute; left: 0; top: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.lp-deck__card:not(.is-top) { cursor: pointer; }
+.lp-deck__card.is-top { cursor: default; }
+
+/* Рамка устройства: на чёрной полосе тень не видна - край даёт контур 1 px --shell-line (как у кнопок .ses-mini, 5.5).
+   Угол - по формуле устройства: радиус экрана растёт с его размером, рамка = экран + поле (вложенный радиус = внешний
+   минус отступ, 3.11). Телефон: экран --lp-deck-phone-r (55), поле --s3, рамка 67; снизу экрана поле под жест «домой»
+   --lp-deck-phone-safe - нижние панели экранов (таббар, «Как в плане») поднимаются, угол их не срезает.
+   Компьютер: экран --r-card (24), поле --s2, рамка 32. Единое правило рамки телефона для всех блоков страницы (DESIGN.md 5.9). */
+.lp-deck__dev { position: absolute; left: 0; top: 0; transform-origin: 0 0; background: var(--shell-2); box-shadow: 0 0 0 1px var(--shell-line); }
+.lp-deck__dev--desk { padding: var(--s2); border-radius: calc(var(--r-card) + var(--s2)); }
+.lp-deck__dev--phone { padding: var(--s3); border-radius: calc(var(--lp-deck-phone-r) + var(--s3)); }
+/* Стекло .lp-deck__glass обрезает экран по углу; подложка под экраном - цвета рамки, экран заходит под обрезку на 1 px
+   с каждой стороны. Колода уменьшена масштабом, край экрана встаёт на дробный пиксель: так в сглаженный край обрезки
+   попадает экран или рамка, а не щель. */
+.lp-deck__glass { overflow: hidden; background: var(--shell-2); }
+.lp-deck__dev--desk > .lp-deck__glass { border-radius: var(--r-card); }
+.lp-deck__dev--phone > .lp-deck__glass { border-radius: var(--lp-deck-phone-r); }
+.lp-deck__glass > .hd-scr { margin: -1px; overflow: hidden; contain: strict; }
+.lp-deck__dev--phone .hd-scr { --hd-safe-bottom: var(--lp-deck-phone-safe); }
+
+/* Строка состояния телефона: 9:41, связь, сеть, батарея - на чёрном, вне темы */
+.hd-scr .hd-sbar { display: flex; align-items: center; justify-content: space-between; height: var(--row); padding: 0 var(--s6) 0 var(--s8); background: var(--shell); color: var(--on-dark); font: var(--t-body); font-weight: 700; }
+.hd-scr .hd-sbar__i { display: flex; align-items: center; gap: var(--s1); }
+.hd-scr .hd-sbar .i { width: var(--icon-s); height: var(--icon-s); }
+
+/* Экраны: что отличается от прототипа. Календарь - видно 7 часов сетки (07:00-14:00), окно целиком без прокрутки
+   (решение пользователя: «чуть меньше, чуть более сбитым, чтобы он не был обрезанным»). */
+.lp-deck .hd-cal .cal__col, .lp-deck .hd-cal .cal__hours { height: calc(var(--hour) * 7); }
+/* Рабочий лист возвращает тему (3.17), но цвет текста в прототипе он берёт от body - здесь это полоса, вне темы:
+   в тёмной теме текст листа был бы чёрным на графите. Лист экранов тренера задаёт цвет текста сам. */
+.lp-deck .hd-cal .work, .lp-deck .hd-tr .work { color: var(--ink); }
+/* Нижние панели телефонов (решение пользователя 2026-10-28: кнопки внизу - не на отдельной чёрной полосе).
+   Телефон тренера: таббар остаётся, поле под жест «домой» - его цвета (поле внутри таббара, safe-area). Лист экрана
+   кончается у таббара, а не уходит под него: иначе светлый лист просвечивает в сглаженный край обрезки по бокам таббара. */
+.lp-deck .hd-tr > .is-scrolled { display: flex; flex-direction: column; height: 100%; }
+.lp-deck .hd-tr .app { flex: 1 1 0; min-height: 0; overflow: hidden; }
+/* Экраны колоды не прокручиваются: нижняя панель стоит внизу раскладкой - колонкой высотой экрана, где лист занимает остаток, -
+   а не прилипанием (sticky) прототипа. Колода уменьшена transform-ом, и Safari считает прилипание внутри неё от высоты окна
+   прокрутки после уменьшения: панель «прилипала» к низу этой малой высоты и вставала вверху экрана, под строкой состояния. */
+.lp-deck .hd-tr > .is-scrolled > .tabbar, .lp-deck .hd-cl > .capp > .assign-bar { position: relative; }
+.lp-deck .hd-cl { display: flex; flex-direction: column; }
+.lp-deck .hd-cl > .capp { flex: 1 1 0; min-height: 0; }
+.lp-deck .hd-cl > .capp > .work { flex: 1 1 0; min-height: 0; overflow: hidden; }
+/* Телефон клиента: панель под «Как в плане» и поле под жест «домой» - цвета экрана (--shell, как лист тренировки).
+   Подходы уходят под панель плавно, затуханием в цвет экрана на --s8 над ней, - без края, который читался полосой. */
+.lp-deck .hd-cl .assign-bar::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: var(--s8); background: linear-gradient(to bottom, transparent, var(--shell)); pointer-events: none; }
+
+/* ---------- Подпись карточки ---------- */
+/* Одна строка под колодой, меняется вместе с карточкой: прежняя уходит вверх с затуханием, новая приходит снизу.
+   Подписи стоят в одной ячейке: высота - по самой длинной, страница не прыгает. */
+.lp-deck__cap { display: grid; margin-top: var(--s5); font: var(--lp-text); font-weight: 600; color: var(--on-dark); text-align: center; }
+.lp-deck__cap > span { grid-area: 1 / 1; opacity: 0; transform: translateY(var(--s3)); text-wrap: balance; }
+.lp-deck__cap > .is-on { opacity: 1; transform: none; }
+.lp-deck__cap > .is-out { transform: translateY(calc(-1 * var(--s3))); }
+@media (prefers-reduced-motion: no-preference) {
+  .lp-deck__cap > span { transition: opacity var(--dur-slow) var(--easing-out), transform var(--dur-slow) var(--easing-out); }
+}
+
+/* ---------- «Колбаски» .pv-steps на чёрной полосе ---------- */
+/* Те же размеры, что у шагов превью блока продукта (5.9), роли - полосы: точка --on-dark-2, наведение --on-dark;
+   текущая - пилюля --s6, дорожка --on-dark-2, заполнение --on-dark по времени показа. Кнопка - .btn--shell. */
+.lp-deck .pv-steps { display: flex; justify-content: center; align-items: center; gap: var(--s3); margin-top: var(--s3); }
+.lp-deck__ctl.btn { gap: var(--s2); padding: 0 var(--s4); font: var(--t-small); font-weight: 700; }
+.lp-deck__ctl .i { width: var(--icon-m); height: var(--icon-m); }
+.lp-deck__ctl [data-ico] { display: none; }
+.lp-deck[data-state="playing"] .lp-deck__ctl [data-ico="pause"], .lp-deck:not([data-state="playing"]) .lp-deck__ctl [data-ico="play"] { display: block; }
+.lp-deck .pv-steps__dots { display: flex; align-items: center; }
+.lp-deck .pv-steps__dot { display: grid; place-items: center; width: var(--s6); height: var(--row); padding: 0; border: 0; border-radius: var(--r-pill); background: none; cursor: pointer; }
+.lp-deck .pv-steps__dot > span { position: relative; display: block; width: var(--s2); height: var(--s2); overflow: hidden; border-radius: var(--r-pill); background: var(--on-dark-2); }
+.lp-deck .pv-steps__dot:hover > span { background: var(--on-dark); }
+.lp-deck .pv-steps__dot.is-on { width: calc(var(--s6) + var(--s4)); }
+.lp-deck .pv-steps__dot.is-on > span { width: var(--s6); background: var(--on-dark-2); }
+.lp-deck .pv-steps__dot > span > i { position: absolute; inset: 0; background: var(--on-dark); transform: scaleX(0); transform-origin: 0 50%; }
+.lp-deck .pv-steps__dot:not(.is-on) > span > i { visibility: hidden; }
+.lp-deck .pv-steps__dot:focus-visible { outline: var(--focus-w) solid var(--focus-on-dark); outline-offset: calc(-1 * var(--focus-w)); }
+@media (prefers-reduced-motion: no-preference) {
+  .lp-deck .pv-steps__dot, .lp-deck .pv-steps__dot > span { transition: width var(--dur-slow) var(--easing-out), background-color var(--dur) var(--easing); }
+}
+/* «Уменьшение движения»: без автопрокрутки - кнопки нет, текущая пилюля залита, смена - по нажатию (BEHAVIOR.md 5.3) */
+@media (prefers-reduced-motion: reduce) {
+  .lp-deck__ctl { display: none; }
+  .lp-deck .pv-steps__dot.is-on > span > i { transform: none; }
+}

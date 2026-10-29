@@ -1,0 +1,63 @@
+/* Превью «Телефон»: слой сцены поверх настоящего экрана C 2.0 на 390.
+   Экран - разметка и стили прототипа (design/directions/c2), здесь только то, чего в продукте нет или что в прототипе не нарисовано:
+   нажатие касанием (зеркало :hover и :active системы), смена данных по шагам сцены, полоска загрузки, раскладка «Усилия» ниже 600.
+   Значения - токены C 2.0 (DESIGN.md 3.14). Шаги включает ep-screen.js классами ev-1, ev-2 на <html>. */
+
+/* Экран не прокручивается пользователем: прокрутку ведёт страница лендинга. */
+html.ev-scr { overflow: hidden; scrollbar-width: none; scroll-behavior: auto; }   /* прокрутку по кадрам ведёт сцена: плавная прокрутка прототипа её бы растягивала */
+html.ev-scr::-webkit-scrollbar { display: none; }
+.theme-fab { display: none; }
+
+/* Нажатие касанием - то же состояние, что :hover в системе (DESIGN.md 5, «Состояния по умолчанию»: active = hover).
+   Источники: app.css .btn:hover, .btn--primary:hover, .chip:hover, .wo-row:hover, .sigs .sig:hover; clients.css .cl-row:hover (компактная строка). */
+.btn.ev-down { background: var(--control-hover); }
+.btn--primary.ev-down { background: var(--accent); box-shadow: inset 0 0 0 var(--focus-w) var(--on-accent); }
+.chip.ev-down { background: var(--control-hover); }
+.wo-row.ev-down { box-shadow: inset 0 0 0 2px var(--ink); }
+.sigs .sig.ev-down { background: var(--sig-bg-hover, var(--control-hover)); }
+@container cl (max-width: 679px) {
+  .cl-tbl .cl-row.ev-down { background: var(--surface-2); }
+}
+
+/* Смена данных: старое значение гаснет, новое появляется на том же месте, без пружины (появление данных).
+   <span class="ev-swap ev-swap--1"><span class="ev-a">80</span><span class="ev-b">82,5</span></span> */
+.ev-swap { display: inline-grid; align-items: center; justify-items: start; }
+.ev-swap > * { grid-area: 1 / 1; transition: opacity var(--dur-slow) var(--easing-out); }
+.ev-swap > .ev-b { opacity: 0; }
+.ev-1 .ev-swap--1 > .ev-a, .ev-2 .ev-swap--2 > .ev-a { opacity: 0; transition-duration: var(--dur); transition-timing-function: var(--easing); }
+.ev-1 .ev-swap--1 > .ev-b, .ev-2 .ev-swap--2 > .ev-b { opacity: 1; transition-delay: calc(var(--dur) / 2); }   /* старое и новое не сливаются в одно пятно */
+.ev-swap--center { justify-items: center; }
+.ev-swap--end { justify-items: end; }
+.ev-swap--block { display: grid; width: 100%; }
+
+/* Появление и уход элемента на шаге сцены */
+.ev-show--1, .ev-show--2 { opacity: 0; transition: opacity var(--dur-slow) var(--easing-out); }
+.ev-1 .ev-show--1, .ev-2 .ev-show--2 { opacity: 1; }
+.ev-hide--1, .ev-hide--2 { transition: opacity var(--dur) var(--easing); }
+.ev-1 .ev-hide--1, .ev-2 .ev-hide--2 { opacity: 0; }
+
+/* Фон строки меняется вместе с данными (пустой слот «Плана» становится строкой) */
+.ev-row, .ev-row .tag { transition: background-color var(--dur-slow) var(--easing-out); }
+
+/* Сброс сцены и кадр без движения */
+.ev-instant *, .ev-instant *::before, .ev-instant *::after { transition: none !important; animation: none !important; }
+
+/* Полоска загрузки экрана - DESIGN.md 5.7 (в гайде .sys-loadbar): переход ждёт данные нового экрана, старый остаётся.
+   Сверху видимой части экрана, 2 px --accent на чёрной полосе, на белом - чернилами; отрезок 40 % бежит за 1,2 с. Появление через 150 мс держит сцена. */
+.band:has(> .ev-loadbar) { position: relative; }
+.ev-loadbar { position: absolute; top: 0; left: 0; right: 0; z-index: var(--z-bar); height: 2px; overflow: hidden; }
+.ev-loadbar::before { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 40%; background: var(--accent); animation: ev-run calc(var(--dur) * 6) var(--easing) infinite; }
+.ev-loadbar--ink::before { background: var(--ink); }
+@keyframes ev-run { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+
+/* «Усилие» ниже 600 - столбиком (DESIGN.md 5.3, .effort-ask). В прототипе на 390 три сегмента шире карточки и «Каждый подход»
+   обрезан. Собрано из того же сегмента: кнопки делят ширину дорожки поровну, подпись не обрезается (README, «Дефекты прототипа на 390»). */
+@media (max-width: 599px) {
+  .effort-ask .seg > button { flex: 1 1 0; min-width: 0; padding-inline: var(--s2); white-space: normal; line-height: 1.15; }
+}
+
+/* «План клиента», неделя 10 после копирования: на 390 кнопка стоит второй строкой под заголовком недели, «3 черновика» встаёт
+   на её место от левого края - как подзаголовок недели, строка не прыгает. */
+@media (max-width: 599px) {
+  #ev-w10-head .ev-swap--end { justify-items: start; }
+}

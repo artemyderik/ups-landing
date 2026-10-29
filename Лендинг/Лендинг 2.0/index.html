@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Апс! · Приложение для персональных тренеров, которые ведут тренировки онлайн и в зале</title>
+<meta name="description" content="Программу под каждого клиента собираете быстрее, а кто начал пропадать - видно сразу">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<!-- Тема - системная (DESIGN.md 3.17, 5.9). ?theme=dark или ?theme=light - только для проверки. -->
+<script>(t => { if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; })(new URLSearchParams(location.search).get('theme'));</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="tokens.css?v=4">
+<link rel="stylesheet" href="lp.css?v=34">
+<link rel="stylesheet" href="lp-pv.css?v=1">
+<!-- Лендинг 2.0: стили новых блоков (копии из Лендинг/Новые блоки/, README.md этой папки) и стыковка с блоком продукта -->
+<link rel="stylesheet" href="hero/hero.css?v=3">
+<link rel="stylesheet" href="how/how.css?v=1">
+<link rel="stylesheet" href="client-phone/client.css?v=2">
+<link rel="stylesheet" href="lp2.css?v=1">
+<!-- Блок продукта собирает скрипт: пока он работает, подписи без кадров не показываем (без скрипта класса нет - подписи видны списком) -->
+<script>document.documentElement.classList.add('pv-js');</script>
+</head>
+<body class="lp">
+<!--lp-sprite--><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="lp-i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/> <path d="M16 3.128a4 4 0 0 1 0 7.744"/> <path d="M22 21v-2a4 4 0 0 0-3-3.87"/> <circle cx="9" cy="7" r="4"/></symbol><symbol id="lp-i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/> <path d="M12 6v6l4 2"/></symbol><symbol id="lp-i-message" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></symbol><symbol id="lp-i-missed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/> <path d="m15 9-6 6"/> <path d="m9 9 6 6"/></symbol><symbol id="lp-i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/> <path d="M12 18h.01"/></symbol><symbol id="lp-i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3"/> <path d="M16 2v3"/> <rect x="3" y="3" width="18" height="18" rx="2"/> <path d="M3 9h18"/></symbol><symbol id="lp-i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/> <path d="M3 3v5h5"/> <path d="M12 7v5l4 2"/></symbol><symbol id="lp-i-today" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3"/> <path d="M16 2v3"/> <rect x="3" y="3" width="18" height="18" rx="2"/> <path d="M3 9h18"/> <path d="m9 15 2 2 4-4"/></symbol><symbol id="lp-i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="lp-i-arrowR" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/> <path d="m12 5 7 7-7 7"/></symbol><symbol id="lp-i-chevD" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol><symbol id="lp-i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/> <line x1="2" x2="22" y1="10" y2="10"/> <path d="M6 14h2"/></symbol><symbol id="lp-i-ruble" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 11h8a4 4 0 0 0 0-8H9v18"/> <path d="M6 15h8"/></symbol><symbol id="lp-i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol><symbol id="lp-i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/> <path d="M18 17V9"/> <path d="M13 17V5"/> <path d="M8 17v-3"/></symbol><symbol id="lp-i-tip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/> <path d="M9 18h6"/> <path d="M10 22h4"/></symbol><symbol id="lp-i-summary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5h8"/> <path d="M13 12h8"/> <path d="M13 19h8"/> <path d="m3 17 2 2 4-4"/> <path d="m3 7 2 2 4-4"/></symbol></defs></svg><!--/lp-sprite-->
+<!-- Лендинг 2.0 (2026-10-29): копия «Вёрстка - с превью» со встроенными новыми блоками - первый экран с колодой, «Как работает»,
+     сцена приложения клиента (README.md этой папки, не утверждено). Ниже - комментарий исходной вёрстки.
+     Лендинг, этап 3 «Визуал». Тексты - Лендинг/Тексты лендинга.md (утверждены 2026-10-27), структура и доли - Лендинг/Принятые решения.md,
+     компоненты - design/system-c2/DESIGN.md 5.9. Копия Вёрстка/ от 2026-10-28: в блок продукта встроены сборки «Превью - единый вид» и «Превью - телефон» (README.md этой папки, не утверждено). -->
+
+<!-- Первый экран с колодой рисует hero/hero.js. Внутри - прежний статичный первый экран: он виден без скрипта. -->
+<div id="nb-hero"><header class="lp-band lp-hero">
+  <div class="lp-wrap lp-hero__in">
+    <div class="lp-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18.5 4.5 7 9 12 12 5 15 12 19.5 7 21 18.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><span>АПС!</span></div>
+    <img class="lp-hero__cat" src="../../design/directions/assets/v2/cat-wave.webp" alt="" width="220" height="220">
+    <div class="lp-hero__text">
+      <p class="lp-hero__eyebrow">Приложение для персональных тренеров, которые ведут тренировки онлайн и&nbsp;в зале</p>
+      <h1 class="lp-hero__title">Ведите больше клиентов</h1>
+      <p class="lp-hero__lead">Программу под каждого клиента собираете быстрее, а&nbsp;кто начал пропадать&nbsp;- видно сразу</p>
+      <!-- ЗАГЛУШКА: «Попробовать» ведёт на квал-вопросы, затем регистрация. Адрес - при разработке. -->
+      <a class="btn btn--primary btn--lg lp-cta" href="#try" data-cta="try">Попробовать<svg class="i" aria-hidden="true"><use href="#lp-i-arrowR"/></svg></a>
+      <p class="lp-hero__note">14 дней бесплатно и&nbsp;без привязки карты</p>
+    </div>
+  </div>
+</header></div>
+
+<main class="lp-main">
+  <section class="lp-sec lp-panel lp-pains" aria-labelledby="pains-h">
+    <div class="lp-wrap lp-pains__grid">
+      <h2 class="lp-h" id="pains-h">Клиентов больше, а&nbsp;часов в&nbsp;сутках столько же</h2>
+      <img class="lp-pains__cat" src="../../design/directions/assets/v2/cat-overload.webp" alt="" width="168" height="168">
+      <div class="lp-pains__body">
+        <p class="lp-pains__ask">Знакомо?</p>
+        <ul class="lp-pains__list">
+          <li><span class="lp-pains__ico"><svg class="i" aria-hidden="true"><use href="#lp-i-users"/></svg></span><span>Клиенты в&nbsp;таблицах, чатах и&nbsp;заметках, а&nbsp;кто на&nbsp;какой неделе и&nbsp;у кого что болит, держите в&nbsp;голове</span></li>
+          <li><span class="lp-pains__ico"><svg class="i" aria-hidden="true"><use href="#lp-i-clock"/></svg></span><span>На&nbsp;программы уходят часы, и&nbsp;с каждым новым клиентом их больше</span></li>
+          <li><span class="lp-pains__ico"><svg class="i" aria-hidden="true"><use href="#lp-i-message"/></svg></span><span>Чтобы поправить план, листаете переписку в&nbsp;поисках прошлого веса и&nbsp;жалоб</span></li>
+          <li><span class="lp-pains__ico"><svg class="i" aria-hidden="true"><use href="#lp-i-missed"/></svg></span><span>Клиент пропустил раз, другой, а&nbsp;вы замечаете, когда он уже ушёл</span></li>
+        </ul>
+        <p class="lp-pains__sum">Чем больше клиентов, тем больше часов съедает рутина</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lp-sec lp-band lp-benefits" aria-labelledby="benefits-h">
+    <div class="lp-wrap">
+      <h2 class="lp-h" id="benefits-h">Больше клиентов без лишних часов</h2>
+      <ul class="lp-benefits__grid">
+        <li class="lp-benefit"><span class="lp-tile"><svg class="i" aria-hidden="true"><use href="#lp-i-users"/></svg></span><p class="lp-benefit__t">Каждый клиент как на&nbsp;ладони: план, тренировки, результаты и&nbsp;ограничения</p></li>
+        <li class="lp-benefit"><span class="lp-tile"><svg class="i" aria-hidden="true"><use href="#lp-i-calendar"/></svg></span><p class="lp-benefit__t">Новый клиент легко встаёт в&nbsp;график: свободные окна видны сразу, программу под него собираете быстрее</p></li>
+        <li class="lp-benefit"><span class="lp-tile"><svg class="i" aria-hidden="true"><use href="#lp-i-history"/></svg></span><p class="lp-benefit__t">Корректируете план, видя, что клиент делал в&nbsp;прошлый раз и&nbsp;на&nbsp;что жаловался</p></li>
+        <li class="lp-benefit"><span class="lp-tile"><svg class="i" aria-hidden="true"><use href="#lp-i-today"/></svg></span><p class="lp-benefit__t">Ваш день перед глазами: тренировки и&nbsp;кто начал пропадать</p></li>
+        <li class="lp-benefit"><span class="lp-tile"><svg class="i" aria-hidden="true"><use href="#lp-i-phone"/></svg></span><p class="lp-benefit__t">Всё это работает и&nbsp;на&nbsp;компьютере, и&nbsp;с&nbsp;телефона прямо в&nbsp;зале</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="lp-sec lp-panel lp-product" aria-labelledby="product-h">
+    <div class="lp-wrap">
+      <h2 class="lp-h" id="product-h">Всё, что вы держали в&nbsp;голове, теперь в&nbsp;приложении</h2>
+    </div>
+    <!-- «Как работает» рисует how/how.js (Лендинг 2.0) -->
+    <div id="nb-how"></div>
+    <div class="lp-wrap">
+      <!-- Превью - две сборки по ширине окна (lp-pv.js, README.md этой папки): до 899 - «Превью - телефон/», от 900 - «Превью - единый вид/» (копии в этой папке).
+           Кадры, стили и скрипты берутся из папок сборок по ссылке. Здесь - только утверждённые подписи (Тексты лендинга.md, блок 4),
+           сгруппированные по трём превью; без скрипта они остаются списком. -->
+      <ol class="lp-scenes" data-pv-caps>
+        <li class="lp-scene" data-scene="a">
+          <div class="lp-scene__cap">
+            <h3 class="lp-scene__t">Клиенты</h3>
+            <p class="lp-scene__d">Все клиенты одним списком: у&nbsp;кого есть план, когда была последняя тренировка, сколько выполнено из&nbsp;плана</p>
+          </div>
+        </li>
+        <li class="lp-scene" data-scene="b">
+          <div class="lp-scene__cap">
+            <h3 class="lp-scene__t">Следующая неделя&nbsp;- одним нажатием</h3>
+            <p class="lp-scene__d">Скопируйте прошлую неделю клиента и&nbsp;поправьте под него то, что нужно</p>
+            <h3 class="lp-scene__t">Результаты клиента под рукой&nbsp;- даже с&nbsp;телефона</h3>
+            <p class="lp-scene__d">Под каждым упражнением видно, что клиент сделал в&nbsp;прошлый раз. Следующую тренировку собираете от&nbsp;его реального результата.</p>
+          </div>
+        </li>
+        <!-- Лендинг 2.0: сцена приложения клиента - client-phone/, её ставит lp-pv.js между «Неделей» и «Сегодня». Здесь - подпись для показа без скрипта. -->
+        <li class="lp-scene">
+          <div class="lp-scene__cap">
+            <h3 class="lp-scene__t">Результаты приходят сами</h3>
+            <p class="lp-scene__d">Клиент отмечает подходы и&nbsp;самочувствие в&nbsp;своём приложении, а&nbsp;вы сверяете с&nbsp;планом и&nbsp;сразу правите следующую тренировку</p>
+          </div>
+        </li>
+        <li class="lp-scene" data-scene="c">
+          <div class="lp-scene__cap">
+            <h3 class="lp-scene__t">Сегодня</h3>
+            <p class="lp-scene__d">Открываете «Сегодня» и&nbsp;сразу видите, кто требует действия: кто перестал присылать отчёты или остался без плана</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<section class="lp-band lp-offer" aria-labelledby="offer-h">
+  <div class="lp-wrap lp-offer__in">
+    <div class="lp-offer__head">
+      <h2 class="lp-h" id="offer-h">Попробуйте на&nbsp;своих клиентах</h2>
+      <span class="lp-badge" aria-hidden="true"><img src="../../design/directions/assets/v2/cat-happy.webp" alt="" width="77" height="77"></span>
+    </div>
+    <ul class="lp-gains">
+      <li><span class="lp-gains__ico"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-users"/></svg></span>Больше клиентов без лишних часов</li>
+      <li><span class="lp-gains__ico"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-history"/></svg></span>История клиента под рукой</li>
+      <li><span class="lp-gains__ico"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-today"/></svg></span>Видно, кто начал пропадать</li>
+    </ul>
+
+    <div class="lp-plans">
+      <h3 class="lp-plans__h">Тарифы</h3>
+      <!-- Тарифы (DESIGN.md 5.9, BEHAVIOR.md 5.3): шапка карточки - кнопка «Входит в тариф». Ниже 1024 - столбиком, раскрывается
+           в карточке, по умолчанию раскрыт выбранный CLUB (.is-on, решение пользователя 2026-10-28). От 1024 (решение пользователя 2026-10-28):
+           FREE - компактной карточкой справа от заголовка, четыре платных в ряд, под ними состав платных строкой с иконками,
+           ниже «Больше 25 клиентов?» строкой; «Входит в тариф» всплывает окном при наведении и по нажатию. -->
+      <div class="lp-tariffs">
+        <div class="lp-tariff lp-tariff--free">
+          <button class="lp-tariff__head" type="button" aria-expanded="false" aria-controls="tf-free"><span class="label lp-tariff__name">FREE</span><span class="lp-tariff__lim">До&nbsp;2 клиентов</span><span class="lp-tariff__price"><span class="lp-tariff__sum">0&nbsp;₽</span></span><span class="lp-tariff__tog" aria-hidden="true"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-chevD"/></svg></span></button>
+          <div class="lp-tariff__feats" id="tf-free"><div class="lp-tariff__in"><p class="label">Входит в&nbsp;тариф</p><ul><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Программы и&nbsp;шаблоны</li></ul></div></div>
+        </div>
+        <div class="lp-tariff">
+          <button class="lp-tariff__head" type="button" aria-expanded="false" aria-controls="tf-start"><span class="label lp-tariff__name">START</span><span class="lp-tariff__lim">До&nbsp;5 клиентов</span><span class="lp-tariff__price"><span class="lp-tariff__sum">990&nbsp;₽</span><span class="lp-tariff__per">/мес</span></span><span class="lp-tariff__tog" aria-hidden="true"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-chevD"/></svg></span></button>
+          <div class="lp-tariff__feats" id="tf-start"><div class="lp-tariff__in"><p class="label">Входит в&nbsp;тариф</p><ul><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Программы и&nbsp;шаблоны</li><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Аналитика</li><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Подсказки</li><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Итоги тренировок</li></ul></div></div>
+        </div>
+        <div class="lp-tariff">
+          <button class="lp-tariff__head" type="button" aria-expanded="false" aria-controls="tf-pro"><span class="label lp-tariff__name">PRO</span><span class="lp-tariff__lim">До&nbsp;10 клиентов</span><span class="lp-tariff__price"><span class="lp-tariff__sum">1&nbsp;490&nbsp;₽</span><span class="lp-tariff__per">/мес</span></span><span class="lp-tariff__tog" aria-hidden="true"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-chevD"/></svg></span></button>
+          <div class="lp-tariff__feats" id="tf-pro"><div class="lp-tariff__in"><p class="label">Входит в&nbsp;тариф</p><ul><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Программы и&nbsp;шаблоны</li><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Аналитика</li><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Подсказки</li><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Итоги тренировок</li></ul></div></div>
+        </div>
+        <div class="lp-tariff">
+          <button class="lp-tariff__head" type="button" aria-expanded="false" aria-controls="tf-ultra"><span class="label lp-tariff__name">ULTRA</span><span class="lp-tariff__lim">До&nbsp;15 клиентов</span><span class="lp-tariff__price"><span class="lp-tariff__sum">1&nbsp;990&nbsp;₽</span><span class="lp-tariff__per">/мес</span></span><span class="lp-tariff__tog" aria-hidden="true"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-chevD"/></svg></span></button>
+          <div class="lp-tariff__feats" id="tf-ultra"><div class="lp-tariff__in"><p class="label">Входит в&nbsp;тариф</p><ul><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Программы и&nbsp;шаблоны</li><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Аналитика</li><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Подсказки</li><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Итоги тренировок</li></ul></div></div>
+        </div>
+        <div class="lp-tariff is-on">
+          <button class="lp-tariff__head" type="button" aria-expanded="false" aria-controls="tf-club"><span class="label lp-tariff__name">CLUB</span><span class="lp-tariff__lim">До&nbsp;25 клиентов</span><span class="lp-tariff__price"><span class="lp-tariff__sum">2&nbsp;490&nbsp;₽</span><span class="lp-tariff__per">/мес</span></span><span class="lp-tariff__tog" aria-hidden="true"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-chevD"/></svg></span></button>
+          <div class="lp-tariff__feats" id="tf-club"><div class="lp-tariff__in"><p class="label">Входит в&nbsp;тариф</p><ul><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Программы и&nbsp;шаблоны</li><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Аналитика</li><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Подсказки</li><li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-check"/></svg>Итоги тренировок</li></ul></div></div>
+        </div>
+        <!-- «Больше 25 клиентов?» - карточка целиком кнопка «Написать нам». На компьютере - строка под составом тарифов.
+             ЗАГЛУШКА: «Написать нам» пока без действия (решение 2026-10-27), канал связи не выбран. -->
+        <button class="lp-tariff lp-tariff--more" type="button" data-cta="contact">
+          <span class="lp-tariff__tog lp-tariff__tog--more" aria-hidden="true"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-message"/></svg></span>
+          <span class="lp-tariff__lim">Больше 25 клиентов?</span>
+          <span class="lp-tariff__sub">Или нужно то, чего нет в&nbsp;тарифах?</span>
+          <span class="btn lp-tariff__btn"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-message"/></svg>Написать нам</span>
+        </button>
+      </div>
+      <!-- Состав платных тарифов строкой - от 1024, ниже его показывает раскрытая карточка. Иконки - DESIGN.md, раздел 4. -->
+      <ul class="lp-plans__feats">
+        <li><span class="lp-plans__ico"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-layers"/></svg></span>Программы и&nbsp;шаблоны</li>
+        <li><span class="lp-plans__ico"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-chart"/></svg></span>Аналитика</li>
+        <li><span class="lp-plans__ico"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-tip"/></svg></span>Подсказки</li>
+        <li><span class="lp-plans__ico"><svg class="i i--m" aria-hidden="true"><use href="#lp-i-summary"/></svg></span>Итоги тренировок</li>
+      </ul>
+    </div>
+
+    <!-- ЗАГЛУШКА: как у кнопки первого экрана. -->
+    <a class="btn btn--primary btn--lg lp-cta lp-cta--shine" href="#try" data-cta="try">Попробовать<svg class="i" aria-hidden="true"><use href="#lp-i-arrowR"/></svg></a>
+    <ul class="lp-assure">
+      <li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-calendar"/></svg>Пробный период 14 дней</li>
+      <li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-ruble"/></svg>Без оплаты</li>
+      <li><svg class="i i--m" aria-hidden="true"><use href="#lp-i-card"/></svg>Без карты</li>
+    </ul>
+  </div>
+
+  <footer class="lp-foot">
+    <div class="lp-wrap">
+      <div class="lp-foot__in">
+        <p class="lp-foot__req"><span>ИП Табунов</span><span>ИНН 773379585100</span></p>
+        <!-- Место под ссылки «Оферта» и «Политика обработки персональных данных» - подэтап «Подвал и всё юридическое». -->
+        <nav class="lp-foot__docs" aria-label="Документы"></nav>
+      </div>
+    </div>
+  </footer>
+</section>
+
+<script>
+// Тарифы (BEHAVIOR.md 5.3). Выбранный тариф .is-on - последний нажатый, по умолчанию CLUB (решение пользователя 2026-10-28).
+// Ниже 1024 «Входит в тариф» раскрыт у выбранного, нажатие раскрывает другой или сворачивает этот.
+// От 1024 - окно: с мышью его показывает наведение (это CSS), нажатие мышью только выбирает тариф - закреплённое окно
+// загородило бы «Попробовать». С клавиатуры и на сенсорном экране нажатие закрепляет окно; закрывают повторное нажатие,
+// нажатие мимо карточек, Esc и уход фокуса с шапки.
+(() => {
+  const heads = [...document.querySelectorAll('.lp-tariff__head')];
+  const desk = matchMedia('(min-width: 1024px)'), mouse = matchMedia('(hover: hover)');
+  const show = (head) => { for (const h of heads) h.setAttribute('aria-expanded', h === head); };
+  const sync = () => show(desk.matches ? null : document.querySelector('.lp-tariff.is-on > .lp-tariff__head'));
+  sync();
+  desk.addEventListener('change', sync);
+  for (const head of heads) {
+    head.addEventListener('click', (e) => {
+      for (const h of heads) h.parentElement.classList.toggle('is-on', h === head);
+      if (desk.matches && mouse.matches && e.detail > 0) return;
+      show(head.getAttribute('aria-expanded') !== 'true' ? head : null);
+    });
+    head.addEventListener('blur', () => { if (desk.matches && head.getAttribute('aria-expanded') === 'true') show(null); });
+  }
+  document.addEventListener('click', (e) => { if (desk.matches && !e.target.closest('.lp-tariff__head, .lp-tariff__feats')) show(null); });
+  document.addEventListener('keydown', (e) => {
+    const open = heads.find((h) => h.getAttribute('aria-expanded') === 'true');
+    if (e.key === 'Escape' && desk.matches && open) { show(null); open.focus(); }
+  });
+})();
+</script>
+
+<script>
+// Блик финальной «Попробовать» - один раз за загрузку (DESIGN.md 5.9, BEHAVIOR.md 5.3): когда кнопка целиком видна и поднялась
+// выше нижней четверти окна. Если выше подняться ей некуда (конец страницы, на телефоне так и есть) - когда страница докручена до конца.
+(() => {
+  const cta = document.querySelector('.lp-cta--shine');
+  const check = () => {
+    const r = cta.getBoundingClientRect();
+    const atEnd = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+    if (r.top < 0 || r.bottom > innerHeight || (r.bottom > innerHeight * 0.75 && !atEnd)) return;
+    cta.classList.add('is-shine');
+    removeEventListener('scroll', check);
+  };
+  addEventListener('scroll', check, { passive: true });
+  check();
+})();
+</script>
+
+<script src="hero/hero.js?v=4"></script>
+<script src="how/how.js?v=1"></script>
+<script src="lp-pv.js?v=7"></script>
+</body>
+</html>

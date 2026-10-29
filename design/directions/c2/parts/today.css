@@ -1,0 +1,163 @@
+/* C 2.0 «Лаборатория» Обновленная: правки дизайн-ревью экранов «Сегодня» и «Состояния» (2026-10-25).
+   Основания - review-applicability.md: «Сегодня», «Приёмка», «Клиент: результат и прогресс» (прогресс-A-07, T-05).
+   Подключается сразу после app.css только в k1-today.html и states.html. Значения - только токены tokens.css и app.css. */
+
+/* =========================================================
+   Лента «Требует действия» строками (сегодня-A-01, T-01, T-03, A-10)
+   Было: событие - карточка 182-250 px, на первом экране 1440×900 целиком 2 события из 5;
+   у каждого 2-3 пилюли, дата у Ксении дважды, у Марии «с пн, 19 окт» повторялось плашками.
+   Стало: строка на --surface, радиус 16, без обводок. Одна сетка для всех строк:
+     аватар | имя | причина, о чём, время              (первая строка)
+     аватар | слова клиента или мета    | действия      (вторая строка)
+   Колонки имени, причины, времени и действий стоят на одном x во всех строках.
+   Одна белая пилюля - главное действие по типу события; остальное - в «…»; «Просмотрено» - иконка.
+   Ширина ленты 560-728 px не вмещает четыре колонки в одну линию, поэтому строка в две линии,
+   а на узкой ленте (1280-1439) - в три (см. @container ниже).
+   ========================================================= */
+.feed { gap: var(--s2); container-type: inline-size; }
+.feed .ev {
+  display: grid;
+  grid-template-columns: 32px 136px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "ava name head head"
+    "ava body body act";
+  align-items: center;
+  column-gap: var(--s3);
+  row-gap: var(--s1);
+  padding: var(--s3) var(--s3) var(--s3) var(--s4);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+.feed .ev > .ava { grid-area: ava; }
+.feed .ev__name { grid-area: name; min-width: 0; font: var(--t-body); font-weight: 700; }
+.ev__head { grid-area: head; display: flex; align-items: center; gap: var(--s2); min-width: 0; }
+.ev__what { display: flex; align-items: center; flex-wrap: wrap; gap: 0 var(--s2); min-width: 0; }
+.ev__about { font: var(--t-small); color: var(--text-2); }
+.ev__head .ev__time { grid-area: time; margin-left: auto; padding-left: var(--s2); }
+.ev__said, .ev__meta { grid-area: body; min-width: 0; }
+.ev__said { font: var(--t-body); color: var(--ink); }
+.ev__meta { font: var(--t-small); color: var(--text-2); }
+.ev__act { grid-area: act; display: flex; align-items: center; justify-content: flex-end; gap: var(--s1); }
+.ev__act > .btn:first-child { padding: 0 var(--s4); }
+/* место «Просмотрено», когда этого действия нет: иконки «…» не сдвигаются */
+.ev__ph { width: var(--row); flex: none; }
+/* Узкая лента (1280-1439: 560-620 px): причина с «о чём» не помещается между именем и временем.
+   Строка в три линии: кто и когда / почему и о чём / слова или мета и действия. Колонки те же во всех строках. */
+@container (max-width: 619px) {
+  .feed .ev {
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "ava name time"
+      "ava what what"
+      "ava body act";
+  }
+  .feed .ev > .ava { align-self: start; }
+  .ev__head { display: contents; }
+  .ev__what { grid-area: what; }
+  .ev__head .ev__time { padding-left: 0; }
+}
+
+/* Телефон: строка складывается в столбик, действия - на всю ширину (размеры телефона - как в C) */
+@media (max-width: 1023px) {
+  .feed .ev {
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    grid-template-areas: "ava name time" "what what what" "body body body" "act act act";
+    row-gap: var(--s2);
+    padding: var(--s4);
+  }
+  .feed .ev > .ava { align-self: center; }
+  /* у ленты-контейнера нет собственной ширины по содержимому: колонка тянется на всю ширину */
+  .k1-grid > .k1-col { align-self: stretch; }
+  .ev__act { justify-content: flex-start; }
+  .ev__act > .btn:first-child { flex: 1 1 auto; }
+}
+
+/* =========================================================
+   1024-1279 (сегодня-A-02, T-06, T-04, A-08). Одна колонка задана общим порогом в app.css.
+   Здесь: над лентой - ближайшая тренировка с лаймовой «Провести»; «Провести» в расписании ниже - неакцентная
+   (на белом блоке ближайшей тренировки неакцентная пилюля залита --surface, как «…» рядом): лайм один на экран.
+   ========================================================= */
+.k1-up { display: none; }
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .k1-up {
+    display: flex; align-items: center; gap: var(--s4);
+    margin-top: var(--s5); padding: var(--s2) var(--s2) var(--s2) var(--s5);
+    border-radius: var(--r-pill); background: var(--shell-2); color: var(--on-dark);
+  }
+  .k1-up__t { font: var(--t-h2); letter-spacing: var(--ls-h2); font-variant-numeric: tabular-nums; }
+  .k1-up__body { flex: 1 1 auto; min-width: 0; font: var(--t-small); color: var(--on-dark-2); }
+  .k1-up__body b { font: var(--t-body); font-weight: 700; color: var(--on-dark); }
+  .k1-sched .slot--next .slot__act .btn--primary { flex: none; background: var(--surface); color: var(--ink); }
+  .k1-sched .slot--next .slot__act .btn--primary:hover { background: var(--control-hover); box-shadow: none; }
+}
+
+/* =========================================================
+   «Состояния»
+   ========================================================= */
+/* Два действия пустого состояния в одном ряду; если не помещаются - второе переносится целиком */
+.st__acts { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s4); }
+.st__empty .st__acts .btn { margin-top: 0; }
+/* 1024-1279: на 1024 колонки были по 324 px - заголовок «Новых событий нет» выходил за рамку, а двум кнопкам не было места.
+   Одна колонка, как у рабочих экранов на этой ширине */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .st-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* =========================================================
+   Правки пользователя 2026-10-26: сигналы внимания и кот-бейдж
+   ========================================================= */
+
+/* Причина события в ленте - группа сигналов .sigs (app.css, «сигналы внимания v2»): иконка и значение вместо капса с точкой,
+   слова - в подсказке. Колонки строки те же: сигналы и «о чём» в ячейке причины, время справа.
+   Сигнал 28 px выше строки текста (20 px): ячейка причины выравнивается по центру, строка не скачет. */
+.ev__what .sigs { flex: none; margin-right: var(--s1); }  /* счётчик выступает на 6 px вправо: до «о чём» остаётся 6 px, а не 2 */
+.ev__head { min-height: 28px; }
+/* Расписание: сигнал под названием тренировки - по левому краю, а не на всю ширину колонки */
+.slot__body > .sigs { align-self: flex-start; margin-top: 2px; }
+/* «Сами сегодня»: сигнал боли перед временем выполнения, в правой колонке строки */
+.self__end { display: flex; align-items: center; gap: var(--s3); }
+
+/* Кот-бейдж: голова cat-happy (повязка и очки) в белом круге с наклоном - приём текущей версии (web, .cat-badge).
+   Только праздник: рекорд в «Хороших новостях» и шапка оглавления. Картинка шире круга на 20%, в круг попадает голова. */
+.cat-badge { display: grid; place-items: center; width: var(--s16); height: var(--s16); border-radius: var(--r-pill); background: var(--bg); overflow: hidden; transform: rotate(6deg); flex: none; }
+.cat-badge img { width: 120%; max-width: none; height: auto; margin-top: 6%; }
+.cat-badge--l { width: 96px; height: 96px; }
+
+/* «Хорошие новости»: бейдж справа от цифры рекорда. Раскладка карточки прежняя: бейдж вне потока,
+   у строки цифры справа оставлено место под бейдж - текст под него не заходит. Низ бейджа выше подписи «Павел Морозов…». */
+.good__cat { position: absolute; right: 0; top: calc(-1 * var(--s4)); }
+.good__num { padding-right: calc(var(--s16) + var(--s2)); }
+
+/* Оглавление: бейдж в чёрной шапке справа от заголовка и подписи */
+.ix-hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--s8); align-items: center; }
+@media (max-width: 1023px) {
+  .ix-hero { column-gap: var(--s4); align-items: start; }
+  .ix-hero .cat-badge--l { width: var(--s16); height: var(--s16); }
+}
+
+/* =========================================================
+   «Состояния» → «Календарь»: карточка «Окно для нового клиента» при загрузке недели больше половины.
+   Шапка недели - как на «Календаре»: заголовок и подпись слева, карточка --shell-2 справа (стили .k5-head, .k5-tip из app.css).
+   Кадр на всю ширину сетки состояний, без белой части - показана только шапка.
+   ========================================================= */
+.st-k5 { grid-column: 1 / -1; display: flex; flex-direction: column; gap: var(--s8); }
+.st-k5__band { padding-bottom: var(--s6); }
+.st-k5__band .k5-head { margin-top: var(--s3); }
+.st-k5__band .band__meta { margin-top: var(--s3); }
+.st-k5__why { margin-top: var(--s2); font: var(--t-small); color: var(--text-2); }
+.st-k5__param { max-width: 720px; font: var(--t-small); color: var(--text-2); }
+.st-k5__param b { color: var(--ink); font-weight: 700; }
+/* 1024-1279: как было на «Календаре» на этой ширине - карточка уже, зазор меньше */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .st-k5__band .k5-head { gap: var(--s6); }
+  .st-k5__band .k5-tip { width: 320px; padding: var(--s4); }
+}
+
+/* Телефон и сенсор: группа сигналов - одна цель не меньше 44×44 (Apple 44 pt). По высоте её добирает app.css,
+   по ширине - здесь: одиночный сигнал 28 px получает по 8 px поля с боков, раскладка не сдвигается (поля компенсированы). */
+@media (pointer: coarse), (max-width: 1023px) {
+  .sigs { padding-inline: var(--s2); margin-inline: calc(-1 * var(--s2)); }
+  .ev__what .sigs { margin-right: calc(var(--s1) - var(--s2)); }
+}
+/* Оглавление на телефоне: «C 2.0 «Лаборатория» Обновленная» в 40 px выходило за край на 17 px */
+@media (max-width: 599px) { .ix-hero .band__title { font: var(--t-h1-m); } }

@@ -1,0 +1,459 @@
+/* Лендинг «Апс!» на дизайн-системе C 2.0: компоненты DESIGN.md 5.9 и кнопки 5.2.
+   Подключать после tokens.css (собирает tools/make-tokens.py из DESIGN.md). Значения - только токены C 2.0;
+   геометрия компонента (знак, плитка, ширина текста, коты) - переменными --lp-*, как в описании 5.9.
+   Эти же стили рисует гайд design/system-c2/DESIGN.html, раздел «5.9. Лендинг»: правка здесь, затем
+   python3 design/system-c2/src/build.py. Брейкпоинты - числа из 3.13: 600, 1024 (в @media переменные не работают).
+
+   Шкала лендинга (ревью 2026-10-27): страницу с рекламы читают с первого взгляда и с двух расстояний - телефон
+   в руке и монитор. Поэтому кегли меняются по ширине одной группой переменных --lp-h, --lp-text, --lp-title… ниже:
+   компоненты берут переменную, а не кегль. */
+
+/* ---------- Основа ---------- */
+.lp {
+  --lp-tile: 48px;            /* плитка-иконка 48 (5.4) - выгоды от 600 */
+  --lp-tile-s: 40px;          /* плитка-иконка 40 (5.4) - боли и выгоды на телефоне */
+  --lp-crown: 22px;           /* корона знака - как в боковой панели c2 (app.css:59-61) */
+  --lp-crown-x: 10px;
+  --lp-crown-y: -2px;
+  --lp-mark-top: 14px;
+  --lp-hero-w: 20em;          /* заголовок первого экрана - две строки на 1440 */
+  --lp-lead-w: 32em;
+  --lp-cap-w: 34em;           /* подпись сцены продукта: em от текста .lp (15) - около 510 px, заголовок сцены 34 - в две строки */
+  --lp-hero-cat: 240px;       /* коты (DESIGN.md 4, 5.9): файлы 1254 px; от 1024 кот - персонаж над заголовком, а не значок у края */
+  --lp-hero-cat-t: 168px;     /* 600-1023 */
+  --lp-hero-cat-m: 96px;
+  --lp-pains-cat: 280px;      /* от 1024 - рядом со списком болей, соразмерно ему */
+  --lp-pains-cat-m: 96px;
+  --lp-badge: 96px;
+  --lp-badge-m: 64px;
+  --lp-col: 880px;            /* центральная колонка списков от 600: выгоды, строки не длиннее 75 знаков */
+  --lp-col-s: 640px;          /* колонка списка болей рядом с котом от 1024 */
+  --lp-cta-h: 64px;           /* «Попробовать» от 1024 - крупнее рабочей кнопки (56) */
+  --lp-cta-w: 480px;          /* ...от 600: чуть шире колонки оффера (повтор выгод, 440) и строки под кнопкой - строка уже кнопки на --s5 с каждой стороны */
+  --lp-cta-grow: 1.04;        /* увеличение «Попробовать» при наведении */
+
+  /* Шкала по ширине: телефон - база, 600 и 1024 переопределяют */
+  --lp-h: var(--t-h1-m);      /* заголовок блока */
+  --lp-text: var(--t-text-lg);/* текст блоков, кнопки лендинга */
+  --lp-title: var(--t-h3);    /* пункт: боль, выгода, повтор выгод, лимит тарифа (вес 700) */
+  --lp-scene-t: var(--t-h2);  /* заголовок сцены продукта */
+  --lp-scene-ls: var(--ls-h2);
+  --lp-price: var(--t-h2);    /* цена тарифа */
+  --lp-price-ls: var(--ls-h2);
+  --lp-pad: var(--s12);       /* отступ блока сверху и снизу */
+  --lp-head-gap: var(--s8);   /* заголовок блока -> содержимое; от 1024 - 64: заголовку 48 нужен воздух больше его кегля */
+  --lp-inset: 0px;            /* светлая панель от края окна: на телефоне во всю ширину */
+
+  color: var(--ink);
+  font: var(--t-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+@media (min-width: 600px) {
+  .lp { --lp-h: var(--t-h1); --lp-scene-t: var(--t-h1-m); --lp-scene-ls: var(--ls-h1); --lp-price: var(--t-h1-m); --lp-price-ls: var(--ls-h1); --lp-pad: var(--s16); --lp-inset: var(--s4); }
+}
+@media (min-width: 1024px) {
+  .lp {
+    --lp-h: var(--t-section); --lp-text: var(--t-text-xl); --lp-title: var(--t-lead); --lp-scene-t: var(--t-h1); --lp-price: var(--t-h1);
+    --lp-pad: calc(var(--s16) + var(--s8)); --lp-head-gap: var(--s16); --lp-badge: 128px;
+    /* адаптивные токены (DESIGN.md, раздел 2): от 1024 - размеры под мышь */
+    --row: var(--row-desk); --t-small: var(--t-small-desk); --t-num: var(--t-num-desk);
+  }
+}
+body.lp { margin: 0; background: var(--shell); }
+.lp *, .lp *::before, .lp *::after { box-sizing: border-box; }
+/* сброс - без веса (:where), чтобы не перебивать компоненты, например превью .pv */
+:where(.lp) :where(h1, h2, h3, p, ul, ol, figure) { margin: 0; }
+:where(.lp) :where(ul, ol) { padding: 0; list-style: none; }
+:where(.lp) :where(a) { color: inherit; }
+:where(.lp) :where(b, strong) { font-weight: 800; }
+:where(.lp) :where(button) { font: inherit; color: inherit; }
+
+:where(.lp) .label { font: var(--t-label); text-transform: uppercase; letter-spacing: var(--ls-label); }
+:where(.lp) .i { width: var(--icon-l); height: var(--icon-l); flex: none; display: inline-block; vertical-align: middle; }
+:where(.lp) .i--m { width: var(--icon-m); height: var(--icon-m); }
+:where(.lp) .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Фокус: на панелях - --focus, на полосах лендинга (вне темы) - лайм --focus-on-dark */
+.lp :focus-visible { outline: var(--focus-w) solid var(--focus); outline-offset: var(--focus-offset); }
+.lp .lp-band :focus-visible { outline-color: var(--focus-on-dark); }
+
+/* ---------- Кнопки (5.2) ---------- */
+:where(.lp) .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s2);
+  height: var(--row); padding: 0 var(--s5);
+  border: 0; border-radius: var(--r-pill);
+  background: var(--control); color: var(--ink);
+  font: var(--t-body); font-weight: 700; white-space: nowrap; text-decoration: none; cursor: pointer;
+}
+:where(.lp) .btn .i { width: var(--icon-m); height: var(--icon-m); }
+:where(.lp) .btn:hover, :where(.lp) .btn:active { background: var(--control-hover); }
+:where(.lp) .btn--primary { background: var(--accent); color: var(--on-accent); }
+:where(.lp) .btn--primary:hover, :where(.lp) .btn--primary:active { background: var(--accent); box-shadow: inset 0 0 0 var(--focus-w) var(--on-accent); }
+:where(.lp) .btn--shell { background: var(--shell-2); color: var(--on-dark); }
+:where(.lp) .btn--shell:hover, :where(.lp) .btn--shell:active { background: var(--shell-line); }
+:where(.lp) .btn--lg { height: var(--ctl-lg); padding: 0 var(--s8); font: var(--t-h3); letter-spacing: var(--ls-h3); }
+@media (min-width: 1024px) { :where(.lp) .btn--lg { height: var(--tap); } }
+@media (prefers-reduced-motion: no-preference) {
+  :where(.lp) .btn { transition: background-color var(--dur) var(--easing), box-shadow var(--dur) var(--easing); }
+}
+/* Кнопки лендинга крупнее рабочих. «Попробовать» (обе, первый экран и оффер, одного размера - запрос пользователя 2026-10-27):
+   ниже 600 - 56 и во всю колонку; от 600 - шириной с колонку оффера --lp-cta-w, как на телефоне; от 1024 - высота --lp-cta-h
+   и текст --t-lead: крупная цель для мыши и главный акцент экрана. Ховер - увеличение пружиной вместо тёмного кольца
+   .btn--primary (5.2): на увеличенной кнопке кольцо читается серой обводкой. При «уменьшении движения» - кольцо, как у кнопок. */
+.lp-cta { height: var(--ctl-lg); padding-inline: var(--s8); font: var(--lp-text); font-weight: 700; letter-spacing: normal; }
+.lp-cta .i { width: var(--icon-l); height: var(--icon-l); }
+@media (min-width: 600px) { .lp-cta { min-width: var(--lp-cta-w); } }
+@media (min-width: 1024px) { .lp-cta { height: var(--lp-cta-h); font: var(--t-lead); font-weight: 700; } }
+@media (prefers-reduced-motion: no-preference) {
+  .lp-cta { transition: transform var(--dur-spring) var(--easing-spring), background-color var(--dur) var(--easing), box-shadow var(--dur) var(--easing); }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .lp-cta:hover { transform: scale(var(--lp-cta-grow)); box-shadow: none; }
+}
+
+/* ---------- Каркас: полосы, панели, блоки ---------- */
+/* Полосы - чёрные, во всю ширину. Панели - светлые (--surface, по теме), скруглены и отстоят от края окна на --lp-inset:
+   светлое дозировано и чередуется с чёрным (ревью: «много белого», «острые линии»). */
+.lp-band { background: var(--shell); color: var(--on-dark); }
+.lp-panel { margin-inline: var(--lp-inset); border-radius: var(--r-card); background: var(--surface); color: var(--ink); overflow-x: clip; }
+.lp-wrap { max-width: calc(var(--wrap-max) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
+.lp-sec { padding-block: var(--lp-pad); }
+@media (max-width: 1023px) { .lp-wrap { padding-inline: var(--gutter-tab); } }
+@media (max-width: 599px) { .lp-wrap { padding-inline: var(--gutter-phone); } }
+
+/* Заголовок блока и строка под ним */
+.lp-h { max-width: 22em; font: var(--lp-h); letter-spacing: var(--ls-h1); text-wrap: balance; }
+.lp-band .lp-h { color: var(--on-dark); }
+.lp-sub { margin-top: var(--s4); font: var(--lp-text); color: var(--text-2); }
+/* от 600 заголовки и строки под ними - по центральной оси: на широком экране текст, прибитый к левому краю, читается хуже */
+@media (min-width: 600px) {
+  .lp-h { margin-inline: auto; text-align: center; }
+  .lp-sub { text-align: center; }
+}
+
+/* ---------- Словесный знак ---------- */
+.lp-mark { position: relative; display: inline-flex; align-items: flex-end; padding: var(--lp-mark-top) var(--s3) 0; color: var(--on-dark); }
+.lp-mark span { font: var(--t-wordmark); letter-spacing: var(--ls-wordmark); }
+.lp-mark svg { position: absolute; left: var(--lp-crown-x); top: var(--lp-crown-y); width: var(--lp-crown); height: var(--lp-crown); transform: rotate(-10deg); }
+
+/* ---------- Коты: на панели - по теме (в тёмной стикер), в полосах роли светлые - исходный файл ---------- */
+.lp img[src*="cat-happy"] { content: var(--illus-cat-happy); mix-blend-mode: var(--illus-blend); }
+.lp img[src*="cat-grumpy"] { content: var(--illus-cat-grumpy); }
+.lp img[src*="cat-overload"] { content: var(--illus-cat-overload); }
+
+/* Кот-бейдж: голова cat-happy в белом круге с наклоном, как .cat-badge «Хороших новостей» (c2 parts/today.css) */
+.lp-badge { display: grid; place-items: center; flex: none; width: var(--lp-badge); height: var(--lp-badge); border-radius: var(--r-pill); background: var(--bg); overflow: hidden; transform: rotate(6deg); }
+.lp-badge img { width: 120%; max-width: none; height: auto; margin-top: 6%; }
+@media (max-width: 599px) { .lp-badge { width: var(--lp-badge-m); height: var(--lp-badge-m); } }
+
+/* ---------- Первый экран ---------- */
+/* Телефон: знак и кот 96 в одной строке, текст ниже по левому краю, кнопка во всю ширину.
+   От 600 - по центральной оси: знак слева сверху, кот над надзаголовком (168, от 1024 - 240), текст и кнопка - по центру. */
+.lp-hero { padding-block: var(--s6) var(--lp-pad); }
+.lp-hero__in { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "mark cat" "text text"; align-items: center; column-gap: var(--s4); }
+.lp-hero__in .lp-mark { grid-area: mark; justify-self: start; }
+.lp-hero__cat { grid-area: cat; width: var(--lp-hero-cat-m); height: var(--lp-hero-cat-m); object-fit: contain; }
+.lp-hero__text { grid-area: text; display: grid; justify-items: start; min-width: 0; }
+.lp-hero__eyebrow { margin-top: var(--s10); font: var(--lp-text); font-weight: 600; color: var(--on-dark-2); text-wrap: balance; }
+/* на телефоне 34, а не 28: заголовки блоков там 28, герой должен быть крупнее (ревью 2026-10-27) */
+.lp-hero__title { max-width: var(--lp-hero-w); margin-top: var(--s3); font: var(--t-h1); letter-spacing: var(--ls-h1); color: var(--on-dark); text-wrap: balance; }
+.lp-hero__lead { max-width: var(--lp-lead-w); margin-top: var(--s4); font: var(--t-text-lg); color: var(--on-dark-2); text-wrap: pretty; }
+.lp-hero .lp-cta { margin-top: var(--s8); }
+@media (max-width: 599px) {
+  .lp-hero .lp-cta { justify-self: stretch; }
+  /* строка под кнопкой - по центру кнопки во всю ширину (замечание пользователя 2026-10-28) */
+  .lp-hero__note { justify-self: stretch; text-align: center; }
+}
+@media (min-width: 600px) {
+  .lp-hero__in { grid-template-columns: minmax(0, 1fr); grid-template-areas: "mark" "cat" "text"; }
+  .lp-hero__cat { justify-self: center; width: var(--lp-hero-cat-t); height: var(--lp-hero-cat-t); }
+  .lp-hero__text { justify-items: center; text-align: center; }
+  /* надзаголовок не шире 32em - в две строки и уже заголовка, не спорит с ним по длине (2026-10-28: надзаголовок стал длиннее) */
+  .lp-hero__eyebrow { max-width: 32em; margin-top: var(--s5); }
+  .lp-hero__title { margin-top: var(--s4); font: var(--t-hero); letter-spacing: var(--ls-h1); }
+  .lp-hero__lead { margin-top: var(--s6); }
+  .lp-hero .lp-cta { margin-top: var(--s10); }
+}
+/* Под кнопкой - срок и что карта не нужна, одной строкой (решение пользователя 2026-10-27) */
+.lp-hero__note { margin-top: var(--s4); font: var(--lp-text); font-weight: 600; color: var(--on-dark-2); text-wrap: balance; }
+@media (min-width: 600px) { .lp-hero__note { max-width: calc(var(--lp-cta-w) - 2 * var(--s5)); } }
+@media (min-width: 1024px) {
+  .lp-hero__cat { width: var(--lp-hero-cat); height: var(--lp-hero-cat); }
+  .lp-hero__lead { margin-top: var(--s8); font: var(--t-lead); }
+  .lp-hero .lp-cta { margin-top: var(--s12); }
+}
+
+/* ---------- Боли ---------- */
+/* Без линий: пункты разделяет отступ, иконка - в круглой плитке 40 (--bg на --surface). Ниже 1024 одна колонка,
+   кот - справа от итога; от 1024 - заголовок по центру, под ним пара «список | кот 280» по центральной оси: текст читается
+   первым, кот развёрнут ноутбуком влево и справа смотрит в текст (решение пользователя 2026-10-28). Колонка кота фиксированная:
+   при auto её растягивал заголовок над обеими колонками, зазор до списка был 136 вместо --s12. */
+.lp-pains__grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "head head" "ask ask" "list list" "sum cat"; column-gap: var(--s4); align-items: center; }
+.lp-pains__grid > .lp-h { grid-area: head; }
+.lp-pains__body { display: contents; }
+.lp-pains__ask { grid-area: ask; margin-top: var(--s6); }
+.lp-pains__list { grid-area: list; display: grid; gap: var(--s4); margin-top: var(--s4); }
+.lp-pains__list li { display: grid; grid-template-columns: var(--lp-tile-s) minmax(0, 1fr); align-items: center; gap: var(--s4); font: var(--lp-text); text-wrap: pretty; }
+.lp-pains__ico { display: grid; place-items: center; width: var(--lp-tile-s); height: var(--lp-tile-s); border-radius: var(--r-pill); background: var(--bg); color: var(--ink); }
+.lp-pains__ico .i { width: var(--icon-m); height: var(--icon-m); }
+.lp-pains__sum { grid-area: sum; margin-top: var(--s6); text-wrap: pretty; }
+.lp-pains__cat { grid-area: cat; width: var(--lp-pains-cat-m); height: var(--lp-pains-cat-m); margin-top: var(--s6); object-fit: contain; }
+.lp-pains__ask, .lp-pains__sum { font: var(--lp-title); font-weight: 700; letter-spacing: var(--ls-h3); }
+@media (min-width: 1024px) {
+  .lp-pains__grid { grid-template-columns: minmax(0, var(--lp-col-s)) var(--lp-pains-cat); grid-template-areas: "head head" "body cat"; justify-content: center; gap: var(--lp-head-gap) var(--s12); align-items: center; }
+  .lp-pains__body { display: block; grid-area: body; }
+  .lp-pains__ask { margin-top: 0; }
+  .lp-pains__list { gap: var(--s5); margin-top: var(--s8); }
+  .lp-pains__list li { gap: var(--s5); }
+  .lp-pains__sum { margin-top: var(--s8); }
+  .lp-pains__cat { width: var(--lp-pains-cat); height: var(--lp-pains-cat); margin-top: 0; }
+}
+
+/* ---------- Выгоды: чёрная полоса между светлыми панелями ---------- */
+/* Список на всех ширинах (замечание пользователя: «списком, как на телефоне, так лучше читается»): строка
+   «плитка | текст» на --shell-2; плитка светлая (--bg / --ink), иначе сольётся с карточкой. От 600 - колонка --lp-col
+   по центру, плитка 48. */
+.lp-benefits__grid { display: grid; gap: var(--s2); margin-top: var(--lp-head-gap); }
+.lp-benefit { display: grid; grid-template-columns: var(--lp-tile-s) minmax(0, 1fr); align-items: center; gap: var(--s4); padding: var(--s4); border-radius: var(--r-md); background: var(--shell-2); }
+.lp-benefit__t { font: var(--lp-title); font-weight: 700; letter-spacing: var(--ls-h3); color: var(--on-dark); text-wrap: pretty; }
+.lp-tile { display: inline-grid; place-items: center; width: var(--lp-tile-s); height: var(--lp-tile-s); border-radius: var(--r-pill); background: var(--bg); color: var(--ink); }
+.lp-tile .i { width: var(--icon-m); height: var(--icon-m); }
+@media (min-width: 600px) {
+  .lp-benefits__grid { max-width: var(--lp-col); margin-inline: auto; gap: var(--s3); }
+  .lp-benefit { grid-template-columns: var(--lp-tile) minmax(0, 1fr); gap: var(--s5); padding: var(--s5) var(--s6); border-radius: var(--r-card); }
+  .lp-tile { width: var(--lp-tile); height: var(--lp-tile); }
+  .lp-tile .i { width: var(--icon-l); height: var(--icon-l); }
+}
+
+/* ---------- Продукт: сцены с превью ---------- */
+/* От 1024 подпись и телефон стоят парой у центральной оси через --s16, а не по центрам половин; чётные - зеркально */
+.lp-scenes { display: grid; gap: var(--s12); margin-top: var(--lp-head-gap); }
+.lp-scene { display: grid; gap: var(--s5); }
+.lp-scene__cap { display: grid; gap: var(--s3); max-width: var(--lp-cap-w); }
+.lp-scene__t { font: var(--lp-scene-t); letter-spacing: var(--lp-scene-ls); text-wrap: balance; }
+.lp-scene__d { font: var(--lp-text); color: var(--text-2); text-wrap: pretty; }
+@media (min-width: 1024px) {
+  .lp-scenes { gap: var(--s16); }
+  .lp-scene { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: var(--s16); }
+  .lp-scene__cap { justify-self: end; gap: var(--s5); }
+  .lp-scene .pv { justify-self: start; }
+  .lp-scene:nth-child(even) .lp-scene__cap { order: 2; justify-self: start; }
+  .lp-scene:nth-child(even) .pv { justify-self: end; }
+}
+
+/* ---------- Оффер ---------- */
+/* Телефон - по левому краю, кнопка во всю ширину. От 600 - по центральной оси: кот-бейдж над заголовком,
+   повтор выгод - список с иконками, тарифы, «Попробовать» по центру и под ней строка с иконками. */
+.lp-offer { padding-top: var(--lp-pad); }
+.lp-offer__in { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; }
+.lp-offer__head { display: flex; align-items: center; gap: var(--s4); }
+.lp-gains { display: grid; gap: var(--s3); margin-top: var(--s6); }
+.lp-gains li { display: grid; grid-template-columns: var(--lp-tile-s) minmax(0, 1fr); align-items: center; gap: var(--s4); font: var(--lp-title); font-weight: 700; letter-spacing: var(--ls-h3); }
+.lp-gains__ico { display: grid; place-items: center; width: var(--lp-tile-s); height: var(--lp-tile-s); border-radius: var(--r-pill); background: var(--shell-2); color: var(--on-dark); }
+@media (min-width: 600px) {
+  .lp-offer__in { justify-items: center; }
+  .lp-offer__head { flex-direction: column-reverse; gap: var(--s5); }
+  .lp-gains { margin-top: var(--s8); }
+}
+
+/* Тарифы (решения пользователя 2026-10-27): пять компактных тарифов - цена и число клиентов; «Входит в тариф» -
+   ниже 1024 раскрывается в карточке с анимацией высоты, от 1024 всплывает окном под карточкой при наведении и по нажатию
+   (скрипт в index.html, BEHAVIOR.md 5.3). Выбранный тариф .is-on - последний нажатый, по умолчанию CLUB (решение пользователя 2026-10-28).
+   Карточка .lp-tariff - оболочка (фон, контур, углы), её шапка .lp-tariff__head - кнопка (aria-expanded).
+   FREE - светлая (--surface в полосе), платные - --shell-2; выбранная платная - лаймовый контур 1 px (линия лайма
+   на чёрном допустима, на светлом - нет), отметки «входит» в карточке - лайм. Окно на компьютере - поднятый слой:
+   светлое --bg, --r-card, --shadow-float, отметки чернилами. */
+.lp-plans { justify-self: stretch; margin-top: var(--s12); }
+.lp-plans__h { font: var(--lp-scene-t); letter-spacing: var(--lp-scene-ls); }
+@media (min-width: 600px) { .lp-plans__h { text-align: center; } }
+.lp-tariffs { display: grid; gap: var(--s2); margin-top: var(--s6); }
+.lp-tariff { position: relative; border: 1px solid transparent; border-radius: var(--r-card); background: var(--shell-2); color: var(--on-dark); }
+.lp-tariff--free { background: var(--surface); color: var(--ink); }
+.lp-tariff:has(> [aria-expanded="false"]:hover) { background: var(--shell-line); }
+.lp-tariff--free:has(> [aria-expanded="false"]:hover) { background: var(--surface-2); }
+.lp-tariff.is-on { border-color: var(--accent); }
+.lp-tariff--free.is-on { border-color: transparent; }
+.lp-tariff__head {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto; grid-template-areas: "name price tog" "lim price tog";
+  align-items: center; gap: var(--s1) var(--s4); width: 100%; margin: 0; padding: var(--s4) var(--s4) var(--s4) var(--s5);
+  border: 0; border-radius: inherit; background: none; text-align: start; cursor: pointer;
+}
+.lp-tariff__name { grid-area: name; color: var(--on-dark-2); }
+.lp-tariff--free .lp-tariff__name { color: var(--text-2); }
+.lp-tariff__lim { grid-area: lim; min-width: 0; font: var(--lp-title); font-weight: 700; letter-spacing: var(--ls-h3); text-wrap: balance; }
+.lp-tariff__price { grid-area: price; display: flex; flex-direction: column; align-items: flex-end; font: var(--lp-price); letter-spacing: var(--lp-price-ls); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lp-tariff__per { font: var(--t-small); font-weight: 700; letter-spacing: normal; color: var(--on-dark-2); }
+.lp-tariff__tog { grid-area: tog; display: grid; place-items: center; width: var(--row); height: var(--row); border-radius: var(--r-pill); background: var(--shell-line); color: var(--on-dark); }
+.lp-tariff--free .lp-tariff__tog { background: var(--surface-2); color: var(--ink); }
+/* ховер свёрнутой: карточка на ступень темнее, стрелка меняется с ней местами - круг не сливается с фоном */
+.lp-tariff__head[aria-expanded="false"]:hover > .lp-tariff__tog { background: var(--shell-2); }
+.lp-tariff--free .lp-tariff__head[aria-expanded="false"]:hover > .lp-tariff__tog { background: var(--surface); }
+[aria-expanded="true"] > .lp-tariff__tog { background: var(--bg); color: var(--ink); }
+.lp-tariff--free [aria-expanded="true"] > .lp-tariff__tog { background: var(--ink); color: var(--on-ink); }
+[aria-expanded="true"] > .lp-tariff__tog .i { transform: rotate(180deg); }
+/* фокус - кольцом вокруг всей карточки, лаймом на чёрном полосы: кольцо одной шапки резало бы раскрытую карточку */
+.lp .lp-tariff__head:focus-visible { outline: none; }
+.lp-tariff:has(> .lp-tariff__head:focus-visible) { outline: var(--focus-w) solid var(--focus-on-dark); outline-offset: var(--focus-offset); }
+
+/* «Входит в тариф» ниже 1024 - в карточке под шапкой. Высота раскрывается строкой сетки 0fr → 1fr, свёрнутое -
+   visibility: hidden (не читается и не ловит фокус); вертикальные поля - у списка внутри обрезки, иначе свёрнутое не схлопнется */
+.lp-tariff__feats { display: grid; grid-template-rows: 0fr; visibility: hidden; }
+[aria-expanded="true"] + .lp-tariff__feats { grid-template-rows: 1fr; visibility: visible; }
+.lp-tariff__in { display: grid; gap: var(--s3); min-height: 0; overflow: hidden; padding-inline: var(--s5); }
+.lp-tariff__in .label { color: var(--on-dark-2); }
+.lp-tariff__in ul { display: grid; gap: var(--s2) var(--s8); padding-bottom: var(--s5); font: var(--lp-text); }
+.lp-tariff__in li { display: flex; align-items: center; gap: var(--s3); }
+.lp-tariff__in .i { color: var(--accent); }
+.lp-tariff--free .lp-tariff__in .label { color: var(--text-2); }
+.lp-tariff--free .lp-tariff__in .i { color: var(--ink); }
+@media (prefers-reduced-motion: no-preference) {
+  .lp-tariff__feats { transition: grid-template-rows var(--dur-slow) var(--easing-out), visibility var(--dur-slow); }
+  .lp-tariff__tog .i { transition: transform var(--dur-slow) var(--easing-out); }
+}
+
+/* «Больше 25 клиентов?» - тот же блок: вопрос и «Написать нам» (белая пилюля на графите) */
+/* «Больше 25 клиентов?» - карточка того же вида; вся карточка - кнопка «Написать нам» (белая пилюля на графите).
+   Строка на всех ширинах от 600: вопрос и вторая строка слева, пилюля справа; ниже 600 - столбиком. От 1024 - строка
+   во всю ширину под составом тарифов (раскладка 2026-10-28; до неё - шестая карточка ряда с кругом message-circle). */
+.lp-tariff--more { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "lim btn" "sub btn"; align-items: center; gap: var(--s1) var(--s4); width: 100%; margin: 0; padding: var(--s4) var(--s4) var(--s4) var(--s5); text-align: start; cursor: pointer; }
+/* вторая строка - мельче вопроса, вторичным цветом, как «/мес» и названия тарифов (решение пользователя 2026-10-28) */
+.lp-tariff__sub { grid-area: sub; font: var(--t-body); color: var(--on-dark-2); text-wrap: pretty; }
+.lp-tariff--more .lp-tariff__btn { grid-area: btn; }
+@media (max-width: 599px) {
+  .lp-tariff--more { grid-template-columns: minmax(0, 1fr); grid-template-areas: "lim" "sub" "btn"; }
+  .lp-tariff--more .lp-tariff__btn { justify-self: start; margin-top: var(--s2); }
+}
+.lp-tariff--more:hover { background: var(--shell-line); }
+.lp-tariff--more:hover .lp-tariff__btn { background: var(--control-hover); }
+.lp-tariff__tog--more { display: none; }
+.lp-tariff__btn { height: var(--tap); padding-inline: var(--s5); font: var(--lp-text); font-weight: 700; }
+@media (min-width: 600px) {
+  .lp-tariff__in ul { grid-template-columns: repeat(2, max-content); }
+}
+/* Состав платных тарифов строкой .lp-plans__feats - только от 1024; ниже его показывает раскрытая карточка */
+.lp-plans__feats { display: none; }
+.lp-plans__feats li { display: flex; align-items: center; gap: var(--s3); font: var(--lp-text); font-weight: 600; color: var(--on-dark); }
+.lp-plans__ico { display: grid; place-items: center; flex: none; width: var(--lp-tile-s); height: var(--lp-tile-s); border-radius: var(--r-pill); background: var(--shell-2); color: var(--on-dark); }
+@media (min-width: 1024px) {
+  /* Раскладка от 1024 (решения пользователя 2026-10-28, по его примеру): «Тарифы» по центру, FREE - компактной
+     тёмной карточкой справа на уровне заголовка (белая выделялась и цветом, и местом - замечание пользователя);
+     START … CLUB и «Больше 25 клиентов?» - карточки ряда, как было: от 1280 пять в ряд, на 1024-1279 по три
+     (в пяти колонках по 176 px цена не помещается); под ними состав платных строкой с иконками.
+     .lp-tariffs - display: contents, карточки - ячейки сетки .lp-plans, идут по порядку со второй строки. */
+  .lp-plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s3); }
+  .lp-plans__h { grid-column: 1 / -1; grid-row: 1; align-self: center; margin-bottom: calc(var(--s8) - var(--s3)); }
+  .lp-tariffs { display: contents; }
+  .lp-tariff:not(.lp-tariff--free) > .lp-tariff__head { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name tog" "lim lim" "price price"; align-content: start; gap: var(--s2); height: 100%; padding: var(--s5); }
+  .lp-tariff:not(.lp-tariff--free) .lp-tariff__price { flex-direction: column; align-items: flex-start; margin-top: var(--s4); font: var(--t-h1-m); letter-spacing: var(--ls-h1); }
+  /* FREE - компактная строка, как карточка ниже 1024: название и лимит слева, цена, стрелка. Тёмная, как платные:
+     --shell-2, ховер --shell-line, выбранная - лаймовый контур (на чёрном допустим), стрелка - как у платных */
+  .lp-tariff--free { grid-column: -2 / -1; grid-row: 1; justify-self: end; align-self: center; margin-bottom: calc(var(--s8) - var(--s3)); background: var(--shell-2); color: var(--on-dark); }
+  .lp-tariff--free:has(> [aria-expanded="false"]:hover) { background: var(--shell-line); }
+  .lp-tariff--free.is-on { border-color: var(--accent); }
+  .lp-tariff--free .lp-tariff__name { color: var(--on-dark-2); }
+  .lp-tariff--free .lp-tariff__tog { background: var(--shell-line); color: var(--on-dark); }
+  .lp-tariff--free .lp-tariff__head[aria-expanded="false"]:hover > .lp-tariff__tog { background: var(--shell-2); }
+  .lp-tariff--free [aria-expanded="true"] > .lp-tariff__tog { background: var(--bg); color: var(--ink); }
+  .lp-tariff--free > .lp-tariff__head { padding: var(--s3) var(--s3) var(--s3) var(--s5); }
+  .lp-tariff--free .lp-tariff__lim { font: var(--t-h3); font-weight: 700; letter-spacing: var(--ls-h3); }
+  .lp-tariff--free .lp-tariff__price { font: var(--t-h2); letter-spacing: var(--ls-h2); }
+  /* строка состава: на 1024-1279 зазор --s8 - четыре пункта помещаются в одну строку (при --s12 четвёртый уходил вниз) */
+  .lp-plans__feats { grid-column: 1 / -1; margin-top: calc(var(--s8) - var(--s3)); display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s4) var(--s8); }
+  /* «Больше 25 клиентов?» - карточка ряда, последняя (как было): круг с message-circle на месте стрелки, вопрос на месте
+     лимита, пилюля внизу. В узкой карточке пилюля - кнопка рабочего размера (5.2): --row и --t-body 700. С текстом
+     --lp-text 20 она была шире своих полей и крупнее вопроса (замечание пользователя 2026-10-28) */
+  .lp-tariff--more { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: ". tog" "lim lim" "sub sub" "btn btn"; grid-template-rows: auto auto auto 1fr; align-items: start; align-content: stretch; gap: var(--s2); padding: var(--s5); }
+  .lp-tariff__tog--more { display: grid; }
+  .lp-tariff--more .lp-tariff__btn { grid-area: btn; align-self: end; margin-top: var(--s4); height: var(--row); padding-inline: var(--s4); font: var(--t-body); font-weight: 700; }
+  .lp-tariff--more .lp-tariff__btn .i { display: none; }
+
+  /* Окно «Входит в тариф»: под карточкой через --s2, не уже карточки; у крайних - по их краю (START - слева,
+     FREE - справа; раскладка по ширине - ниже), у средних - по центру.
+     С мышью видно, пока карточка под курсором: окно не ловит мышь (pointer-events), поэтому прячется, как только курсор
+     ушёл с карточки, и не загораживает «Попробовать». С клавиатуры и без наведения (сенсорный экран) - закрепляется
+     нажатием (aria-expanded); под мышью другой карточки закреплённое прячется - окно на экране одно. */
+  .lp-tariff__feats {
+    position: absolute; top: calc(100% + var(--s2)); left: 50%; z-index: var(--z-menu);
+    grid-template-rows: 1fr; width: max-content; min-width: 100%;
+    border-radius: var(--r-card); background: var(--bg); color: var(--ink); box-shadow: var(--shadow-float);
+    opacity: 0; translate: -50% 0; transform: translateY(calc(-1 * var(--s1)));
+  }
+  /* 1024-1279 (по три): START и CLUB - в начале строки, ULTRA - в конце; от 1280 ULTRA и CLUB в середине ряда - по центру */
+  .lp-tariff:nth-child(2) .lp-tariff__feats, .lp-tariff:nth-child(5) .lp-tariff__feats { left: 0; translate: none; }
+  .lp-tariff:nth-child(4) .lp-tariff__feats, .lp-tariff--free .lp-tariff__feats { left: auto; right: 0; translate: none; }
+  [aria-expanded="true"] + .lp-tariff__feats { opacity: 1; transform: none; }
+  .lp-tariff__in { padding: var(--s5); }
+  .lp-tariff__in .label, .lp-tariff--free .lp-tariff__in .label { color: var(--text-2); }
+  .lp-tariff__in ul { grid-template-columns: minmax(0, 1fr); gap: var(--s3); padding-bottom: 0; font: var(--t-text-lg); }
+  .lp-tariff__in .i, .lp-tariff--free .lp-tariff__in .i { color: var(--ink); }
+}
+@media (min-width: 1280px) {
+  /* пять карточек в ряд: поля --s4 и лимит --t-text-xl - лимит в одну строку */
+  .lp-plans { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .lp-tariff--free { grid-column: -3 / -1; } /* узкая колонка 227 переносила лимит FREE: место - две колонки, ширина - по содержимому */
+  .lp-tariff:not(.lp-tariff--free) > .lp-tariff__head, .lp-tariff--more { padding: var(--s5) var(--s4); }
+  .lp-tariff:not(.lp-tariff--free) .lp-tariff__lim { font: var(--t-text-xl); font-weight: 700; }
+  .lp-plans__feats { column-gap: var(--s12); }
+  .lp-tariff:nth-child(4) .lp-tariff__feats, .lp-tariff:nth-child(5) .lp-tariff__feats { left: 50%; right: auto; translate: -50% 0; }
+}
+@media (min-width: 1024px) and (hover: hover) {
+  .lp-tariff__feats { pointer-events: none; }
+  .lp-tariff:hover .lp-tariff__feats { visibility: visible; opacity: 1; transform: none; }
+  .lp-tariff:hover .lp-tariff__tog .i { transform: rotate(180deg); }
+  .lp-tariffs:has(.lp-tariff:hover) .lp-tariff:not(:hover) .lp-tariff__feats { visibility: hidden; opacity: 0; }
+  .lp-tariffs:has(.lp-tariff:hover) .lp-tariff:not(:hover) .lp-tariff__tog .i { transform: none; }
+}
+/* иконка чата у «Больше 25 клиентов?» - не стрелка раскрытия: при наведении не поворачивается (замечание пользователя 2026-10-28) */
+.lp-tariffs .lp-tariff--more .lp-tariff__tog .i { transform: none; }
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .lp-tariff__feats { transition: opacity var(--dur) var(--easing-out), transform var(--dur) var(--easing-out), visibility var(--dur); }
+}
+
+/* «Попробовать» и под ней - что будет и чем не рискуете: иконки вместо длинных фраз (замечание пользователя) */
+.lp-offer .lp-cta { margin-top: var(--s12); }
+.lp-assure { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s2) var(--s6); margin-top: var(--s4); font: var(--lp-text); font-weight: 600; color: var(--on-dark-2); }
+.lp-assure li { display: inline-flex; align-items: center; gap: var(--s2); }
+@media (max-width: 599px) {
+  .lp-offer .lp-cta { justify-self: stretch; margin-top: var(--s10); }
+  .lp-assure { justify-self: stretch; }
+}
+/* от 600 строка под кнопкой уже кнопки на --s5 с каждой стороны (кнопка заметно шире подписи - замечание пользователя)
+   и, как на телефоне, переносится в два ряда */
+@media (min-width: 600px) { .lp-assure { max-width: calc(var(--lp-cta-w) - 2 * var(--s5)); } }
+/* от 1024 заголовок оффера отстоит от списка как остальные (--lp-head-gap); перед подзаголовком «Тарифы» отступ
+   больше, чем после него, - тарифы читаются отдельной частью оффера */
+@media (min-width: 1024px) {
+  .lp-gains { margin-top: var(--lp-head-gap); }
+  .lp-plans { margin-top: calc(var(--s16) + var(--s4)); }
+  .lp-offer .lp-cta { margin-top: var(--s16); }
+}
+
+/* Блик на финальной «Попробовать» (запросы пользователя 2026-10-27/28): полоса --shine проходит по кнопке слева направо
+   за четверть цикла --dur-shine. Сам по себе - один раз за загрузку страницы: когда кнопка поднялась на четверть окна
+   от низа (скрипт в index.html ставит .is-shine) - постоянное мерцание раздражает и перестаёт замечаться. Наведение
+   и фокус с клавиатуры запускают проход сразу (своя анимация - смена имени перезапускает её). Блик - под текстом
+   (isolation + z-index -1), текст не бледнеет. При «уменьшении движения» блика нет. */
+.lp-cta--shine { position: relative; overflow: hidden; isolation: isolate; }
+@media (prefers-reduced-motion: no-preference) {
+  .lp-cta--shine::after {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(105deg, transparent 30%, var(--shine) 50%, transparent 70%);
+    transform: translateX(-100%);
+  }
+  .lp-cta--shine.is-shine::after { animation: lp-shine var(--dur-shine) var(--easing) 1; }
+  .lp-cta--shine:focus-visible::after { animation: lp-shine-again var(--dur-shine) var(--easing) infinite; }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .lp-cta--shine:hover::after { animation: lp-shine-again var(--dur-shine) var(--easing) infinite; }
+}
+@keyframes lp-shine { 0% { transform: translateX(-100%); } 25%, 100% { transform: translateX(100%); } }
+@keyframes lp-shine-again { 0% { transform: translateX(-100%); } 25%, 100% { transform: translateX(100%); } }
+
+/* ---------- Подвал ---------- */
+/* Без линии сверху: подвал отделён отступом */
+.lp-foot { margin-top: var(--lp-pad); }
+.lp-foot__in { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s3) var(--s6); padding-block: var(--s6) var(--s8); font: var(--t-small); color: var(--on-dark-2); }
+.lp-foot__req { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s5); }
+@media (min-width: 600px) { .lp-foot__in { justify-content: center; } }
+.lp-foot__docs { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s5); }

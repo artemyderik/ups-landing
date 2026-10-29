@@ -1,0 +1,62 @@
+/* «Прогресс» клиента. Общие компоненты - app.css и css/s3-kit.css; здесь только раскладка экрана. Значения - токены C 2.0. */
+
+/* Полоса: живой вывод - цифра-герой на карточке --shell-2 (как герой «Клиент: результат и прогресс» c2 на телефоне) */
+.prg-hero { margin-top: var(--s5); padding: var(--s5); border-radius: var(--r-card); background: var(--shell-2); }
+.prg-hero__num { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s1) var(--s3); margin-top: var(--s2); }
+.prg-hero__num .num { font: var(--t-num-xl-m); letter-spacing: var(--ls-h1); color: var(--accent); }
+.prg-hero__t { font: var(--t-h3); letter-spacing: var(--ls-h3); color: var(--on-dark); }
+.prg-hero__cap { margin-top: var(--s2); font: var(--t-small); color: var(--on-dark-2); }
+
+/* Свежий рекорд: «Хорошие новости» */
+.prg-good__d { color: var(--accent); font-weight: 800; }
+.prg-good__go { margin-top: var(--s2); color: var(--on-dark); }
+
+/* Выбор упражнения графика: селект-кнопка и меню со списком */
+.prg-pick { align-self: flex-start; max-width: 100%; }
+.prg-pick .menu__pop { left: 0; right: auto; }
+.prg-pick [aria-selected="false"] .prg-pick__ok { visibility: hidden; }
+
+/* График рабочего веса (DESIGN.md 5.4 «Графики», разметка .chart c2) - кандидат в app.css */
+.prg-chart-wrap { padding-bottom: var(--s10); }
+.prg-chart { position: relative; height: 200px; margin: var(--s10) var(--s2) 0 36px; }
+.prg-chart__lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.prg-chart__grid line { stroke: var(--line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.prg-chart__line { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.prg-chart__y { position: absolute; left: -36px; transform: translateY(-50%); font: var(--t-small); color: var(--text-2); }
+.prg-chart__x { position: absolute; bottom: -32px; transform: translateX(-50%); font: var(--t-small); color: var(--text-2); white-space: nowrap; }
+.prg-chart__pt { position: absolute; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--bg); box-shadow: inset 0 0 0 2px var(--ink); }
+.prg-chart__pt--last { width: 22px; height: 22px; margin: -11px 0 0 -11px; background: var(--accent); box-shadow: inset 0 0 0 3px var(--ink); }
+.prg-chart__v { position: absolute; transform: translate(-50%, -150%); font: var(--t-small); font-weight: 700; white-space: nowrap; }
+.prg-chart__v--last { transform: translate(calc(-100% + 11px), -175%); height: 28px; padding: 0 10px; display: inline-grid; place-items: center; border-radius: var(--r-pill); background: var(--ink); color: var(--on-ink); }
+.prg-chart__note { position: absolute; transform: translate(-50%, 14px); font: var(--t-small); color: var(--text-2); white-space: nowrap; }
+
+/* Рекорды по упражнениям: строка-карточка, ссылка на названии растянута на строку */
+.prg-recs { display: flex; flex-direction: column; gap: var(--s2); }
+.prg-rec { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) var(--icon-m); grid-template-areas: "a go" "v v" "p p"; align-items: center; gap: var(--s2) var(--s3); padding: var(--s4); border-radius: var(--r-md); background: var(--surface); }
+.prg-rec:hover { background: var(--surface-2); }
+.prg-rec__a { grid-area: a; text-decoration: none; }
+.prg-rec__a b { font-weight: 700; }
+.prg-rec__a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.prg-rec__a:focus-visible { outline: none; }
+.prg-rec__a:focus-visible::after { outline: var(--focus-w) solid var(--focus); outline-offset: var(--focus-offset); }
+.prg-rec__v { grid-area: v; display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); }
+.prg-rec__path { grid-area: p; white-space: normal; }
+.prg-rec .i.prg-rec__go { grid-area: go; color: var(--text-2); }
+
+/* Число тренировок */
+.prg-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2); }
+.prg-stats .card { display: flex; flex-direction: column; gap: var(--s1); }
+
+/* Вес тела: значение, спарклайн (как .wo-spark c2), «Добавить замер» и форма */
+.prg-bw { display: flex; flex-direction: column; gap: var(--s1); }
+/* Высота постоянная (геометрия компонента, как высота .prg-chart): каркас тянется на ширину экрана, линия - только по ширине */
+.prg-spark { position: relative; height: 88px; margin-top: var(--s4); }
+.prg-spark__svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.prg-spark__l { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.prg-spark__p { position: absolute; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: var(--accent); box-shadow: inset 0 0 0 2px var(--ink); }
+.prg-spark__x { display: flex; justify-content: space-between; margin-top: var(--s1); }
+.prg-bw__add { margin-top: var(--s4); }
+.prg-bw__f { display: flex; flex-direction: column; gap: var(--s4); margin-top: var(--s4); }
+.prg-bw__acts { display: flex; gap: var(--s2); }
+.prg-bw__acts .btn--dark { flex: 1 1 auto; }
+.prg-bw__ok { margin-bottom: var(--s3); background: var(--bg); }

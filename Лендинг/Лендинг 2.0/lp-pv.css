@@ -1,0 +1,14 @@
+/* Блок продукта со встроенными сборками превью (lp-pv.js). Раскладку сцен, кадр, подписи и кнопку задают стили сборок
+   (ev.css / ep.css из их папок); здесь - только то, что меняется от того, что сборка стоит на панели лендинга. Только токены C 2.0. */
+
+/* Скрипт работает - подписи-список не показываем, пока не встанут кадры; спрятанная сборка не занимает места */
+.pv-js .lp-product [data-pv-caps] { display: none; }
+.lp-product [data-pv-set][hidden] { display: none; }
+
+/* Отступ заголовок блока -> первая сцена - как у остальных блоков лендинга (--lp-head-gap), а не свой у сборки */
+.lp-product [data-pv-set] { margin-top: var(--lp-head-gap); }
+
+/* Кнопка «Смотреть / Пауза / Повторить» в сборках - --surface на белом листе. Панель лендинга сама --surface,
+   на ней кнопка теряет форму: берём заливку кнопки лендинга .btn (--control / --control-hover, DESIGN.md 5.2) */
+.lp-product .ev__ctl, .lp-product .ep__ctl { background: var(--control); }
+.lp-product .ev__ctl:hover, .lp-product .ep__ctl:hover { background: var(--control-hover); }

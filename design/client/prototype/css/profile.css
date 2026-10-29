@@ -1,0 +1,22 @@
+/* «Тренер и профиль» клиента. Общие компоненты - app.css и css/s3-kit.css; здесь только раскладка экрана. Значения - токены C 2.0. */
+
+/* Полоса: тренер - аватар 56 (DESIGN.md 5.4: в полосе клиента 72, на телефоне 56), имя заголовком экрана */
+.prf-who { display: flex; align-items: center; gap: var(--s4); }
+.prf-ava { width: 56px; height: 56px; font: var(--t-h3); letter-spacing: 0; }
+.prf-who__t { min-width: 0; }
+.prf-who .band__title { margin-top: var(--s1); }
+.prf-tg__h { text-align: center; }
+.prf-tg__h b { color: var(--on-dark); font-weight: 700; }
+
+.prf-acts { display: flex; flex-direction: column; gap: var(--s2); margin-top: var(--s3); }
+
+/* Мои данные: подпись над выбором; сегменты, которые не помещаются в строку, - во всю ширину поровну (DESIGN.md 5.2) */
+.prf-me { display: flex; flex-direction: column; }
+.prf-me__who { display: flex; align-items: center; gap: var(--s3); padding-bottom: var(--s4); }
+.prf-me__who b { font-weight: 700; }
+.prf-row { display: flex; flex-direction: column; gap: var(--s3); padding: var(--s4) 0; border-top: 1px solid var(--line); }
+.prf-row:last-child { padding-bottom: 0; }
+.prf-row__t { display: flex; flex-direction: column; font-weight: 700; }
+.prf-row__t .small { font-weight: 500; }
+.prf-seg { display: flex; width: 100%; background: var(--bg); }
+.prf-seg button { flex: 1 1 0; padding: 0 var(--s2); }

@@ -1,0 +1,88 @@
+/* Полоса «Как работает» блока продукта (DESIGN.md 5.9, .lp-how). Разметку рисует how.js в #nb-how. Значения - токены C 2.0;
+   геометрия компонента (экран телефона, ширины ленты) - переменные компонента, как в описании 5.9.
+   У каждого шага - телефон целиком. Ниже 1280 - лента шагов вбок с привязкой к шагу; от 1280 - четыре колонки в ряд. */
+
+.lp-how {
+  --how-scr-w: 375px;          /* экран телефона - раскладка телефона прототипов, целиком */
+  --how-scr-h: 812px;
+  --how-scr-r: 55px;           /* угол экрана - общее правило рамки телефона новых блоков (5.9, «Колода»: экран 55, рамка 55 + --s3) */
+  --how-step-w: 292px;         /* ширина шага в ленте: тексты шагов - в две строки, следующий шаг выглядывает на 50-70 px */
+  --how-phone-w: 232px;        /* ширина телефона в ленте: шаг с телефоном - около 600 px на 390 */
+  --how-gut: var(--gutter-phone);
+  padding-top: var(--lp-head-gap);
+}
+.lp-how__h { margin: 0; font: var(--t-h2); letter-spacing: var(--ls-h2); text-wrap: balance; }
+.lp-how :where(ol) { list-style: none; margin: 0; padding: 0; }
+
+/* Шаг: номер - круг --s8 с инверсной заливкой (как .grp 5.4) и заголовок в строку, текст под ними, телефон - по низу шага */
+.lp-how__step { display: grid; grid-template-columns: var(--s8) minmax(0, 1fr); grid-template-rows: auto auto 1fr; column-gap: var(--s3); row-gap: var(--s2); align-content: start; }
+.lp-how__n { display: grid; place-items: center; width: var(--s8); height: var(--s8); border-radius: var(--r-pill);
+  background: var(--ink); color: var(--on-ink); font: var(--t-h3); font-weight: 700; font-variant-numeric: tabular-nums; }
+.lp-how__t { margin: 0; align-self: center; font: var(--t-h3); font-weight: 700; letter-spacing: var(--ls-h3); color: var(--ink); text-wrap: balance; }
+.lp-how__d { grid-column: 1 / -1; margin: 0; font: var(--t-text-lg); color: var(--text-2); text-wrap: pretty; }
+.lp-how__nw { white-space: nowrap; }   /* «ссылку-приглашение» не рвётся на дефисе */
+
+/* Телефон целиком: рамка --shell с полем --s3 и углом экрана + поле, экран 375 × 812 с углом 55. Собран в пикселях экрана
+   и уменьшается целиком по ширине .lp-how__shot (how.js: transform и высота места). */
+.lp-how__shot { grid-column: 1 / -1; align-self: end; position: relative; width: var(--how-phone-w); margin-top: var(--s2); }
+.lp-how__dev { position: absolute; left: 0; top: 0; padding: var(--s3); overflow: hidden; border-radius: calc(var(--how-scr-r) + var(--s3)); background: var(--shell); transform-origin: 0 0; }
+.lp-how__scr { display: flex; flex-direction: column; width: var(--how-scr-w); height: var(--how-scr-h); overflow: hidden; background: var(--shell); }
+/* Рамка - накладкой поверх края экрана: угол экрана 55 и полоса 2 px по краю цвета рамки. Экран уменьшен масштабом, его край встаёт
+   на дробный пиксель, а светлое содержимое при уменьшении растекается примерно на пиксель окна - по краю экрана в рамке шла светлая
+   волосяная линия. Под накладкой край экрана заходит под рамку на 2 px (на 390 это около 1 px окна); прямые углы экрана обрезает
+   внешний угол рамки. */
+.lp-how__dev::after { content: ''; position: absolute; inset: var(--s3); z-index: 1; border-radius: var(--how-scr-r);
+  box-shadow: inset 0 0 0 2px var(--shell), 0 0 0 var(--s3) var(--shell); pointer-events: none; }
+/* Окно экрана. Сверху - пустое поле --s8 цвета экрана у верха окна (how.js берёт цвет из экрана): верхний угол 55 не срезает
+   содержимое. Снизу поле --s8 под жест «домой» - внутри экрана (cs-screen.js, safe=1): панели поднимаются, их цвет доходит до края.
+   До загрузки - заливка --surface-2, как у скелетона (5.7); экран проявляется. Поле - накладкой (::before), экран заходит под неё
+   на 2 px: уменьшенный iframe даёт по верхнему краю тёмную кайму в пиксель окна - она шла серой нитью между полем и экраном. */
+.lp-how__view { position: relative; flex: 1; min-height: 0; padding-top: calc(var(--s8) - 2px); background: var(--surface-2); }
+.lp-how__view::before { content: ''; position: absolute; left: 0; right: 0; top: 0; z-index: 1; height: var(--s8); background: inherit; }
+.lp-how__view iframe { position: relative; display: block; width: 100%; height: 100%; border: 0; background: none; opacity: 0; transition: opacity var(--dur-slow) var(--easing-out); }
+.lp-how__view.is-ready iframe { opacity: 1; }
+
+/* Повтор: шаги 2-4 на подложке --bg, под ними «И так каждую неделю» с refresh-cw (словарь: серия «каждую неделю»).
+   Шаг 1 - вне подложки, с тем же полем сверху и снизу: номера и телефоны стоят на одной линии с шагами 2-4. */
+.lp-how__loop { display: grid; grid-template-rows: 1fr auto; padding: var(--s4); border-radius: var(--r-card); background: var(--bg); }
+.lp-how__list > .lp-how__step { padding: var(--s4) 0 calc(var(--s4) + var(--s4) + var(--row-desk)); }
+.lp-how__again { display: flex; align-items: center; gap: var(--s2); height: var(--row-desk); margin: var(--s4) 0 0;
+  font: var(--t-text-lg); font-weight: 600; color: var(--text-2); }
+.lp-how__again svg { flex: none; width: var(--icon-m); height: var(--icon-m); }
+
+/* Ниже 1280 - лента вбок: от края до края окна, шаг на экран, следующий выглядывает. Привязка к началу шага (у шагов на подложке -
+   с её полем). «И так каждую неделю» не уезжает, пока на экране шаги 2-4. Автопрокрутки нет; с клавиатуры лента в фокусе (how.js). */
+.lp-how__list { display: flex; align-items: stretch; gap: var(--s3); margin: var(--s6) calc(-1 * var(--how-gut)) 0; padding: 0 var(--how-gut) var(--s2);
+  overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--how-gut); scrollbar-width: thin; }
+.lp-how__list:focus-visible { outline: var(--focus-w) solid var(--focus); outline-offset: calc(-1 * var(--focus-w)); }
+.lp-how__list .lp-how__step { flex: none; width: var(--how-step-w); scroll-snap-align: start; }
+.lp-how__loop { flex: none; }
+.lp-how__steps { display: flex; gap: var(--s4); }
+.lp-how__steps > .lp-how__step { scroll-margin-inline-start: var(--s4); }
+.lp-how__again { position: sticky; left: var(--s4); justify-self: start; }   /* от поля ленты: строка стоит под текстом шага */
+
+@media (min-width: 600px) {
+  .lp-how { --how-step-w: 300px; --how-phone-w: 240px; --how-gut: var(--gutter-tab); }
+  .lp-how__h { text-align: center; }
+  .lp-how__list { margin-top: var(--s8); }
+}
+@media (min-width: 1024px) {
+  .lp-how { --how-gut: var(--gutter); }
+}
+
+/* От 1280 - четыре колонки одной ширины, без прокрутки: шаг 1 | подложка с шагами 2-4. Колонка = (ширина − --s6 − 4 × --s4) / 4:
+   между шагом 1 и подложкой --s6, у подложки поля --s4, между шагами в ней --s4. Телефон - во всю колонку (около 0,7 на 1440). */
+@media (min-width: 1280px) {
+  .lp-how__h { font: var(--t-h1-m); letter-spacing: var(--ls-h1); }
+  .lp-how__list { --how-col: calc((100% - var(--s6) - 4 * var(--s4)) / 4); display: grid; grid-template-columns: var(--how-col) minmax(0, 1fr); gap: var(--s6);
+    margin-inline: 0; padding: 0; overflow: visible; scroll-snap-type: none; }
+  .lp-how__list .lp-how__step { width: auto; }
+  .lp-how__steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s4); }
+  .lp-how__t { font: var(--t-text-xl); font-weight: 700; letter-spacing: normal; }
+  .lp-how__shot { width: 100%; margin-top: var(--s3); }
+  .lp-how__again { position: static; justify-self: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-how__view iframe { transition: none; }
+}

@@ -1,0 +1,115 @@
+/* =========================================================
+   C 2.0 «Лаборатория» Обновленная: правки принятого дизайн-ревью (2026-10-25) - «Календарь» и «Библиотека».
+   Основания - review-applicability.md, разделы «Календарь», «Библиотека», «Системные правки».
+   Подключается сразу после app.css на экранах: «Календарь», «Новая тренировка», «Шаблоны», «Упражнения»,
+   «Упражнение», «Своё упражнение», «Профиль». Значения - только токены tokens.css и app.css;
+   новых цветов, шрифтов, «героев» и рамок нет. Телефон (<1024) - как в C 2.0, кроме отмеченного.
+   ========================================================= */
+
+/* ---------- Календарь: неделя ---------- */
+
+/* Подпись, которая на 1024-1279 уходит к экранному диктору, а на экране остаётся короткая (.k5-narrow).
+   Скрытие через clip-path, а не overflow: текст не считается обрезкой. */
+.k5-narrow { display: none; }
+
+/* календарь-T-05: значок статуса - в строке времени у каждого события; слово - только у отклонений (.evt__s).
+   Было: «выполнено» и «запланировано» у 28 из 30 событий, на 1024 все слова статуса обрезаны. */
+.cal .evt__t.status { display: flex; align-items: center; gap: var(--s1); font: var(--t-label); letter-spacing: .04em; color: var(--text-2); white-space: nowrap; }
+.cal .evt__t.status .i { flex: none; width: var(--icon-xs); height: var(--icon-xs); color: var(--ink); }
+.cal .evt__s { display: block; font-weight: 700; color: var(--ink); }
+.cal .evt--cancel .evt__s, .cal .evt--cancel .evt__t .i { color: var(--text-2); }
+
+/* календарь-A-05: имя переносится на вторую строку вместо «Наталья Гро…» */
+.cal .evt b { white-space: normal; overflow: visible; text-overflow: clip; }
+
+/* календарь-T-03: пересечение каскадом - первое событие на всю колонку, второе сдвинуто на четверть.
+   Было: половинки по 45 px на 1280 и 25 px на 1024, время «19:00» (52 px) обрезалось.
+   Зазор между карточками - цвет фона (--bg), а не обводка. */
+.cal .evt--half { right: var(--s1); width: auto; }
+.cal .evt--half2 { left: 25%; right: var(--s1); width: auto; z-index: var(--z-raise); box-shadow: inset 4px 0 0 var(--ink), 0 0 0 2px var(--bg); }
+.cal .evt--half b, .cal .evt--half2 b { line-height: inherit; }
+/* у первого время и первая строка имени укладываются в 30 минут над вторым */
+.cal .evt--half:not(.evt--half2) { padding-top: calc(var(--s1) / 2); line-height: 1.1; }
+.cal .evt--half:not(.evt--half2) .evt__t.status { line-height: 1.1; }
+
+/* календарь-A-05, T-04, T-05: строка «Сами» - 12 px, как вся недельная сетка (исключение шкалы C 2.0);
+   имя переносится, у нормы - только значок с подписью для диктора. Было: на 1280 обрезаны 10 имён из 11. */
+.cal .self-p { font: var(--t-cal); }
+.cal .self-p b { white-space: normal; overflow: visible; text-overflow: clip; }
+.cal .self-p .status { line-height: 1.2; }
+
+/* Легенда под сеткой - только на 1024-1279 */
+.k5-legend--foot { display: none; }
+
+/* календарь-A-05: на 1024-1279 сетке оставалось 175 px первого экрана (с шапкой дней), часам - 18 px */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .k5-narrow { display: inline; }
+  .k5-wide { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); white-space: nowrap; }
+
+  /* легенда одной строкой под сеткой: сверху она уходила во второй ряд (97 px вместо 40) */
+  .k5-legend--top { display: none; }
+  .k5-legend--foot { display: flex; flex-wrap: nowrap; gap: var(--s3); margin: var(--s4) 0 0; }
+  .k5-legend--foot .status { gap: var(--s1); }
+
+  /* событие: время со значком, имя в две строки, слово отклонения - четыре строки в 60 px */
+  .cal .evt { right: calc(var(--s1) / 2); padding: var(--s1) calc(var(--s1) / 2) 0 calc(var(--s2) + var(--s1) / 2); line-height: 1.1; }
+  .cal .evt:not(.evt--half2) { left: calc(var(--s1) / 2); }
+  .cal .evt__t.status { line-height: 1.1; }
+
+  /* «Сами»: при переносе имени пилюля в три строки - угол 16, чтобы скругление не срезало буквы */
+  .cal .self-p { padding: var(--s1) var(--s2); border-radius: var(--r-md); }
+  .cal__all > div:not(.cal__gut) { padding-inline: var(--s1); }
+}
+
+/* ---------- Календарь: новая тренировка ---------- */
+
+/* qa-15: длительность - поле со степпером −15 / +15 мин на пилюлях вместо «45 / 60 мин / 90» */
+.ce-dur { display: flex; align-items: center; gap: var(--s1); height: var(--row); padding: 0 var(--s1); border-radius: var(--r-sm); background: var(--bg); }
+.ce-dur .btn { height: var(--s8); padding: 0 var(--s3); background: var(--surface); font: var(--t-small); font-weight: 700; }
+.ce-dur .btn:hover { background: var(--control-hover); }
+.ce-dur .btn .i { width: var(--icon-s); height: var(--icon-s); }
+.ce-dur__v { flex: 1; min-width: 72px; padding: 0 var(--s2); text-align: center; font-weight: 700; white-space: nowrap; }
+@media (max-width: 1023px) {
+  .ce-dur { height: auto; padding: var(--s1); }
+  .ce-dur .btn { height: var(--row); }
+}
+
+/* ---------- Библиотека: шаблоны ---------- */
+
+/* библиотека-T-03: карточка шаблона - ссылка в конструктор (заголовок растянут на карточку),
+   «Назначить» - единственная белая пилюля, с иконкой календаря, как везде (сквозное-A-10).
+   Было: на каждой из 10 карточек две одинаковые пилюли «Открыть» и «Назначить» (с иконкой людей). */
+.wo-tpl { position: relative; }
+.wo-tpl__a { color: inherit; text-decoration: none; }
+.wo-tpl__a::after { content: ""; position: absolute; inset: 0; border-radius: var(--r-card); }
+.wo-tpl__a:focus-visible { outline: none; }
+.wo-tpl:hover { background: var(--surface-2); }
+.wo-tpl:has(.wo-tpl__a:focus-visible) { box-shadow: inset 0 0 0 2px var(--ink); }
+.wo-tpl__act { position: relative; z-index: var(--z-raise); }
+.wo-tpl__act .btn { flex: 0 0 auto; }
+
+/* ---------- Библиотека: своё упражнение ---------- */
+
+/* библиотека-A-08: 18 полей фиксации - группами из модели данных; «Темп бега» и «Темп повторения» вместо «Темп» и «Темп выполнения».
+   Было: 18 чипов одним списком, «Темп» и «Темп выполнения» рядом. */
+.lb-fgs { display: flex; flex-direction: column; gap: var(--s3); margin-top: var(--s4); }
+.lb-fg { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: var(--s2) var(--s4); align-items: start; }
+.lb-fg__l { display: flex; align-items: center; min-height: var(--s8); font: var(--t-small); font-weight: 700; color: var(--text-2); }
+.lb-fg .chips { margin-top: 0; }
+.lb-unit { font-weight: 500; color: var(--text-2); }
+.chip[aria-pressed="true"] .lb-unit, .chip.is-on .lb-unit { color: var(--on-ink-2); }
+@media (max-width: 1023px) {
+  .lb-fg { grid-template-columns: minmax(0, 1fr); gap: var(--s2); }
+  .lb-fg__l { min-height: 0; }
+}
+
+/* ---------- Календарь: «не просмотрена» (правка пользователя 2026-10-26) ---------- */
+/* Статусы календаря - словарь статусов, а не сигналы: иконки чернилами. Изменено одно слово: «не открыта» → «не просмотрена»,
+   иконка - i-sig-unopened (Lucide mail), как в словаре сигналов. */
+/* 1024-1279: «просмотрена» (79 px) шире пилюли «Сами» (70 px на 1024). Статус - строкой текста с иконкой в начале,
+   чтобы слово занимало всю ширину пилюли, а не колонку справа от иконки; длинное слово переносится по слогам.
+   Было: «просмотрена» выходило за пилюлю на 9 px. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .page-k5 .self-p .status { display: block; hyphens: auto; }
+  .page-k5 .self-p .status > .i { display: inline-block; margin-right: var(--s1); vertical-align: -3px; }
+}

@@ -1,0 +1,186 @@
+/* =========================================================
+   C 2.0 · Правки ревью · «Конструктор тренировки» и «Назначить нескольким» (2026-10-25).
+   Подключается после app.css только в k3-builder.html и assign.html. Значения - из tokens.css.
+   Основания - review-applicability.md, раздел «Конструктор тренировки».
+   ========================================================= */
+
+/* ---------- конструктор-T-03, конструктор-A-08: таблица подходов ----------
+   Было: подходы сверху вниз, столбцы 88 / 124 / 124 px разной ширины.
+   Стало: подходы слева направо с первого («Подход · 1 · 2 · 3 · +»), параметры сверху вниз («Вес, кг», «Повторы»),
+   третий параметр (время, RPE) - только по «+ Параметр». Все столбцы подходов одной ширины, подписи строк одной ширины.
+   Ширины собраны из шага отступов: подпись 72, подход 60, «+» 32, зазор 8. При 1280 (карточка 504, место под таблицу 404)
+   таблица из трёх подходов занимает 332; если подходов больше, таблица прокручивается внутри карточки, а не страницы. */
+.sets-x__wrap {
+  --sx-lab: calc(var(--s16) + var(--s2));   /* 72: подпись строки */
+  --sx-col: calc(var(--s12) + var(--s3));   /* 60: столбец подхода */
+  --sx-add: var(--s8);                      /* 32: кнопка «+» подход */
+  --sx-gap: var(--s2);
+  overflow-x: auto;
+  margin: calc(-1 * var(--sx-gap));          /* компенсирует внешний зазор border-spacing: левый край таблицы = левый край карточки */
+}
+.sets-x { width: max-content; margin: 0; border-spacing: var(--sx-gap); }
+.sets-x th, .sets-x td { padding: 0; width: var(--sx-col); vertical-align: middle; }
+.sets-x thead th:first-child, .sets-x tbody th:first-child { width: var(--sx-lab); }
+.sets-x .sets-x__add { width: var(--sx-add); }
+/* шапка одним стилем (правки пользователя 2026-10-26): «Подход · 1 · 2 · 3 · +» - капс 12 px --text-2, без серой пилюли «Разм.»;
+   столбца разминочного подхода нет («"разм" убираем, оставляем только подходы от 1»). Номера - по центру столбца, как значения под ними */
+.sets-x thead th { text-align: center; font: var(--t-label); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--text-2); }
+.sets-x thead th:first-child { text-align: left; }
+/* подписи строк */
+.sets-x tbody th { text-align: left; font: var(--t-small); font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--text-2); white-space: nowrap; }
+/* значения: поле на всю ширину столбца, цифры по центру */
+.sets-x .inp { width: var(--sx-col); justify-content: center; padding: 0 var(--s2); font: var(--t-num); }
+/* «→ всем»: появляется у первого значения строки после ввода; заполняет подходы правее и исчезает до следующего изменения */
+.sets-x .inp--fill { justify-content: space-between; gap: 0; padding: 0 var(--s1) 0 var(--s2); }
+.fill-btn { display: grid; place-items: center; width: var(--s6); height: var(--s6); flex: none; padding: 0; border: 0; border-radius: var(--r-pill); background: var(--surface-2); color: var(--ink); }
+.fill-btn:hover { background: var(--ink); color: var(--on-ink); }
+.fill-btn .i { width: var(--s4); height: var(--s4); }
+.fill-btn[hidden] { display: none; }
+/* «+» подход в шапке - белая круглая кнопка, как действия в карточке */
+.sets-x__plus { display: grid; place-items: center; width: var(--sx-add); height: var(--sx-add); padding: 0; border: 0; border-radius: var(--r-pill); background: var(--control); color: var(--ink); }
+.sets-x__plus:hover { background: var(--control-hover); }
+.sets-x__plus .i { width: 18px; height: 18px; }
+/* «+ Параметр»: текстовая кнопка без подложки - левый край совпадает с подписями строк */
+.sets-x tfoot td { width: auto; text-align: left; white-space: nowrap; }
+.sets-x__param { display: inline-flex; align-items: center; gap: var(--s1); min-height: var(--s8); padding: 0; border: 0; background: transparent; font: var(--t-small); font-weight: 700; color: var(--ink); }
+.sets-x__param:hover { text-decoration: underline; text-underline-offset: 3px; }
+.sets-x__param .i { width: var(--s4); height: var(--s4); }
+.sets-x__param + .small { margin-left: var(--s2); color: var(--text-2); }
+
+/* ---------- конструктор-A-02, T-01, сквозное-T-03, qa-22: заметка ----------
+   «Заголовок» в заметке на шаг крупнее текста: 17/700 (--t-h3) против 15/500 у тела и 15/800 у жирного. */
+.note-ed__h { font: var(--t-h3); letter-spacing: var(--ls-h3); margin-bottom: var(--s1); }
+
+/* ---------- сквозное-T-05: «Только я» и «Видит клиент» различаются тоном и меткой ----------
+   «Видит клиент» - белый редактор (--bg), «Только я» - --surface-2; в метке глаз или замок. */
+.note-ed--priv { background: var(--surface-2); }
+.note-ed--priv .seg { background: var(--bg); }
+.note-ed__who { display: inline-flex; align-items: center; gap: var(--s2); }
+.note-ed__who .i { width: var(--s4); height: var(--s4); color: var(--ink); }
+.note-ed__who .i[hidden] { display: none; }
+
+/* ---------- qa-06.2: теги без рамки ----------
+   После тегов - пилюля «+ тег» на чёрной полосе; по нажатию - поле с заливкой, как остальные поля C 2.0 (без обводки). */
+.k3-meta .tag-add { height: var(--s8); padding: 0 var(--s3); gap: var(--s1); font: var(--t-small); font-weight: 700; }
+.k3-meta .tag-add .i { width: var(--s4); height: var(--s4); }
+.k3-meta .tag-add[hidden] { display: none; }
+.tag-inp { display: inline-flex; align-items: center; gap: 2px; height: var(--s8); padding: 0 var(--s3); border-radius: var(--r-sm); background: var(--bg); color: var(--ink); font: var(--t-small); font-weight: 700; }
+.tag-inp[hidden] { display: none; }
+.tag-inp input { field-sizing: content; min-width: var(--s12); max-width: calc(var(--s16) * 3); border: 0; padding: 0; background: transparent; outline: 0; font: inherit; color: var(--ink); }
+.tag-inp input::placeholder { color: var(--text-2); }
+/* фокус - рамка чернилами внутри поля (DESIGN 5.3, «Ввод тегов»; было лаймовое кольцо снаружи) */
+.tag-inp:focus-within { outline: 0; box-shadow: inset 0 0 0 var(--focus-w) var(--ink); }
+
+/* ---------- конструктор-A-07: в меню у «Назначить нескольким» и «Копировать в…» - строка последствия ---------- */
+.page-k3 .menu__pop { min-width: calc(var(--s16) * 5); }
+.menu__pop a.menu__i2 { height: auto; min-height: calc(var(--s12) + var(--s2)); align-items: flex-start; padding: var(--s2) var(--s4); border-radius: var(--r-md); }
+.menu__pop a.menu__i2 .i { margin-top: 2px; }
+.menu__i2 span { display: flex; flex-direction: column; gap: 2px; }
+.menu__i2 small { font: var(--t-small); color: var(--text-2); }
+
+/* «Назначить нескольким»: последствие в «Что будет создано» */
+.wo-conseq { display: flex; align-items: center; gap: var(--s2); margin-top: var(--s2); font: var(--t-small); font-weight: 700; color: var(--ink); }
+.wo-conseq .i { width: 18px; height: 18px; }
+.wo-conseq + .wo-list-s { margin-top: var(--s4); }
+
+/* ---------- Телефон (< 1024): таблица подходов в C 2.0 не оценивалась; столбцы уже, высота поля под палец ---------- */
+@media (max-width: 1023px) {
+  .sets-x__wrap { --sx-lab: var(--s16); --sx-col: calc(var(--s12) + var(--s2)); --sx-gap: var(--s1); }
+  .sets-x .inp { width: var(--sx-col); height: var(--tap); }
+}
+
+/* ---------- конструктор-A-02, T-01: шапка на 1024-1279 ----------
+   Было: сводка «8 · 24 · ~55 мин» справа сжимала название до 328 px, и оно ломалось на 3 строки с висящей «2».
+   Стало: сводка переносится под название, название занимает всю ширину рабочей зоны. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .k3-head { flex-wrap: wrap; justify-content: flex-start; row-gap: var(--s5); }
+}
+
+/* =========================================================
+   Правки пользователя 2026-10-26: «криво сверстан» - одна сетка списка и меньше визуального шума, функции те же.
+   ========================================================= */
+
+/* ---------- 1. Одна сетка на весь список ----------
+   Было: группа (.grp-b, суперсет B и трисет D) сдвигала свои карточки на 20 px: ручка 328 вместо 308, номер 364 вместо 344,
+   название 408 вместо 388 (окно 1440). Стало: карточки группы той же ширины и с того же края, что одиночные; лаймовая линия
+   группы вынесена в поле слева, её правый край в 12 px от карточек; шапка группы и «Отдых после круга» - от левого края карточек.
+   Телефон - как в C. */
+@media (min-width: 1024px) {
+  .k3-layout .grp-b { padding-left: 0; }
+  .k3-layout .grp-b::before { left: auto; right: calc(100% + var(--s3)); }
+}
+
+/* ---------- 2. Связки «Соединить в суперсет» ----------
+   Было: 9 кнопок-звеньев всегда на виду, по 4 px до карточек, у несоединённых серое кольцо-обводка, подсказка нарисована открытой.
+   Стало: зазор между карточками ровный, 12 px. Кнопка - на стыке над колонкой номера, видна при наведении на стык (зона
+   наведения заходит на 8 px в соседние карточки) или при фокусе с клавиатуры: прячется прозрачностью, а не display, и остаётся
+   в порядке Tab. Без кольца, заливка --bg. Соединённые внутри группы - тоже по наведению: группу показывают линия и шапка.
+   Подсказка - при наведении на саму кнопку или фокусе. Второй путь - «Соединить со следующим» в меню «…» карточки.
+   Без наведения (сенсорный экран от 1024) кнопки видны всегда. */
+@media (min-width: 1024px) {
+  .k3-layout .join { position: relative; z-index: var(--z-raise); display: block; height: var(--s3); padding: 0; }
+  .k3-layout .join::before { content: ""; position: absolute; inset: calc(-1 * var(--s2)) 0; }
+  .k3-layout .join__btn { position: absolute; top: 50%; left: calc(var(--s3) + var(--s6) + var(--s3)); transform: translateY(-50%); box-shadow: none; }
+  .k3-layout .join__btn:not(.join__btn--on):hover { background: var(--control-hover); }
+  .k3-layout .join__tip { position: absolute; top: 50%; left: calc(var(--s3) + var(--s6) + var(--s3) + var(--s8) + var(--s2)); transform: translateY(-50%); white-space: nowrap; pointer-events: none; opacity: 0; }
+  .k3-layout .join__btn:hover + .join__tip, .k3-layout .join__btn:focus-visible + .join__tip { opacity: 1; }
+}
+@media (min-width: 1024px) and (hover: hover) {
+  .k3-layout .join__btn { opacity: 0; }
+  .k3-layout .join:hover .join__btn, .k3-layout .join:focus-within .join__btn { opacity: 1; }
+}
+/* Телефон: связки как в C, подсказка не нужна - наведения нет */
+@media (max-width: 1023px) {
+  .k3-layout .join__tip { display: none; }
+}
+
+/* «…» раскрытой карточки: «Соединить со следующим» - тот же пункт, что кнопка на стыке */
+.ex__menu .menu__pop { min-width: 0; }
+.menu__pop button[role=menuitem] { display: flex; align-items: center; gap: var(--s3); width: 100%; height: var(--row); padding: 0 var(--s4); border: 0; border-radius: var(--r-pill); background: transparent; color: var(--ink); font: inherit; font-weight: 700; text-align: left; white-space: nowrap; cursor: pointer; }
+.menu__pop button[role=menuitem]:hover { background: var(--surface); }
+
+/* ---------- 3. Разминка и заминка без пустой колонки номера ----------
+   Было: у 4 карточек между ручкой и названием пустая колонка 32 px. Стало: у строки нет колонки номера, название встаёт
+   на её место (x названия = x номера в основной части). */
+.blk--plain .ex__row { grid-template-columns: var(--s6) minmax(0, 1fr) auto; }
+.blk--plain .ex__body { padding-left: calc(var(--s3) + var(--s6) + var(--s3)); }
+@media (max-width: 1023px) {
+  .blk--plain .ex__row { grid-template-columns: var(--s5) minmax(0, 1fr) auto; }
+  .blk--plain .ex__body { padding-left: var(--s4); }
+}
+
+/* ---------- 5. Панель форматирования заметки ----------
+   Было: висела на стыке «Взять из прошлого» и заметки (top -34 px) и перекрывала верх заметки.
+   Стало: в потоке над заметкой с зазором 8 px, ничего не перекрывает - поэтому без тени плавающего слоя. Телефон - скрыта, как в C. */
+.note-box { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s2); }
+.note-box .note-ed { align-self: stretch; margin-top: 0; }
+.note-box .fmt { position: static; box-shadow: none; }
+
+/* ---------- 6. Сигналы внимания - иконкой и коротким текстом (README, «Сигналы внимания C 2.0») ----------
+   Было: точка 8 px и «23 окт - боль в пояснице 4/10 на румынской тяге», «RPE 9 · боль 4/10», «RPE 9 · боль 4».
+   Стало: компонент .sig из app.css - боль i-sig-pain, высокое усилие (RPE 9 и выше) i-sig-effort; иконка оранжевая, текст чернилами,
+   полная формулировка - в aria-label и title. RPE ниже 9 - простой серый текст. В серой строке истории текст сигнала - чернилами,
+   как у остальных сигналов; в строках с flex-зазором второй сигнал не получает ещё и внешний отступ (иначе 20-24 px вместо 8-12). */
+.h-list__m .sig { color: var(--ink); }
+.h-list__m .sig + .sig, .last .sig + .sig { margin-left: 0; }
+.limits__body .sig { align-self: center; }
+
+/* Когда спрашивать усилие (правка пользователя 2026-10-26): не спрашивать / после каждого подхода / после последнего, плюс цель RPE.
+   Подпись строки - той же ширины, что подписи строк таблицы подходов (72 px). */
+.effort-ask { display: grid; grid-template-columns: 72px minmax(0, 1fr); column-gap: 8px; align-items: start; }
+.effort-ask__c { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); }
+.effort-ask__l { display: inline-flex; align-items: center; gap: 6px; min-width: 72px; min-height: 40px; font: var(--t-small); font-weight: 700; color: var(--ink); }
+.effort-ask__l .i { width: var(--icon-s); height: var(--icon-s); color: var(--text-3); }
+.effort-ask .seg { background: var(--bg); }
+.effort-ask__goal { display: inline-flex; align-items: center; gap: 6px; font: var(--t-small); color: var(--text-2); }
+.effort-ask__goal .inp { width: 64px; height: 32px; justify-content: center; }
+
+/* Белый блок «Прошлый раз»: пилюли сигналов серые, иначе сливаются с фоном */
+.last { --sig-bg: var(--surface); --sig-bg-hover: var(--surface-2); }
+/* Телефон: строка «Усилие» - подпись над переключателем, кнопки делят ширину (на 390 переключатель выходил за край на 57 px) */
+@media (max-width: 599px) {
+  .effort-ask { grid-template-columns: minmax(0, 1fr); row-gap: var(--s2); }
+  .effort-ask__l { min-height: 0; }
+  .effort-ask .seg { display: flex; width: 100%; }
+  .effort-ask .seg button { flex: 1 1 0; min-width: 0; padding: 0 var(--s2); }
+}

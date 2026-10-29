@@ -1,0 +1,225 @@
+/* «Выполнение тренировки» - режим зала (DESIGN.md 5.5, «„Выполнение тренировки“ клиента»; правила - BEHAVIOR.md 5.6).
+   Экран целиком --shell: полоса .band и пульт .pult - оболочка, вне темы. Компоненты пульта перенесены из прототипа тренера
+   (design/directions/c2/app.css, «К4 Проведение тренировки») с телефонными размерами - кандидаты в app.css: .pult, .psets/.pset,
+   .ctl, .steppers/.stepper/.step, .rest/.ring, .btn--plan, .qx, .qgrp. Классы экрана - ses-. Значения - токены C 2.0. */
+
+/* ---------- Экран целиком чёрный: лист без белого наезда (кроме пустого состояния) ---------- */
+.page-session:not(.is-empty) .band { padding-bottom: 0; }
+.page-session:not(.is-empty) .band__top { margin-bottom: var(--s3); }
+.page-session:not(.is-empty) .work { margin-top: 0; padding: 0; border-radius: 0; background: var(--shell); }
+.page-session .assign-bar { min-height: calc(var(--ctl-plan) + var(--s6)); }
+.ses-sync { min-height: var(--tap-min); }
+.ses-sync[hidden] { display: none; }
+.ses-sync .i { width: var(--icon-s); height: var(--icon-s); }
+
+/* ---------- Прибитая шапка - один липкий блок (DESIGN.md 5.5) ----------
+   Колбаски - сама полоса экрана, а не копия: стоят в потоке листа под верхней строкой и прилипают (sticky). Шапка .ses-mini -
+   часть того же блока, подвешена под колбасками (absolute, top: 100%): прилипание одно на двоих, поэтому при любой прокрутке,
+   и при оттяжке за край тоже, они не расходятся. Колбаски (.ses-segbox__bar) - над шапкой: она выезжает из-под них.
+   Метка .ses-stick перед блоком показывает, что прилипли: тогда линия под колбасками, пока под ними нет шапки. */
+.ses-stick { height: 0; }
+.ses-segbox { position: sticky; top: 0; z-index: var(--z-bar); }
+.ses-segbox__bar { position: relative; z-index: var(--z-raise); padding: var(--s2) var(--gutter); background: var(--shell); }
+.ses-segbox.is-stuck:not(.with-mini) .ses-segbox__bar { box-shadow: 0 1px 0 var(--shell-line); }
+
+/* ---------- Место в тренировке, имя, план (под колбасками, на чёрном) ---------- */
+.ses-head { padding: var(--s2) var(--gutter) var(--s5); background: var(--shell); color: var(--on-dark); }
+
+/* ---------- Колбаски: одна на упражнение (DESIGN.md 5.5) ----------
+   --f - доля отмеченных подходов (задаёт js/session.js). Текущее - лайм долей, оставленное - --on-dark долей,
+   «не сделано» - контур без заливки (отличается формой), сделанная часть - заливкой. */
+.ses-segs span { background: var(--shell-line); }
+.ses-segs .is-done { background: var(--on-dark); }
+.ses-segs .is-now { background: linear-gradient(to right, var(--accent) var(--f), var(--shell-line) var(--f)); box-shadow: inset 0 0 0 var(--focus-w) var(--accent); }   /* контур - где вы, даже при 0 подходов */
+.ses-segs .is-part { background: linear-gradient(to right, var(--on-dark) var(--f), var(--shell-line) var(--f)); }
+.ses-segs .is-miss { background: linear-gradient(to right, var(--on-dark) var(--f), transparent var(--f)); box-shadow: inset 0 0 0 var(--focus-w) var(--on-dark-2); }
+.ses-segs .is-miss.is-cur { box-shadow: inset 0 0 0 var(--focus-w) var(--accent); }
+
+/* ---------- Прибитая шапка .ses-mini (DESIGN.md 5.5; когда что появляется - BEHAVIOR.md 5.6) ----------
+   Поверх листа сверху, постоянной высоты. Шапка въезжает сверху, ряд иконок и пилюля отдыха - каждая по своему сигналу
+   (классы show-acts, show-rest); скрытая часть держит место (visibility: hidden). Сама шапка - --easing-out без перелёта, части - пружина. */
+.ses-mini { position: absolute; top: 100%; left: 0; right: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--s3); padding: 0 var(--gutter-phone); color: var(--on-dark); pointer-events: none; opacity: 0; visibility: hidden; transform: translateY(-100%); transition: transform var(--dur-slow) var(--easing-out), opacity var(--dur-slow) var(--easing-out), visibility 0s linear var(--dur-slow); }   /* без перелёта: пристыкована к колбаскам, пружина отрывала её на 3 px */
+.ses-mini.is-on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+/* Чёрная полоса - фон только строки названия (первая строка сетки); ниже - прозрачно, лист виден */
+.ses-mini__bg { grid-row: 1; grid-column: 1 / -1; margin: 0 calc(-1 * var(--gutter-phone)); border-bottom: 1px solid var(--shell-line); background: var(--shell); pointer-events: auto; }
+/* Название и строка подхода - та же пара, что заголовок и мета полосы, ступенью ниже: --t-h2 и --t-body */
+.ses-mini__t { position: relative; grid-row: 1; grid-column: 1 / -1; align-self: center; display: flex; flex-direction: column; justify-content: center; min-width: 0; min-height: var(--tap-min); margin-bottom: var(--s2); padding: 0; border: 0; border-radius: var(--r-sm); background: transparent; color: inherit; font: inherit; text-align: left; pointer-events: auto; }
+.ses-mini__name, .ses-mini__sub { max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ses-mini__name { font: var(--t-h2); letter-spacing: var(--ls-h2); }
+.ses-mini__sub { font: var(--t-body); color: var(--on-dark-2); }
+/* Кнопки-иконки и пилюля отдыха - без подложки под полосой, плавают над листом: контур и тень отделяют их от карточек */
+.ses-mini__row { position: relative; grid-row: 2; grid-column: 1 / -1; display: flex; align-items: center; gap: var(--s2); min-height: var(--tap-min); padding-top: var(--s2); }
+/* Иконки - одной капсулой без зазоров (между кнопками не просвечивает лист), пилюля отдыха - отдельно справа */
+.ses-mini__acts, .ses-mini__rest { pointer-events: auto; box-shadow: inset 0 0 0 1px var(--shell-line), var(--shadow-float); }
+@media (min-width: 600px) {   /* --bp-phone: в строку названия справа, на чёрную полосу - шапка в одну строку */
+  .ses-mini__t { grid-column: 1; }
+  .ses-mini__row { grid-row: 1; grid-column: 2; align-self: center; margin-bottom: var(--s2); padding-top: 0; }
+}
+.ses-mini__rest { flex: none; display: flex; align-items: center; gap: var(--s1); height: var(--tap-min); margin-left: auto; padding-left: var(--s2); border-radius: var(--r-pill); background: var(--shell-2); }
+.ses-mini__rest[hidden] { display: none; }
+.ses-mini__ring { width: 20px; height: 20px; transform: rotate(-90deg); }
+.ses-mini__ring circle { fill: none; stroke-width: 3; }
+/* Время - роль чисел --t-num, табличными цифрами (после font: сокращение сбрасывает их) в поле постоянной ширины:
+   5,7ch вмещают и «9:59», и «Вперёд», поэтому пилюля не меняет ширину ни по ходу отдыха, ни в конце */
+.ses-mini__time { width: 5.7ch; font: var(--t-num); font-variant-numeric: tabular-nums; text-align: center; white-space: nowrap; }
+.ses-mini__skip { display: grid; place-items: center; width: var(--tap-min); height: var(--tap-min); padding: 0; border: 0; border-radius: var(--r-pill); background: var(--shell-line); color: var(--on-dark); }
+.ses-mini__skip .i { width: var(--icon-m); height: var(--icon-m); }
+.ses-mini__acts { display: flex; border-radius: var(--r-pill); background: var(--shell-2); }
+.ses-mini__acts .btn--icon { width: var(--tap-min); height: var(--tap-min); background: transparent; }
+.ses-mini__acts .btn--icon:hover { background: var(--shell-line); }
+.ses-mini__acts .btn[disabled] { opacity: var(--opacity-disabled); cursor: not-allowed; }
+/* Части въезжают сдвигом сверху с проявлением и уезжают вверх */
+.ses-mini__acts, .ses-mini__rest { opacity: 0; visibility: hidden; transform: translateY(calc(-1 * var(--s2))); transition: opacity var(--dur-spring) var(--easing-spring), transform var(--dur-spring) var(--easing-spring), visibility 0s linear var(--dur-spring); }
+.ses-mini.is-on.show-acts .ses-mini__acts, .ses-mini.is-on.show-rest .ses-mini__rest { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+@media (prefers-reduced-motion: reduce) { .ses-mini, .ses-mini__acts, .ses-mini__rest { transform: none; } }
+/* Подсказка у кнопки-иконки (DESIGN.md 5.6, «Подсказка»): при наведении и фокусе через 400 мс; на чёрном - светлая */
+@media (hover: hover) {
+  .ses-tip { position: relative; }
+  .ses-tip::after { content: attr(data-tip); position: absolute; top: calc(100% + var(--s2)); left: 50%; z-index: var(--z-pop); padding: var(--s1) var(--s3); border-radius: var(--r-pill); background: var(--bg); color: var(--ink); font: var(--t-small); font-weight: 700; white-space: nowrap; box-shadow: var(--shadow-float); opacity: 0; pointer-events: none; transform: translateX(-50%); transition: opacity var(--dur) var(--easing); }
+  .ses-tip:hover::after, .ses-tip:focus-visible::after { opacity: 1; transition-delay: calc(var(--dur) * 2); }
+}
+.ses-pos { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
+.ses-pos__nav { display: flex; gap: var(--s1); margin-right: calc(-1 * var(--s1)); }
+.ses-pos__nav .btn { width: var(--tap-min); height: var(--tap-min); }
+.ses-name { margin-top: var(--s1); }
+.ses-plan { margin-top: var(--s2); font: var(--t-small); }
+
+/* ---------- Пульт ---------- */
+.pult { display: flex; flex-direction: column; gap: var(--s6); padding: 0 var(--gutter) var(--s10); background: var(--shell); color: var(--on-dark); }
+.pult .banner { background: var(--shell-2); color: var(--on-dark); }
+.pult .banner > .i { color: var(--on-dark); }
+.pult .label { color: var(--on-dark-2); }
+.ses-top { display: flex; flex-direction: column; gap: var(--s3); }
+
+/* Группа: «Суперсет A · круг 2 из 3», очередь A1 → A2, текущая буква - лайм */
+.ses-grp { display: flex; flex-direction: column; gap: var(--s2); padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--shell-2); }
+.ses-grp__h { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); font: var(--t-small); color: var(--on-dark-2); }
+.ses-grp__h .tag--lime { height: var(--sig-h); font: var(--t-label); text-transform: uppercase; letter-spacing: var(--ls-label); }
+.ses-q { display: flex; flex-direction: column; gap: var(--s1); }
+.ses-q li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s2); min-height: 32px; color: var(--on-dark-2); }
+.ses-q .grp { background: var(--shell-line); color: var(--on-dark); }
+.ses-q .is-now { color: var(--on-dark); font-weight: 700; }
+.ses-q .is-now .grp { background: var(--accent); color: var(--on-accent); }
+.ses-q .small { color: var(--on-dark-2); font-weight: 500; }
+
+/* Заметка тренера к упражнению - только «Видит клиент» */
+.ses-note { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: var(--s3); padding: var(--s3) var(--s4) var(--s3) var(--s3); border-radius: var(--r-md); background: var(--shell-2); }
+.ses-note__b p + p { margin-top: var(--s1); }
+
+/* Записи клиента у упражнения: боль, вопрос, «не сделано» */
+.ses-flag { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); min-height: var(--tap-min); padding: var(--s1) var(--s1) var(--s1) var(--s4); border-radius: var(--r-md); background: var(--shell-2); font: var(--t-small); }
+.ses-flag > p, .ses-flag > .pain-mark { min-width: 0; padding: var(--s2) 0; }
+.ses-flag > p { display: flex; align-items: flex-start; gap: var(--s2); }
+.ses-flag > p > .i { width: var(--icon-s); height: var(--icon-s); margin-top: 2px; }
+.ses-flag b { font-weight: 700; }
+.ses-flag .muted { color: var(--on-dark-2); }
+.ses-flag__act { flex: none; height: var(--tap-min); padding: 0 var(--s3); border: 0; border-radius: var(--r-pill); background: transparent; color: var(--on-dark); font: var(--t-small); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.ses-flag__act:hover { background: var(--shell-line); }
+
+/* Действия упражнения: четыре кнопки-пилюли 56, иконка над подписью */
+.ses-acts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s2); }
+.ses-acts--one { grid-template-columns: minmax(0, 1fr); }
+.ses-act { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s1); height: var(--ctl-lg); padding: 0 var(--s1); border: 0; border-radius: var(--r-pill); background: var(--shell-2); color: var(--on-dark); font: var(--t-small); font-weight: 700; text-decoration: none; white-space: nowrap; }
+.ses-acts--one .ses-act { flex-direction: row; gap: var(--s2); }
+.ses-act:hover { background: var(--shell-line); }
+.ses-act .i { width: var(--icon-m); height: var(--icon-m); }
+
+/* ---------- Подходы ---------- */
+.ses-sets { display: flex; flex-direction: column; gap: var(--s3); }
+.ses-sets__h { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3); }
+.ses-sets__h .small { color: var(--on-dark-2); }
+.ses-last { display: flex; align-items: flex-start; gap: var(--s2); font: var(--t-small); color: var(--on-dark-2); }
+.ses-last .i { width: var(--icon-s); height: var(--icon-s); margin-top: 2px; color: var(--on-dark); }
+.ses-last b { color: var(--on-dark); font-weight: 700; }
+
+.psets { display: flex; flex-direction: column; gap: var(--s1); }
+.psets > li { display: flex; flex-direction: column; gap: var(--s1); }
+.pset { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: center; gap: var(--s3); width: 100%; min-height: var(--row); padding: 0 var(--s4) 0 var(--s2); border: 0; border-radius: var(--r-pill); background: transparent; color: var(--on-dark); font: inherit; text-align: left; }
+button.pset:hover { background: var(--shell-2); }
+.pset__n { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--shell-2); font: var(--t-label); letter-spacing: 0; }
+button.pset:hover .pset__n { background: var(--shell-line); }
+.pset__v { min-width: 0; font: var(--t-h3); font-variant-numeric: tabular-nums; }
+.pset__v small { margin-left: var(--s2); font: var(--t-small); color: var(--on-dark-2); }
+.pset__s { display: inline-flex; align-items: center; gap: var(--s1); font: var(--t-small); font-weight: 700; color: var(--on-dark-2); white-space: nowrap; }
+.pset__s .i { width: var(--icon-s); height: var(--icon-s); }
+.pset--done .pset__s { color: var(--on-dark); }
+.pset--plan { color: var(--on-dark-2); }
+.pset--miss .pset__v { color: var(--on-dark-2); }
+/* Свёрнутое усилие под подходом: огонёк и подпись; касание открывает бегунок снова */
+.pset__eff { display: flex; align-items: center; gap: var(--s2); width: 100%; min-height: var(--tap-min); margin-left: 0; padding: 0 var(--s4); border: 0; border-radius: var(--r-pill); background: var(--shell-2); color: var(--on-dark-2); font: var(--t-small); text-align: left; }
+.pset__eff:hover { background: var(--shell-line); color: var(--on-dark); }
+.pset__eff .i { width: var(--icon-s); height: var(--icon-s); flex: none; }
+.pset__effbox { margin-left: 0; }
+
+/* Текущий подход: карточка-пульт со степперами, лаймовый контур */
+.ctl { display: flex; flex-direction: column; gap: var(--s4); padding: var(--s4); border-radius: var(--r-card); background: var(--shell-2); box-shadow: inset 0 0 0 var(--focus-w) var(--accent); scroll-margin: calc(var(--ses-mini-h, 0px) + var(--s4)) 0 calc(var(--ctl-plan) + var(--s10)); }
+.ctl__h { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s2) var(--s3); }
+.ctl__h .label { display: inline-flex; align-items: center; gap: var(--s2); color: var(--on-dark); }
+.ctl__h .pset__n { background: var(--accent); color: var(--on-accent); }
+.ctl__h .small { color: var(--on-dark-2); }
+.ctl__foot { display: flex; justify-content: flex-end; }
+.steppers { display: flex; flex-direction: column; gap: var(--s6); padding-bottom: var(--s4); }
+.stepper { display: grid; grid-template-columns: var(--ctl-lg) minmax(0, 1fr) var(--ctl-lg); align-items: center; gap: var(--s3); }
+.step { position: relative; display: grid; place-items: center; width: var(--ctl-lg); height: var(--ctl-lg); padding: 0; border: 0; border-radius: 50%; background: var(--shell-line); color: var(--on-dark); }
+.step[disabled] { opacity: var(--opacity-disabled); cursor: not-allowed; }
+.step .i { width: var(--icon-l); height: var(--icon-l); }
+.step__d { position: absolute; top: 100%; left: 50%; margin-top: var(--s1); transform: translateX(-50%); font: var(--t-label); letter-spacing: 0; color: var(--on-dark-2); white-space: nowrap; }
+.stepper__v { display: flex; flex-direction: column; align-items: center; min-width: 0; text-align: center; }
+.stepper__v > span { display: flex; align-items: baseline; justify-content: center; gap: var(--s2); }
+.stepper__v b { font: var(--t-num-xl); letter-spacing: var(--ls-h1); font-variant-numeric: tabular-nums; }
+.stepper__v > span > span { color: var(--on-dark-2); font-weight: 700; }
+.stepper__v small { font: var(--t-small); color: var(--on-dark-2); }
+
+/* Таймер отдыха - лаймовое кольцо на графите */
+.rest { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: var(--s3); padding: var(--s3) var(--s3) var(--s3) var(--s4); border-radius: var(--r-card); background: var(--shell-2); }
+.ring { width: 44px; height: 44px; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 5; }
+.rest__t { font: var(--t-h2); letter-spacing: var(--ls-h2); font-variant-numeric: tabular-nums; }
+.rest__l { font: var(--t-small); color: var(--on-dark-2); }
+.rest .btn--shell { background: var(--shell-line); }
+.rest .btn--shell:hover { background: var(--shell); }
+
+.ses-extra { align-self: flex-start; }
+.ses-done { display: flex; align-items: center; gap: var(--s2); font: var(--t-small); font-weight: 700; }
+.ses-done .i { width: var(--icon-m); height: var(--icon-m); }
+
+/* Чужое усилие в группе: A1 отмечен, текущим стал A2 - бегунок A1 над подходами */
+.ses-effx { display: flex; flex-direction: column; gap: var(--s1); padding: var(--s3) var(--s3) var(--s2) var(--s4); border-radius: var(--r-md); background: var(--shell-2); }
+.ses-effx .eff--card { padding: var(--s4) 0 0; background: transparent; box-shadow: none; animation: none; }
+.ses-effx > p { font: var(--t-small); color: var(--on-dark-2); }
+.ses-effx > p b { color: var(--on-dark); font-weight: 700; }
+
+/* ---------- Главная кнопка в панели действий ---------- */
+.btn--plan { flex: 1 1 auto; justify-content: flex-start; height: var(--ctl-plan); padding: 0 var(--s5); gap: var(--s3); font: var(--t-h3); text-align: left; white-space: normal; }
+.btn--plan > span { min-width: 0; }
+.btn--plan small { display: block; overflow: hidden; font: var(--t-small); font-weight: 700; white-space: nowrap; text-overflow: ellipsis; }
+.btn--plan .i { width: var(--icon-l); height: var(--icon-l); }
+.ses-bar__note { display: flex; align-items: center; justify-content: center; gap: var(--s2); }
+
+/* ---------- Вся тренировка: строки-кнопки с переходом к упражнению ---------- */
+.ses-all { display: flex; flex-direction: column; gap: var(--s2); }
+.ses-all__h { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s1); }
+.ses-all__h .small { color: var(--on-dark-2); }
+.ses-all ol { display: flex; flex-direction: column; gap: var(--s2); }
+.qx { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: var(--s3); width: 100%; min-height: 64px; padding: var(--s3) var(--s4) var(--s3) var(--s3); border: 0; border-radius: var(--r-md); background: var(--shell-2); color: var(--on-dark); font: inherit; text-align: left; }
+.qx:hover { background: var(--shell-line); }
+.qx--now { box-shadow: inset 0 0 0 var(--focus-w) var(--accent); }
+.qx__no { display: inline-grid; place-items: center; min-width: 28px; height: 28px; padding: 0 var(--s1); border-radius: var(--r-pill); background: var(--shell-line); font: var(--t-label); letter-spacing: 0; }
+.qx--now .qx__no { background: var(--accent); color: var(--on-accent); }
+.qx__n { display: flex; align-items: center; gap: var(--s2); font-weight: 700; }
+.qx__n .pain-mark { flex: none; }
+.qx__p { margin-top: 2px; font: var(--t-small); color: var(--on-dark-2); }
+.qx__dots { display: flex; gap: var(--s1); }
+.qx__dots span { width: 10px; height: 10px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--on-dark-2); }
+.qx__dots .is-done { background: var(--on-dark); box-shadow: none; }
+.qx__dots .is-now { background: var(--accent); box-shadow: none; }
+.qx .status { color: var(--on-dark); }
+.qx .status--muted { color: var(--on-dark-2); }
+.qgrp { position: relative; display: flex; flex-direction: column; gap: var(--s2); padding-left: var(--s3); }
+.qgrp::before { content: ""; position: absolute; left: 0; top: var(--s1); bottom: var(--s1); width: 3px; border-radius: var(--r-pill); background: var(--accent); }
+.qgrp__h { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); min-height: 32px; font: var(--t-small); color: var(--on-dark-2); }
+.qgrp__h .tag--lime { height: var(--sig-h); font: var(--t-label); text-transform: uppercase; letter-spacing: var(--ls-label); }
+.ses-end { display: flex; flex-direction: column; gap: var(--s3); }
+.ses-end p { font: var(--t-small); color: var(--on-dark-2); }
+/* Большой таймер отдыха при прокрутке к нему - не под шапкой */
+.rest { scroll-margin-top: calc(var(--ses-mini-h, 0px) + var(--s4)); }

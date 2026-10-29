@@ -1,0 +1,153 @@
+/* Блок продукта лендинга, вариант «Единый вид»: одна подача для всех зрителей.
+   Экраны компьютера C 2.0 в кадре, камера приближает блок функции, курсор делает действие; в превью «Неделя за пару кликов»
+   та же тренировка выезжает в рамке телефона. Значения - токены C 2.0 (Лендинг/Вёрстка/tokens.css собран из DESIGN.md).
+   Параметры сцены, которых нет в токенах (пропорции кадра, ширина подписи, длительности камеры), - здесь и в ev-scenes.js,
+   с обоснованием в README. */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: var(--t-body); -webkit-font-smoothing: antialiased; }
+.ev-wrap { max-width: calc(var(--wrap-max) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
+.ev-sec { padding-block: var(--s16); }
+@media (max-width: 1023px) { .ev-wrap { padding-inline: var(--gutter-tab); } }
+@media (max-width: 599px) { .ev-wrap { padding-inline: var(--gutter-phone); } .ev-sec { padding-block: var(--s12); } }
+
+/* Заголовок блока - как .lp-h и .lp-sub лендинга (DESIGN.md 5.9) */
+.ev-h { margin: 0; max-width: 22em; font: var(--t-h1); letter-spacing: var(--ls-h1); text-wrap: balance; }
+.ev-sub { margin: var(--s4) 0 0; font: var(--t-text-lg); color: var(--text-2); }
+@media (max-width: 599px) { .ev-h { font: var(--t-h2); letter-spacing: var(--ls-h2); } }
+
+/* Сцена: подпись рядом с превью, одно превью в ряду. От 1280 - две колонки, ниже - подпись над кадром.
+   Колонка подписи 360 (ревью подписей 2026-10-28): в 280 текст 17 шёл по 23-28 знаков и терялся рядом с кадром; в 360 текст
+   лендинга 20 идёт по 26-31 знаку. Цена - кадр 880 → 800 на 1440, крупные планы на 9 % мельче (замер: A до 0,80 вместо 0,88,
+   B и C до 1,01 вместо 1,11). Кегли от 1280 - шкала лендинга (DESIGN.md 5.9):
+   заголовок --t-h1-m 28, текст --t-text-xl 20, заголовок → текст --s5. На 1024-1279 кегли прежние: на 1024 × 768 подпись,
+   кадр и шаги занимают всю высоту окна, крупнее - и подпись уезжает из закрепления. */
+.ev-scenes { display: grid; gap: var(--s16); margin-top: var(--s12); }
+.ev-scene { --ev-cap-w: 360px; display: grid; gap: var(--s6); }
+.ev-cap { display: grid; gap: var(--s3); align-content: center; max-width: 40em; }
+.ev-cap__t { margin: 0; font: var(--t-h2); letter-spacing: var(--ls-h2); text-wrap: balance; }
+.ev-cap__d { margin: 0; font: var(--t-text-lg); color: var(--text-2); text-wrap: pretty; }
+.ev-cap__t + .ev-cap__d + .ev-cap__t { margin-top: var(--s3); }
+.ev-cap__need { justify-self: start; display: inline-flex; align-items: center; gap: var(--s2); min-height: var(--sig-h); padding: 0 var(--s3);
+  border-radius: var(--r-pill); background: var(--surface); color: var(--text-2); font: var(--t-small); font-weight: 700; }
+.ev-cap__need svg { width: var(--icon-s); height: var(--icon-s); }
+@media (min-width: 1280px) {
+  .ev-scene { grid-template-columns: var(--ev-cap-w) minmax(0, 1fr); gap: var(--s10); align-items: center; }
+  .ev-scene:nth-child(even) { grid-template-columns: minmax(0, 1fr) var(--ev-cap-w); }
+  .ev-scene:nth-child(even) .ev-cap { order: 2; }
+  .ev-cap { gap: var(--s5); }
+  .ev-cap__t { font: var(--t-h1-m); letter-spacing: var(--ls-h1); }
+  .ev-cap__d { font: var(--t-text-xl); }
+}
+@media (max-width: 599px) {
+  .ev-scenes { gap: var(--s12); margin-top: var(--s8); }
+  .ev-scene { gap: var(--s5); }
+  .ev-cap__t { font: var(--t-h3); letter-spacing: var(--ls-h3); }
+}
+
+/* Подписи шагов: ev-host.js кладёт пары «заголовок + текст» в .ev-cap__step (для точек шагов); на компьютере обе подписи
+   видны целиком и не меняются (пользователь 2026-10-28: «не надо приглушать на компе»). */
+.ev-cap__step { display: grid; gap: inherit; align-content: start; }
+.ev-cap__step + .ev-cap__step { margin-top: var(--s3); }
+
+/* Закрепление на скролле (BEHAVIOR.md 5.3, решение пользователя 2026-10-28). ev-host.js оборачивает подпись и превью в .ev-pin
+   и ставит --ev-pin-h (высота без запаса) и --ev-pin-top (кадр по центру видимой высоты, не выше --s4). Запас скролла - параметр
+   сцены: 45svh на компьютере, 70svh на телефоне (решение: 40-50 % и 60-80 % видимой высоты), не больше экрана; svh - чтобы
+   на iPhone блок не прыгал, когда прячется адресная строка. Подпись не помещается вместе с кадром - уезжает (--capout);
+   кадр сам выше окна - без закрепления (--nopin). */
+.ev-scene--pin { --ev-run: 45svh; display: block; height: calc(var(--ev-pin-h, 0px) + var(--ev-run)); }
+.ev-scene--nopin { --ev-run: 0px; }
+.ev-pin { position: sticky; top: var(--ev-pin-top, var(--s4)); display: grid; gap: var(--s6); }
+.ev-scene--nopin .ev-pin { position: static; }
+.ev-scene--capout .ev-cap { margin-bottom: var(--s6); }
+.ev-pin, .ev__frame { transform-origin: 50% 50%; }
+@media (min-width: 1280px) {
+  .ev-pin { grid-template-columns: var(--ev-cap-w) minmax(0, 1fr); gap: var(--s10); align-items: center; }
+  .ev-scene:nth-child(even) .ev-pin { grid-template-columns: minmax(0, 1fr) var(--ev-cap-w); }
+}
+@media (max-width: 599px) {
+  .ev-scene--pin { --ev-run: 70svh; }
+  .ev-pin { gap: var(--s5); }
+  .ev-scene--capout .ev-cap { margin-bottom: var(--s5); }
+}
+
+/* Превью. Кадр - экран компьютера: рамка --shell, как у кадра телефона в первой сборке (вложенный радиус = внешний - отступ).
+   Пропорции кадра - параметр сцены: 16:10 как у окна ноутбука; на телефоне 3:4 во всю ширину, без рамки. */
+.ev { margin: 0; display: grid; gap: var(--s4); justify-items: stretch; min-width: 0; }
+.ev__ctl { justify-self: center; }
+.ev__frame { width: 100%; box-sizing: border-box; padding: var(--s3); border-radius: var(--r-card); background: var(--shell); }
+.ev__stage { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border-radius: var(--r-sm); background: var(--shell); isolation: isolate; }
+@media (max-width: 599px) {
+  .ev { margin-inline: calc(50% - 50vw); }
+  .ev__frame { padding: 0; border-radius: 0; }
+  .ev__stage { aspect-ratio: 3 / 4; border-radius: 0; }
+}
+
+/* Скелетон до готовности кадра (DESIGN.md 5.7): --surface-2, пульсация прозрачностью 1 → .55 за 1,2 с, если загрузка дольше 300 мс */
+.ev__skel { position: absolute; inset: 0; z-index: 3; background: var(--surface-2); opacity: 1; transition: opacity var(--dur-slow) var(--easing-out); }
+.ev.is-loading .ev__skel { animation: ev-pulse 1.2s ease-in-out infinite alternate; }
+.ev.is-ready .ev__skel { opacity: 0; pointer-events: none; animation: none; }
+@keyframes ev-pulse { to { opacity: .55; } }
+
+/* Мир камеры: экраны 1280 × N в натуральную величину, камера двигает и масштабирует весь слой */
+.ev__world { position: absolute; left: 0; top: 0; width: 1280px; transform-origin: 0 0; }
+.ev__world iframe { position: absolute; left: 0; top: 0; width: 1280px; height: 800px; border: 0; background: var(--bg); }
+.ev__world iframe.is-off { visibility: hidden; }
+
+/* Курсор - Lucide mouse-pointer-2. Вне темы, как оболочка: заливка --shell, контур --on-dark, виден на белом и на чёрном.
+   Живёт в мире камеры: при приближении растёт вместе с экраном. Остриё - в точке (4, 4) из 24. */
+.ev__cursor { position: absolute; left: 0; top: 0; z-index: 2; width: var(--icon-l); height: var(--icon-l); opacity: 0; pointer-events: none;
+  filter: drop-shadow(var(--shadow-float));   /* --shadow-float без растяжения - тот же синтаксис */ }
+.ev__cursor svg { display: block; width: 100%; height: 100%; fill: var(--shell); stroke: var(--on-dark); stroke-width: 1.5; stroke-linejoin: round;
+  transform-origin: 16.6% 16.6%; }
+
+/* Телефон: та же тренировка на экране 390, рамка --shell. Выезжает снизу и обрезан нижним краем кадра. */
+.ev__phone { position: absolute; z-index: 2; top: var(--s6); right: var(--s8); padding: var(--s3) var(--s3) 0; box-sizing: content-box;
+  width: 390px; border-radius: calc(var(--r-card) + var(--s3)) calc(var(--r-card) + var(--s3)) 0 0; background: var(--shell);
+  box-shadow: var(--shadow-float); transform-origin: 50% 0; visibility: hidden; }
+.ev__phone iframe { display: block; width: 390px; height: 844px; border: 0; border-radius: var(--r-card) var(--r-card) 0 0; background: var(--bg); }
+.ev__phone.is-on { visibility: visible; }
+@media (max-width: 599px) { .ev__phone { top: var(--s4); right: auto; left: 50%; } }
+
+/* Кнопка управления: одна, имя уникальное («Пауза: Неделя за пару кликов»), фокус остаётся на ней.
+   Вид - как .pv__replay первой сборки: --surface, пилюля. */
+.ev__ctl {
+  display: inline-flex; align-items: center; gap: var(--s2);
+  height: var(--row-desk); padding: 0 var(--s4); border: 0; border-radius: var(--r-pill);
+  background: var(--surface); color: var(--ink); font: var(--t-small-desk); font-weight: 700; cursor: pointer;
+  transition: background-color var(--dur) var(--easing);
+}
+.ev__ctl:hover { background: var(--surface-2); }
+.ev__ctl:focus-visible { outline: var(--focus-w) solid var(--focus); outline-offset: var(--focus-offset); }
+.ev__ctl svg { width: var(--icon-m); height: var(--icon-m); }
+.ev__ctl [data-ico] { display: none; }
+.ev[data-state="idle"] .ev__ctl [data-ico="play"], .ev[data-state="still"] .ev__ctl [data-ico="play"], .ev[data-state="paused"] .ev__ctl [data-ico="play"],
+.ev[data-state="playing"] .ev__ctl [data-ico="pause"], .ev[data-state="done"] .ev__ctl [data-ico="replay"] { display: block; }
+@media (max-width: 599px) { .ev__ctl { justify-self: center; height: var(--row); font: var(--t-small); font-weight: 700; } }
+/* Шаги под кадром .pv-steps (DESIGN.md 5.9): кнопка и точки шагов сцены, как в галереях Apple. Точка - кнопка 24 × строка,
+   внутри точка --s2 цвета --text-3; текущая - пилюля --s6, заполнение --ink по доле пройденного шага (--p ставит ev-host.js). */
+.pv-steps { justify-self: center; display: flex; align-items: center; gap: var(--s3); }
+.pv-steps__dots { display: flex; align-items: center; }
+.pv-steps__dot { display: grid; place-items: center; width: var(--s6); height: var(--row-desk); padding: 0; border: 0; border-radius: var(--r-pill);
+  background: none; cursor: pointer; transition: width var(--dur-slow) var(--easing-out); }
+.pv-steps__dot > span { display: block; width: var(--s2); height: var(--s2); border-radius: var(--r-pill); background: var(--text-3);
+  transition: width var(--dur-slow) var(--easing-out), background-color var(--dur) var(--easing); }
+.pv-steps__dot:hover > span { background: var(--text-2); }
+.pv-steps__dot.is-on { width: calc(var(--s6) + var(--s4)); }
+.pv-steps__dot.is-on > span { width: var(--s6); background: linear-gradient(to right, var(--ink) calc(var(--p, 0) * 100%), var(--text-3) 0); }
+.pv-steps__dot:focus-visible { outline: var(--focus-w) solid var(--focus); outline-offset: calc(-1 * var(--focus-w)); }
+@media (max-width: 599px) { .pv-steps__dot { height: var(--row); } }
+/* «Уменьшение движения»: статичный кадр hero, движения нет - ни кнопки, ни шагов */
+.ev[data-state="still"] .ev__ctl, .ev[data-state="still"] .pv-steps { display: none; }
+
+/* ?scene=… - одно превью без подписи и заголовка, для теста */
+.ev-solo .ev-head, .ev-solo .ev-cap, .ev-solo .ev-scene:not(.is-solo) { display: none; }
+.ev-solo .ev-scene { grid-template-columns: minmax(0, 1fr); width: 100%; max-width: 980px; margin-inline: auto; }
+.ev-solo .ev-scenes { margin-top: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ev__skel, .ev.is-loading .ev__skel { animation: none; transition: none; }
+  .pv-steps__dot, .pv-steps__dot > span { transition: none; }
+}
+
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Блок продукта: единый вид · Апс!</title>
+<meta name="description" content="Вариант блока продукта лендинга «Единый вид»: три превью-функции на экранах C 2.0 с приближением камеры, одна подача для телефона и компьютера">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<script>(t => { if (t === 'dark') document.documentElement.dataset.theme = 'dark'; else if (t === 'system') document.documentElement.removeAttribute('data-theme'); })(new URLSearchParams(location.search).get('theme'));</script>
+<link rel="stylesheet" href="../Вёрстка/tokens.css">
+<link rel="stylesheet" href="ev.css?v=20261028g">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <!-- иконки прототипа C 2.0 (design/directions/c2) и Lucide: rotate-ccw, mouse-pointer-2 -->
+  <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5.5v13l10-6.5z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 5.5v13M15.5 5.5v13"/></symbol>
+  <symbol id="i-replay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="i-pointer" viewBox="0 0 24 24"><path d="M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z"/></symbol>
+</defs></svg>
+
+<main class="ev-wrap">
+<section class="ev-sec" aria-labelledby="ev-h">
+  <header class="ev-head">
+    <h2 class="ev-h" id="ev-h">Всё, что вы держали в голове, теперь в приложении</h2>
+  </header>
+
+  <div class="ev-scenes">
+
+    <!-- Превью A «Клиент под рукой»: «Клиенты» -> «Клиент: результат и прогресс». Боли 1 и 3, аналитика. -->
+    <article class="ev-scene" data-scene="a">
+      <div class="ev-cap">
+        <h3 class="ev-cap__t">Клиенты</h3>
+        <p class="ev-cap__d">Все клиенты одним списком: у кого есть план, когда была последняя тренировка, сколько выполнено из плана.</p>
+        <span class="ev-cap__need">нужна подпись: карточка клиента, рост и прошлый раз</span>
+      </div>
+      <figure class="ev" data-scene="a">
+        <div class="ev__frame">
+          <div class="ev__stage">
+            <div class="ev__world" aria-hidden="true">
+              <iframe data-frame="clients" data-src="screens/clients.html?v=20261028g" title="Экран «Клиенты»" tabindex="-1"></iframe>
+              <iframe data-frame="client" data-src="screens/client.html?v=20261028g" title="Экран «Клиент: результат и прогресс»" tabindex="-1"></iframe>
+              <div class="ev__cursor"><svg aria-hidden="true"><use href="#i-pointer"/></svg></div>
+            </div>
+            <div class="ev__skel" aria-hidden="true"></div>
+          </div>
+        </div>
+        <figcaption class="sr-only">Тренер открывает список клиентов, нажимает на клиентку и видит её последнюю тренировку и рост рабочего веса на 15 кг за 8 недель.</figcaption>
+        <button class="ev__ctl" type="button"><svg data-ico="play" aria-hidden="true"><use href="#i-play"/></svg><svg data-ico="pause" aria-hidden="true"><use href="#i-pause"/></svg><svg data-ico="replay" aria-hidden="true"><use href="#i-replay"/></svg><span class="ev__ctl-l">Смотреть</span></button>
+      </figure>
+    </article>
+
+    <!-- Превью B «Неделя за пару кликов»: «План клиента» -> «Конструктор тренировки» -> телефон. Боли 2, 3 и 5. -->
+    <article class="ev-scene" data-scene="b">
+      <div class="ev-cap">
+        <h3 class="ev-cap__t">Следующая неделя - одним нажатием</h3>
+        <p class="ev-cap__d">Скопируйте прошлую неделю клиента и поправьте под него то, что нужно.</p>
+        <h3 class="ev-cap__t">Результаты клиента под рукой - даже с телефона</h3>
+        <p class="ev-cap__d">Под каждым упражнением видно, что клиент сделал в прошлый раз. Следующую тренировку собираете от его реального результата.</p>
+      </div>
+      <figure class="ev" data-scene="b">
+        <div class="ev__frame">
+          <div class="ev__stage">
+            <div class="ev__world" aria-hidden="true">
+              <iframe data-frame="plan" data-src="screens/plan.html?v=20261028g" title="Экран «План клиента»" tabindex="-1"></iframe>
+              <iframe data-frame="builder" data-src="screens/builder.html?v=20261028g" title="Экран «Конструктор тренировки»" tabindex="-1"></iframe>
+              <div class="ev__cursor"><svg aria-hidden="true"><use href="#i-pointer"/></svg></div>
+            </div>
+            <div class="ev__phone" aria-hidden="true">
+              <iframe data-src="screens/builder.html?v=20261028g&step=1#phone" title="Экран «Конструктор тренировки» на телефоне" tabindex="-1"></iframe>
+            </div>
+            <div class="ev__skel" aria-hidden="true"></div>
+          </div>
+        </div>
+        <figcaption class="sr-only">Тренер копирует прошлую неделю клиентки - три тренировки становятся черновиками, открывает одну, видит историю упражнения и прибавляет 2,5 кг; та же тренировка открыта на телефоне.</figcaption>
+        <button class="ev__ctl" type="button"><svg data-ico="play" aria-hidden="true"><use href="#i-play"/></svg><svg data-ico="pause" aria-hidden="true"><use href="#i-pause"/></svg><svg data-ico="replay" aria-hidden="true"><use href="#i-replay"/></svg><span class="ev__ctl-l">Смотреть</span></button>
+      </figure>
+    </article>
+
+    <!-- Превью C «Кто требует действия»: «Сегодня». Боли 4 и 1. -->
+    <article class="ev-scene" data-scene="c">
+      <div class="ev-cap">
+        <h3 class="ev-cap__t">Сегодня</h3>
+        <p class="ev-cap__d">Открываете «Сегодня» и сразу видите, кто требует действия: кто перестал присылать отчёты, отстаёт от плана или остался без плана.</p>
+        <span class="ev-cap__need">подпись дополнена «отстаёт от плана» под кадр, не утверждена</span>
+      </div>
+      <figure class="ev" data-scene="c">
+        <div class="ev__frame">
+          <div class="ev__stage">
+            <div class="ev__world" aria-hidden="true">
+              <iframe data-frame="today" data-src="screens/today.html?v=20261028g" title="Экран «Сегодня»" tabindex="-1"></iframe>
+              <div class="ev__cursor"><svg aria-hidden="true"><use href="#i-pointer"/></svg></div>
+            </div>
+            <div class="ev__skel" aria-hidden="true"></div>
+          </div>
+        </div>
+        <figcaption class="sr-only">Тренер открывает «Сегодня»: трое требуют действия; наведение на сигнал клиентки показывает две самостоятельные тренировки без отчёта, на сигнал второй клиентки - что она отстаёт от плана: перенесены 2 тренировки.</figcaption>
+        <button class="ev__ctl" type="button"><svg data-ico="play" aria-hidden="true"><use href="#i-play"/></svg><svg data-ico="pause" aria-hidden="true"><use href="#i-pause"/></svg><svg data-ico="replay" aria-hidden="true"><use href="#i-replay"/></svg><span class="ev__ctl-l">Смотреть</span></button>
+      </figure>
+    </article>
+
+  </div>
+</section>
+</main>
+
+<script src="ev-scenes.js?v=20261028g"></script>
+<script src="ev-host.js?v=20261029b"></script>
+</body>
+</html>

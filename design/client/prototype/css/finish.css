@@ -1,0 +1,71 @@
+/* «Завершение и итог» (BEHAVIOR.md 5.7). Праздник - .fin «Итога проведения» тренера (design/directions/c2/app.css, «.fin»):
+   плитки .fin__stat, лаймовая карточка рекорда .fin__pr, кот cat-wave-dark и лучики - кандидаты в app.css. Бегунок, чипы, поле,
+   степпер настроек и чекбокс - css/session-kit.css. Классы экрана - end-. Значения - токены C 2.0. */
+
+/* ---------- Вопросы ---------- */
+.end-meta { margin-top: var(--s3); }
+.end-meta b { color: var(--on-dark); font-weight: 700; }
+.end-acts { display: flex; flex-direction: column; gap: var(--s2); margin-top: var(--s4); }
+.end-acts .btn { width: 100%; }
+.end-q .sec-h__title .i { color: var(--ink); }
+.end-seg { align-self: flex-start; }
+.end-pain { display: flex; flex-direction: column; gap: var(--s4); margin-top: var(--s4); }
+
+/* ---------- Итог: праздник на полосе ---------- */
+.fin { position: relative; }
+.fin__cat { position: relative; width: 120px; height: 120px; margin: calc(-1 * var(--s3)) 0 var(--s2) calc(-1 * var(--s3)); }
+.fin__cat img { width: 100%; height: 100%; object-fit: contain; }
+.fin .rays { position: absolute; top: 0; left: 104px; width: 40px; height: 40px; color: var(--accent); transform: scaleX(-1) rotate(10deg); animation: end-rays var(--dur-spring) var(--easing-spring) both; }
+@keyframes end-rays { from { opacity: 0; transform: scaleX(-1) rotate(10deg) scale(.4); } to { opacity: 1; transform: scaleX(-1) rotate(10deg); } }
+.fin__stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2); margin-top: var(--s5); }
+.fin__stat { min-width: 0; padding: var(--s4); border-radius: var(--r-card); background: var(--shell-2); }
+.fin__stat b { display: block; font: var(--t-h2); letter-spacing: var(--ls-h2); white-space: normal; }
+.fin__stat span { font: var(--t-small); color: var(--on-dark-2); }
+.end-week { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: var(--s3); }
+.end-week > .i { color: var(--accent); }
+.fin__pr { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: var(--s4); padding: var(--s5) var(--s4); border-radius: var(--r-card); background: var(--accent); color: var(--on-accent); }
+.fin__pr > .i { width: 40px; height: 40px; }
+.fin__pr b { display: block; font: var(--t-h1-m); letter-spacing: var(--ls-h1); }
+.fin__pr span { display: block; font: var(--t-small); font-weight: 700; }
+
+/* ---------- Итог: лист ---------- */
+.end-insight { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: var(--s3); }
+.end-insight > .i { color: var(--accent); }
+.end-insight p { font: var(--t-h3); letter-spacing: var(--ls-h3); }
+.end-cmps li + li { border-top: 1px solid var(--line); }
+.end-cmp { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--s1) var(--s3); padding: var(--s3) 0; }
+.end-cmp__n { display: flex; align-items: center; gap: var(--s2); min-width: 0; font-weight: 700; }
+.end-cmp__v { grid-column: 1; font: var(--t-small); color: var(--text-2); white-space: normal; }
+.end-cmp > :last-child { grid-column: 2; grid-row: 1 / span 2; justify-self: end; }
+.end-painb { align-items: center; }
+.end-coach { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: var(--s3); padding: var(--s4); border-radius: var(--r-md); background: var(--surface); }
+.end-coach b { font-weight: 700; }
+.end-next { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: var(--s3); min-height: 72px; padding: var(--s3) var(--s4) var(--s3) var(--s3); border-radius: var(--r-md); background: var(--surface); color: inherit; text-decoration: none; }
+.end-next:hover { background: var(--surface-2); }
+.end-next > span:nth-child(2) { display: flex; flex-direction: column; min-width: 0; }
+.end-next > span:nth-child(2) b { font-weight: 700; }
+.end-next__d { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: var(--r-md); background: var(--bg); }
+.end-next__d b { font: var(--t-label); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--text-2); }
+.end-next__d span { font: var(--t-h3); }
+.end-next__go { color: var(--text-2); }
+
+/* ---------- «Отметить, что сделал»: упражнения строками с отметкой и правкой подходов ---------- */
+.end-list { display: flex; flex-direction: column; gap: var(--s2); }
+.end-ex { border-radius: var(--r-md); background: var(--surface); }
+.end-ex__row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s1); min-height: 64px; padding: var(--s2) var(--s2) var(--s2) var(--s1); }
+.end-ex__chk { display: grid; place-items: center; width: var(--tap); height: var(--tap); padding: 0; border: 0; border-radius: var(--r-pill); background: transparent; }
+.end-ex__chk:hover { background: var(--surface-2); }
+.end-ex__b { display: flex; flex-direction: column; min-width: 0; }
+.end-ex__b .num { white-space: normal; }
+.end-ex__n { display: flex; align-items: center; gap: var(--s2); font-weight: 700; }
+/* Название рядом с меткой группы: длинное слово переносится, а не вылезает за строку (360 px) */
+.end-name { min-width: 0; hyphens: auto; overflow-wrap: anywhere; }
+.end-ex.is-off .end-ex__n { color: var(--text-2); }
+.end-ex__fix { height: var(--tap-min); }
+.end-edit { display: flex; flex-direction: column; gap: var(--s3); padding: 0 var(--s4) var(--s4); }
+.end-set { display: flex; flex-direction: column; gap: var(--s2); padding-top: var(--s3); border-top: 1px solid var(--line); }
+.end-set .label { color: var(--text-2); }
+.end-step { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+.end-more > summary { list-style: none; cursor: pointer; justify-content: flex-start; height: auto; min-height: var(--tap); padding: var(--s3) var(--s5); white-space: normal; text-align: left; }
+.end-more > summary::-webkit-details-marker { display: none; }
+.end-more[open] > summary { margin-bottom: var(--s6); }

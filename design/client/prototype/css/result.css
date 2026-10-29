@@ -1,0 +1,61 @@
+/* «Результат тренировки» клиента. Общие компоненты - app.css и css/s3-kit.css; здесь только раскладка экрана.
+   Значения - токены C 2.0. План/факт - телефонный вид .pf c2: упражнения блоками, подписи «План», «Прошлый раз». */
+
+/* Полоса: статус и «внёс тренер», три числа - плитки на чёрном, как «Тренировка: обзор» */
+.res-st { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); margin-top: var(--s4); }
+.res-st .status { color: var(--on-dark); }
+.res-st__why { color: var(--on-dark-2); }
+.res-facts { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--s2); margin-top: var(--s5); }
+.res-facts li { display: flex; flex-direction: column; gap: 2px; padding: var(--s3); border-radius: var(--r-md); background: var(--shell-2); }
+.res-facts b { display: flex; align-items: center; gap: var(--s1); font: var(--t-h2); letter-spacing: var(--ls-h2); color: var(--on-dark); }
+.res-facts span { font: var(--t-small); color: var(--on-dark-2); }
+.res-facts .res-facts__crown { width: var(--icon-m); height: var(--icon-m); color: var(--accent); }
+
+/* Рекорд: «Хорошие новости» */
+.res-good__d { color: var(--accent); font-weight: 800; }
+
+/* План и факт: упражнение - блок с номером, планом, пилюлями подходов, «прошлым разом», усилием и болью */
+.res-list { display: flex; flex-direction: column; }
+.res-ex { display: flex; flex-direction: column; gap: var(--s2); padding: var(--s4) 0; border-top: 1px solid var(--line); }
+.res-list > .res-ex:first-child { border-top: 0; padding-top: 0; }
+.res-ex__h { display: flex; align-items: center; gap: var(--s2); }
+.res-ex__h b { font-weight: 700; min-width: 0; }
+.res-ex__n { min-width: var(--s4); font: var(--t-small); font-weight: 700; color: var(--text-2); }
+.res-ex__plan, .res-ex__last { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s2); }
+.res-ex__eff, .res-ex__pain { display: flex; align-items: flex-start; gap: var(--s2); }
+.res-ex__eff .i, .res-ex__pain .i { margin-top: 2px; }
+.res-ex__eff .i { color: var(--text-2); }
+.res-ex__pain .i { color: var(--attn); }
+.res-ex__pain b { font-weight: 700; }
+.res-set--skip { color: var(--text-2); }
+.set .res-fix { width: var(--icon-xs); height: var(--icon-xs); color: var(--ink); }
+.set--pr .res-fix { color: var(--on-accent); }
+.res-role { margin: var(--s5) 0 var(--s3); color: var(--text-2); }
+.res-role:first-child { margin-top: 0; }
+.res-legend { margin-top: var(--s4); }
+.res-legend .grp { margin-right: 2px; }
+.res-lg-low { display: inline-flex; color: var(--attn); }
+.res-hint { display: flex; flex-direction: column; align-items: flex-start; margin-top: var(--s3); }
+
+/* Правка своих записей до конца дня: вход под легендой, сетка полей вместо пилюль */
+.res-edit { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--s2); margin-top: var(--s3); }
+.res-edit__go { margin-left: calc(-1 * var(--s3)); }
+.res-edit__lead { margin-bottom: var(--s4); }
+.res-grid { overflow-x: auto; padding: var(--focus-room); margin: calc(-1 * var(--focus-room)); }
+.res-ex__err { margin-top: var(--s1); }
+.res-saved { margin-bottom: var(--s4); }
+.assign-bar[hidden] { display: none; }
+
+/* Мои ответы: боль - оранжевый маркер у значения */
+.res-pain > .i { color: var(--attn); }
+
+/* Ветка комментариев и ответ */
+.res-thread__list { display: flex; flex-direction: column; gap: var(--s3); }
+.res-thread .comment__b { max-width: 85%; background: var(--surface); }
+.res-thread .comment--me .comment__b { background: var(--surface-2); }
+.res-thread .comment__m .i { margin: -2px 2px 0 0; }
+.res-new { color: var(--ink); font-weight: 800; }
+.res-reply { display: flex; flex-direction: column; gap: var(--s2); margin-top: var(--s5); }
+.res-reply .area { min-height: 112px; }
+.res-reply .btn { width: 100%; }
+.res-thread > .small { margin-top: var(--s4); }

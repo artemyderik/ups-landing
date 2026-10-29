@@ -1,0 +1,149 @@
+/* Блок продукта лендинга, сборка «Телефон»: те же три превью, что в «Едином виде», на телефонных экранах C 2.0.
+   Кадр - стекло телефона: на компьютере телефон в рамке --shell, на телефоне - экран во всю ширину. Экран прокручивается внутри,
+   камера даёт крупные планы, касание - точка 44 px. Значения - токены C 2.0 (Лендинг/Вёрстка/tokens.css собран из DESIGN.md).
+   Параметры сцены, которых нет в токенах (пропорции кадра, ширина стекла), - здесь и в ep-scenes.js, с обоснованием в README. */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: var(--t-body); -webkit-font-smoothing: antialiased; }
+.ep-wrap { max-width: calc(var(--wrap-max) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
+.ep-sec { padding-block: var(--s16); }
+@media (max-width: 1023px) { .ep-wrap { padding-inline: var(--gutter-tab); } }
+@media (max-width: 599px) { .ep-wrap { padding-inline: var(--gutter-phone); } .ep-sec { padding-block: var(--s12); } }
+
+/* Заголовок блока - как .lp-h и .lp-sub лендинга (DESIGN.md 5.9) */
+.ep-h { margin: 0; max-width: 22em; font: var(--t-h1); letter-spacing: var(--ls-h1); text-wrap: balance; }
+@media (max-width: 599px) { .ep-h { font: var(--t-h2); letter-spacing: var(--ls-h2); } }
+
+/* Сцена: подпись рядом с телефоном. Телефон узкий, поэтому две колонки - уже от 900: подпись тянется, телефон своей ширины.
+   Ниже 900 подпись над телефоном. */
+.ep-scenes { display: grid; gap: var(--s16); margin-top: var(--s12); }
+.ep-scene { display: grid; gap: var(--s6); }
+.ep-cap { display: grid; gap: var(--s3); align-content: center; max-width: 32em; }
+.ep-cap__t { margin: 0; font: var(--t-h2); letter-spacing: var(--ls-h2); text-wrap: balance; }
+.ep-cap__d { margin: 0; font: var(--t-text-lg); color: var(--text-2); text-wrap: pretty; }
+/* вторая пара подписи - отдельная мысль: от прошлого текста 32 (--s3 + --s5), от своего заголовка 12 (ревью подписей 2026-10-28) */
+.ep-cap__t + .ep-cap__d + .ep-cap__t { margin-top: var(--s5); }
+.ep-cap__need { justify-self: start; display: inline-flex; align-items: center; gap: var(--s2); min-height: var(--sig-h); padding: 0 var(--s3);
+  border-radius: var(--r-pill); background: var(--surface); color: var(--text-2); font: var(--t-small); font-weight: 700; }
+@media (min-width: 900px) {
+  .ep-scene, .ep-pin { grid-template-columns: minmax(0, 1fr) auto; gap: var(--s16); align-items: center; }
+  .ep-scene .ep-cap { justify-self: end; }
+  .ep-scene:nth-child(even), .ep-scene:nth-child(even) .ep-pin { grid-template-columns: auto minmax(0, 1fr); }
+  .ep-scene:nth-child(even) .ep-cap { order: 2; justify-self: start; }
+}
+@media (max-width: 599px) {
+  .ep-scenes { gap: var(--s12); margin-top: var(--s8); }
+  .ep-scene { gap: var(--s5); }
+  /* заголовок подписи ниже 600 - --t-h2 22, как --lp-scene-t (DESIGN.md 5.9): при --t-h3 17 он был одного кегля с текстом,
+     лестница 28 → 17 → 17 не читалась (ревью подписей 2026-10-28); теперь 28 → 22 → 17 */
+}
+
+/* Подписи шагов (BEHAVIOR.md 5.3, решения пользователя 2026-10-28). ep-host.js кладёт пары «заголовок + текст» в .ep-cap__step
+   внутри ленты .ep-cap__in. Подписи с кадром не помещаются - окно .ep-cap--win: высота окна и --ep-ck (1 - поток, 0 - закрепление)
+   идут за скроллом, лента сдвигается на активную подпись за --dur-slow (следующая выталкивает прежнюю вверх).
+   --title - окно на заголовок: тексты подписей уходят за скроллом (высота --ep-dh, отступ и непрозрачность). */
+.ep-cap__in { position: relative; display: grid; gap: inherit; transition: transform var(--dur-slow) var(--easing-out); }
+.ep-cap__step { display: grid; align-content: start; }
+.ep-cap__step > * + * { margin-top: var(--s3); }
+.ep-cap__step + .ep-cap__step { margin-top: var(--s5); }
+.ep-cap--win { overflow: hidden; align-content: start; }
+.ep-cap--title .ep-cap__d { overflow: hidden; max-height: calc(var(--ep-dh, 100vh) * var(--ep-ck, 1)); margin-top: calc(var(--s3) * var(--ep-ck, 1));
+  opacity: calc(var(--ep-ck, 1) * 2 - 1); }
+@media (prefers-reduced-motion: reduce) { .ep-cap__in { transition: none; } }
+
+/* Закрепление на скролле (BEHAVIOR.md 5.3, решение пользователя 2026-10-28; механика - как в «Едином виде»). ep-host.js оборачивает
+   подпись и превью в .ep-pin и ставит --ep-pin-h (высота без запаса) и --ep-pin-top (кадр по центру видимой высоты, не выше --s4).
+   Запас скролла - параметр сцены: 45svh на компьютере, 70svh на телефоне (решение: 40-50 % и 60-80 % видимой высоты), не больше экрана;
+   svh - чтобы на iPhone блок не прыгал, когда прячется адресная строка. Подпись не помещается вместе с кадром - уезжает (--capout);
+   кадр сам выше окна - без закрепления (--nopin). */
+.ep-scene--pin { --ep-run: 45svh; display: block; height: calc(var(--ep-pin-h, 0px) + var(--ep-run)); }
+.ep-scene--nopin { --ep-run: 0px; }
+.ep-pin { position: sticky; top: var(--ep-pin-top, var(--s4)); display: grid; gap: var(--s6); }
+.ep-scene--nopin .ep-pin { position: static; }
+.ep-scene--capout .ep-cap { margin-bottom: var(--s6); }
+.ep-pin, .ep__view { transform-origin: 50% 50%; }
+@media (max-width: 599px) {
+  .ep-scene--pin { --ep-run: 70svh; }
+  .ep-pin { gap: var(--s5); }
+  .ep-scene--capout .ep-cap { margin-bottom: var(--s5); }
+}
+
+/* Превью. Стекло - экран 390 × 844 в масштабе: ширина до 360 px, на низком окне меньше, чтобы телефон и кнопка помещались по высоте.
+   Рамка --shell - как телефон в финале веб-сборки (вложенный радиус = внешний - отступ).
+   .ep__view - окно кадра вокруг телефона. От 600 оно по размеру телефона, камера работает под стеклом (.ep__world).
+   Ниже 600 оно во всю ширину и с полями вокруг телефона, камера приближает телефон целиком, края рамки обрезаются по окну. */
+.ep { --ep-glass: min(360px, calc((100vh - 120px) * 390 / 844)); margin: 0; display: grid; gap: var(--s4); justify-items: center; min-width: 0; }
+@supports (height: 100svh) { .ep { --ep-glass: min(360px, calc((100svh - 120px) * 390 / 844)); } }
+.ep__view { display: grid; justify-items: center; }
+.ep__frame { padding: var(--s3); border-radius: calc(var(--r-card) + var(--s3)); background: var(--shell); box-shadow: var(--shadow-float); transform-origin: 0 0; }
+.ep__stage { position: relative; width: var(--ep-glass); aspect-ratio: 390 / 844; overflow: hidden; border-radius: var(--r-card); background: var(--shell); isolation: isolate; }
+/* Телефон, с которого смотрят лендинг: телефон в рамке по центру, 72 % ширины окна (рамка - 78 %), вокруг поля блока.
+   Экран 390 идёт в масштабе около 0,72: общий план - для узнавания, в hero-моменты камера приближает телефон до текста 13-16 px.
+   На низком окне телефон меньше: окно кадра (рамка + поля --s4) и шаги под ним (строка + зазор) помещаются в видимую высоту
+   с полями --s4 и запасом --s4 на округление - иначе кадр не закрепится (на 375 × 667 стекло 232, рамка 68 % ширины). */
+@media (max-width: 599px) {
+  .ep { --ep-glass: min(280px, 72vw, calc((100vh - 5 * var(--s4) - 2 * var(--s3) - var(--row) - var(--s4)) * 390 / 844)); margin-inline: calc(50% - 50vw); justify-items: stretch; }
+  @supports (height: 100svh) { .ep { --ep-glass: min(280px, 72vw, calc((100svh - 5 * var(--s4) - 2 * var(--s3) - var(--row) - var(--s4)) * 390 / 844)); } }
+  .ep__view { display: block; position: relative; overflow: clip; height: calc(var(--ep-glass) * 844 / 390 + 2 * var(--s3) + 2 * var(--s4)); }
+  .ep__frame { position: absolute; top: var(--s4); left: calc(50% - var(--ep-glass) / 2 - var(--s3)); will-change: transform; }
+}
+
+/* Скелетон до готовности кадра (DESIGN.md 5.7): --surface-2, пульсация прозрачностью 1 → .55 за 1,2 с, если загрузка дольше 300 мс */
+.ep__skel { position: absolute; inset: 0; z-index: 3; background: var(--surface-2); opacity: 1; transition: opacity var(--dur-slow) var(--easing-out); }
+.ep.is-loading .ep__skel { animation: ep-pulse 1.2s ease-in-out infinite alternate; }
+.ep.is-ready .ep__skel { opacity: 0; pointer-events: none; animation: none; }
+@keyframes ep-pulse { to { opacity: .55; } }
+
+/* Мир камеры: экран 390 × VH (высоту ставит ep-host.js по пропорциям кадра), камера масштабирует весь слой */
+.ep__world { position: absolute; left: 0; top: 0; width: 390px; transform-origin: 0 0; }
+.ep__world iframe { position: absolute; left: 0; top: 0; width: 390px; height: 844px; border: 0; background: var(--bg); }
+.ep__world iframe.is-off { visibility: hidden; }
+
+/* Касание - точка 44 px (--tap-min, палец) по образцу курсора веб-сборки: вне темы, заливка --scrim (полупрозрачная тень пальца),
+   контур --on-dark, тень --shadow-float - видна на белом и на чёрном. Живёт в мире камеры, растёт вместе с экраном. */
+.ep__touch { position: absolute; left: 0; top: 0; z-index: 2; width: 0; height: 0; pointer-events: none; }
+.ep__touch > i { position: absolute; left: calc(var(--tap-min) / -2); top: calc(var(--tap-min) / -2); width: var(--tap-min); height: var(--tap-min);
+  border-radius: var(--r-pill); background: var(--scrim); border: 2px solid var(--on-dark); box-shadow: var(--shadow-float); opacity: 0; }
+
+/* Кнопка управления: одна, имя уникальное («Пауза: Неделя за пару кликов»), фокус остаётся на ней. Вид - как в веб-сборке. */
+.ep__ctl {
+  justify-self: center; display: inline-flex; align-items: center; gap: var(--s2);
+  height: var(--row-desk); padding: 0 var(--s4); border: 0; border-radius: var(--r-pill);
+  background: var(--surface); color: var(--ink); font: var(--t-small-desk); font-weight: 700; cursor: pointer;
+  transition: background-color var(--dur) var(--easing);
+}
+.ep__ctl:hover { background: var(--surface-2); }
+.ep__ctl:focus-visible { outline: var(--focus-w) solid var(--focus); outline-offset: var(--focus-offset); }
+.ep__ctl svg { width: var(--icon-m); height: var(--icon-m); }
+.ep__ctl [data-ico] { display: none; }
+.ep[data-state="idle"] .ep__ctl [data-ico="play"], .ep[data-state="still"] .ep__ctl [data-ico="play"], .ep[data-state="paused"] .ep__ctl [data-ico="play"],
+.ep[data-state="playing"] .ep__ctl [data-ico="pause"], .ep[data-state="done"] .ep__ctl [data-ico="replay"] { display: block; }
+@media (max-width: 599px) { .ep__ctl { height: var(--row); font: var(--t-small); font-weight: 700; } }
+/* Шаги под кадром .pv-steps (DESIGN.md 5.9): кнопка и точки шагов сцены, как в галереях Apple. Точка - кнопка 24 × строка,
+   внутри точка --s2 цвета --text-3; текущая - пилюля --s6, заполнение --ink по доле пройденного шага (--p ставит ev-host.js). */
+.pv-steps { justify-self: center; display: flex; align-items: center; gap: var(--s3); }
+.pv-steps__dots { display: flex; align-items: center; }
+.pv-steps__dot { display: grid; place-items: center; width: var(--s6); height: var(--row-desk); padding: 0; border: 0; border-radius: var(--r-pill);
+  background: none; cursor: pointer; transition: width var(--dur-slow) var(--easing-out); }
+.pv-steps__dot > span { display: block; width: var(--s2); height: var(--s2); border-radius: var(--r-pill); background: var(--text-3);
+  transition: width var(--dur-slow) var(--easing-out), background-color var(--dur) var(--easing); }
+.pv-steps__dot:hover > span { background: var(--text-2); }
+.pv-steps__dot.is-on { width: calc(var(--s6) + var(--s4)); }
+.pv-steps__dot.is-on > span { width: var(--s6); background: linear-gradient(to right, var(--ink) calc(var(--p, 0) * 100%), var(--text-3) 0); }
+.pv-steps__dot:focus-visible { outline: var(--focus-w) solid var(--focus); outline-offset: calc(-1 * var(--focus-w)); }
+@media (max-width: 599px) { .pv-steps__dot { height: var(--row); } }
+/* «Уменьшение движения»: статичный кадр hero, движения нет - ни кнопки, ни шагов */
+.ep[data-state="still"] .ep__ctl, .ep[data-state="still"] .pv-steps { display: none; }
+
+/* ?scene=… - одно превью без подписи и заголовка, для теста */
+.ep-solo .ep-head, .ep-solo .ep-cap, .ep-solo .ep-scene:not(.is-solo) { display: none; }
+.ep-solo .ep-scene { grid-template-columns: minmax(0, 1fr); }
+.ep-solo .ep-scenes { margin-top: 0; }
+.ep-solo .ep-sec { padding-block: var(--s6); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ep__skel, .ep.is-loading .ep__skel { animation: none; transition: none; }
+  .pv-steps__dot, .pv-steps__dot > span { transition: none; }
+}
+
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

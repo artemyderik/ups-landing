@@ -1,0 +1,144 @@
+/* Новые блоки лендинга: превью «Клиент отмечает - вы видите» на всех ширинах (формат сборки «Телефон», Лендинг/Превью - телефон/ep.css).
+   Два телефона колодой (DESIGN.md 5.9 «Пара телефонов», BEHAVIOR.md 5.3): спереди телефон клиента, из-под него выглядывает телефон
+   тренера; на шаге «Результат у тренера» он выходит из-под клиентского и встаёт наверх, клиентский уходит назад.
+   Подпись - окно на одну подпись, закрепление на скролле, шаги .pv-steps и кнопка - как в сборке «Телефон»; от 1280 подпись слева
+   колонкой, как у сцен «Единого вида». Классы блока - ncp- (свои, не пересекаются с ep- и ev- сборок).
+   Значения - токены C 2.0; параметры сцены вне токенов - README. */
+
+.ncp-wrap { padding-block: var(--s12); }
+@media (min-width: 600px) { .ncp-wrap { padding-block: var(--s16); } }
+
+/* Сцена: ниже 1280 подпись над кадром; от 1280 - подпись слева колонкой 360 рядом с парой телефонов, как сцены «Единого вида»
+   (Лендинг/Превью - единый вид/ev.css): заголовок --t-h1-m, текст --t-text-xl, заголовок -> текст --s5. Подпись и пара стоят
+   группой по центру блока: подпись прижата к телефонам, а не висит у края (DESIGN.md 5.9, сцена продукта). */
+.ncp-scene { --ncp-cap-w: 360px; --ncp-cap-gap: var(--s3); display: grid; gap: var(--s6); }
+.ncp-cap { display: grid; gap: var(--ncp-cap-gap); align-content: center; max-width: 32em; }
+.ncp-cap__t { margin: 0; font: var(--t-h2); letter-spacing: var(--ls-h2); text-wrap: balance; }
+.ncp-cap__d { margin: 0; font: var(--t-text-lg); color: var(--text-2); text-wrap: pretty; }
+@media (min-width: 1280px) {
+  .ncp-scene { --ncp-cap-gap: var(--s5); }
+  .ncp-scene, .ncp-pin { grid-template-columns: var(--ncp-cap-w) auto; justify-content: center; column-gap: var(--s10); align-items: center; }
+  .ncp-cap__t { font: var(--t-h1-m); letter-spacing: var(--ls-h1); }
+  .ncp-cap__d { font: var(--t-text-xl); }
+}
+@media (max-width: 599px) { .ncp-scene { gap: var(--s5); } }
+
+/* Подпись в закреплении - окно на одну подпись (BEHAVIOR.md 5.3): высота окна и --ncp-ck (1 - поток, 0 - закрепление) идут за скроллом,
+   --title - окно на заголовок: текст подписи уходит за скроллом (высота --ncp-dh, отступ и непрозрачность) */
+.ncp-cap__in { position: relative; display: grid; gap: inherit; transition: transform var(--dur-slow) var(--easing-out); }
+.ncp-cap__step { display: grid; align-content: start; }
+.ncp-cap__step > * + * { margin-top: var(--ncp-cap-gap); }
+.ncp-cap--win { overflow: hidden; align-content: start; }
+.ncp-cap--title .ncp-cap__d { overflow: hidden; max-height: calc(var(--ncp-dh, 100vh) * var(--ncp-ck, 1)); margin-top: calc(var(--ncp-cap-gap) * var(--ncp-ck, 1));
+  opacity: calc(var(--ncp-ck, 1) * 2 - 1); }
+
+/* Закрепление на скролле (BEHAVIOR.md 5.3): client.js оборачивает подпись и превью в .ncp-pin и ставит --ncp-pin-h и --ncp-pin-top.
+   Запас - 45svh, ниже 600 - 70svh. Подпись не помещается вместе с кадром - уезжает (--capout); кадр сам выше окна - без закрепления (--nopin). */
+.ncp-scene--pin { --ncp-run: 45svh; display: block; height: calc(var(--ncp-pin-h, 0px) + var(--ncp-run)); }
+.ncp-scene--nopin { --ncp-run: 0px; }
+.ncp-pin { position: sticky; top: var(--ncp-pin-top, var(--s4)); display: grid; gap: var(--s6); }
+.ncp-scene--nopin .ncp-pin { position: static; }
+.ncp-scene--capout .ncp-cap { margin-bottom: var(--s6); }
+.ncp-pin, .ncp__view { transform-origin: 50% 50%; }
+@media (max-width: 599px) {
+  .ncp-scene--pin { --ncp-run: 70svh; }
+  .ncp-pin { gap: var(--s5); }
+  .ncp-scene--capout .ncp-cap { margin-bottom: var(--s5); }
+}
+
+/* Превью. Телефоны свёрстаны в натуральную величину: стекло - экран 390 × 844, рамка - общее правило телефона новых блоков
+   (DESIGN.md 5.9, «Колода»): экран 55, корпус - поле --s3 и угол 55 + --s3 = 67, корпус --shell, тень --shadow-float;
+   снизу экрана поле --s8 под жест «домой» (screens/screen.css). Камера масштабирует пару целиком, вместе с рамкой (.ncp__rig,
+   ставит client.js): общий план - --ncp-glass (ширина стекла на экране), крупный план - не крупнее 1:1.
+   Окно кадра .ncp__view обрезает приближенную пару: высота - пара на общем плане и поля --s4 под тень.
+   Общий план от 600 - 0,8 от 1:1, на низком окне меньше: кадр и шаги помещаются в видимую высоту (5 × --s4 и строка шагов);
+   ниже 1280 над кадром ещё заголовок подписи (--s12 - строка заголовка и зазор). 868 = 844 + 2 × --s3 - высота телефона. */
+.ncp { --ncp-glass: min(calc(390px * .8), calc((100vh - 5 * var(--s4) - var(--row-desk) - var(--s12)) * 390 / 868));
+  --ncp-fh: calc(var(--ncp-glass) * 868 / 390); --ncp-r: 55px;
+  margin: 0; display: grid; gap: var(--s4); justify-items: stretch; min-width: 0; }
+@supports (height: 100svh) { .ncp { --ncp-glass: min(calc(390px * .8), calc((100svh - 5 * var(--s4) - var(--row-desk) - var(--s12)) * 390 / 868)); } }
+@media (min-width: 1280px) {
+  /* подпись рядом: над кадром ничего, под кадром шаги. Ширина окна - телефон 1:1 и --s16: пара шире телефона на --s10 общего плана,
+     при общем плане от 0,63 она помещается в окно целиком и в 1:1 - приближение по ширине её не режет */
+  .ncp { --ncp-glass: min(calc(390px * .8), calc((100vh - 5 * var(--s4) - var(--row-desk)) * 390 / 868)); width: calc(390px + 2 * var(--s3) + var(--s16)); }
+  @supports (height: 100svh) { .ncp { --ncp-glass: min(calc(390px * .8), calc((100svh - 5 * var(--s4) - var(--row-desk)) * 390 / 868)); } }
+}
+.ncp__view { position: relative; overflow: clip; height: calc(var(--ncp-fh) + 2 * var(--s4)); }
+.ncp__gauge { position: absolute; left: 0; top: 0; width: var(--ncp-glass); height: 0; visibility: hidden; pointer-events: none; }
+.ncp__rig { position: absolute; left: 0; top: 0; width: calc(390px + 2 * var(--s3) + var(--ncp-peek1, var(--s12))); height: calc(844px + 2 * var(--s3));
+  transform-origin: 0 0; will-change: transform; }
+.ncp__phone { position: absolute; left: 0; top: 0; z-index: 1; padding: var(--s3); border-radius: calc(var(--ncp-r) + var(--s3)); background: var(--shell);
+  box-shadow: var(--shadow-float); transform-origin: 0 0; }
+.ncp__phone.is-front { z-index: 2; }
+/* Край экрана: экран в масштабе камеры, его край встаёт на дробный пиксель, и по краю стекла шла светлая линия. Скруглённая обрезка
+   сглаживает каждый слой экрана отдельно (закреплённая панель и страница под ней), и на краю сквозь панель просвечивала строка под ней.
+   Подложка стекла - цвета рамки, а поверх края стекла - кольцо цвета рамки: снаружи по рамке, внутрь на 1 px по экрану - экран
+   заходит под рамку на 1 px. Видимое стекло 388 × 842 с углом 54, рамка 13 и угол 67 - снаружи корпус тот же (414 × 868) */
+.ncp__phone::after { content: ""; position: absolute; inset: calc(var(--s3) - 2px); z-index: 1; border: 3px solid var(--shell);
+  border-radius: calc(var(--ncp-r) + 2px); pointer-events: none; }
+.ncp__stage { position: relative; width: 390px; height: 844px; overflow: hidden; border-radius: var(--ncp-r); background: var(--shell); isolation: isolate; }
+/* Телефон, с которого смотрят лендинг (ниже 600): как в сборке - телефон 72 % ширины окна, стекло до 280 px; окно кадра во всю ширину
+   и с полями --s4, приближенная пара обрезается по окну. На низком окне телефон меньше: окно кадра и шаги помещаются в видимую высоту
+   (на 375 × 667 стекло около 237). */
+/* 600-1279: подпись над кадром, рядом с кадром ничего нет - окно кадра во всю ширину панели блока (ниже 600 - во всю ширину
+   экрана). В колонке контента оно было уже панели, и при смене телефонов задний выезжал за край окна и срезался прямой линией
+   внутри панели (замечание пользователя 2026-10-29: «сбоку обрезается чем-то»). Теперь пара стоит по центру шире окна, а что
+   выходит дальше, уходит под край панели (.lp-panel, overflow-x: clip). */
+@media (min-width: 600px) and (max-width: 1279px) { .ncp { margin-inline: calc(50% - 50vw + var(--lp-inset)); } }
+@media (max-width: 599px) {
+  .ncp { --ncp-glass: min(280px, 72vw, calc((100vh - 6 * var(--s4) - var(--row)) * 390 / 868)); margin-inline: calc(50% - 50vw); }
+  @supports (height: 100svh) { .ncp { --ncp-glass: min(280px, 72vw, calc((100svh - 6 * var(--s4) - var(--row)) * 390 / 868)); } }
+}
+
+/* Скелетон до готовности кадра (DESIGN.md 5.7): --surface-2, пульсация прозрачностью, если загрузка дольше 300 мс */
+.ncp__skel { position: absolute; inset: 0; z-index: 3; background: var(--surface-2); opacity: 1; transition: opacity var(--dur-slow) var(--easing-out); }
+.ncp.is-loading .ncp__skel { animation: ncp-pulse 1.2s ease-in-out infinite alternate; }
+.ncp.is-ready .ncp__skel { opacity: 0; pointer-events: none; animation: none; }
+@keyframes ncp-pulse { to { opacity: var(--opacity-stale); } }
+
+/* Экран 390 × 844 в натуральную величину: камера масштабирует пару целиком, слой экрана не двигается */
+.ncp__world { position: absolute; left: 0; top: 0; width: 390px; height: 844px; }
+.ncp__world iframe { position: absolute; left: 0; top: 0; width: 390px; height: 844px; border: 0; background: var(--shell); }
+
+/* Касание - точка 44 px (--tap-min, палец), как в сборке: вне темы, заливка --scrim, контур --on-dark, тень --shadow-float */
+.ncp__touch { position: absolute; left: 0; top: 0; z-index: 2; width: 0; height: 0; pointer-events: none; }
+.ncp__touch > i { position: absolute; left: calc(var(--tap-min) / -2); top: calc(var(--tap-min) / -2); width: var(--tap-min); height: var(--tap-min);
+  border-radius: var(--r-pill); background: var(--scrim); border: 2px solid var(--on-dark); box-shadow: var(--shadow-float); opacity: 0; }
+
+/* Кнопка «Смотреть / Пауза / Воспроизвести / Повторить» - как в сборке, заливка - как .btn лендинга (lp-pv.css: на панели --surface) */
+.ncp__ctl {
+  justify-self: center; display: inline-flex; align-items: center; gap: var(--s2);
+  height: var(--row-desk); padding: 0 var(--s4); border: 0; border-radius: var(--r-pill);
+  background: var(--control); color: var(--ink); font: var(--t-small-desk); font-weight: 700; cursor: pointer;
+  transition: background-color var(--dur) var(--easing);
+}
+.ncp__ctl:hover { background: var(--control-hover); }
+.ncp__ctl:focus-visible { outline: var(--focus-w) solid var(--focus); outline-offset: var(--focus-offset); }
+.ncp__ctl svg { width: var(--icon-m); height: var(--icon-m); }
+.ncp__ctl [data-ico] { display: none; }
+.ncp[data-state="idle"] .ncp__ctl [data-ico="play"], .ncp[data-state="still"] .ncp__ctl [data-ico="play"], .ncp[data-state="paused"] .ncp__ctl [data-ico="play"],
+.ncp[data-state="playing"] .ncp__ctl [data-ico="pause"], .ncp[data-state="done"] .ncp__ctl [data-ico="replay"] { display: block; }
+@media (max-width: 599px) { .ncp__ctl { height: var(--row); font: var(--t-small); font-weight: 700; } }
+
+/* Шаги под кадром .pv-steps (DESIGN.md 5.9) - правила сборок один в один, в области сцены: стили других блоков страницы их не перебивают */
+.ncp-scene .pv-steps { justify-self: center; display: flex; align-items: center; gap: var(--s3); }
+.ncp-scene .pv-steps__dots { display: flex; align-items: center; }
+.ncp-scene .pv-steps__dot { display: grid; place-items: center; width: var(--s6); height: var(--row-desk); padding: 0; border: 0; border-radius: var(--r-pill);
+  background: none; cursor: pointer; transition: width var(--dur-slow) var(--easing-out); }
+.ncp-scene .pv-steps__dot > span { display: block; width: var(--s2); height: var(--s2); border-radius: var(--r-pill); background: var(--text-3);
+  transition: width var(--dur-slow) var(--easing-out), background-color var(--dur) var(--easing); }
+.ncp-scene .pv-steps__dot:hover > span { background: var(--text-2); }
+.ncp-scene .pv-steps__dot.is-on { width: calc(var(--s6) + var(--s4)); }
+.ncp-scene .pv-steps__dot.is-on > span { width: var(--s6); background: linear-gradient(to right, var(--ink) calc(var(--p, 0) * 100%), var(--text-3) 0); }
+.ncp-scene .pv-steps__dot:focus-visible { outline: var(--focus-w) solid var(--focus); outline-offset: calc(-1 * var(--focus-w)); }
+@media (max-width: 599px) { .ncp-scene .pv-steps__dot { height: var(--row); } }
+/* «Уменьшение движения»: статичный финальный кадр - ни кнопки, ни шагов */
+.ncp[data-state="still"] .ncp__ctl, .ncp[data-state="still"] .pv-steps { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ncp-cap__in { transition: none; }
+  .ncp__skel, .ncp.is-loading .ncp__skel { animation: none; transition: none; }
+  .ncp-scene .pv-steps__dot, .ncp-scene .pv-steps__dot > span { transition: none; }
+}
+
+.ncp .sr-only, .ncp-scene .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

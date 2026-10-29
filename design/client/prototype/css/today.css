@@ -1,0 +1,43 @@
+/* «Сегодня» клиента. Общие компоненты - app.css; здесь только раскладка экрана. Значения - токены C 2.0. */
+
+/* Полоса: тренировка дня */
+.t-hero { margin-top: var(--s5); }
+.t-hero .band__title { margin-top: var(--s1); }
+.t-segs { margin-top: var(--s4); }
+.t-sync { margin-top: var(--s4); }
+.t-hero > .band__meta.small { font: var(--t-small); }
+/* Очная: время, место, тренер - строками с иконкой, на чёрном */
+.t-info { display: flex; flex-direction: column; gap: var(--s2); margin-top: var(--s4); color: var(--on-dark); }
+.t-info li { display: flex; align-items: center; gap: var(--s3); }
+.t-info .i { color: var(--on-dark-2); }
+
+/* Новый ответ тренера */
+.t-reply { display: flex; flex-direction: column; gap: var(--s3); }
+.t-reply__mine { align-self: flex-end; max-width: 85%; padding: var(--s2) var(--s4); border-radius: var(--r-sm); background: var(--surface-2); font: var(--t-small); }
+
+/* Последний итог: карточка-ссылка целиком */
+.t-last { display: flex; flex-direction: column; gap: var(--s1); text-decoration: none; }
+.t-last:hover { background: var(--surface-2); }
+.t-last__top { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+.t-last .status { margin-top: var(--s2); }
+.t-go { color: var(--text-2); flex: none; }
+.t-pr { display: flex; flex-direction: column; gap: var(--s2); margin-top: var(--s3); }
+.t-pr__i { display: flex; align-items: center; gap: var(--s3); min-width: 0; }
+.t-pr__i .small { min-width: 0; }
+.t-last__re { display: inline-flex; align-items: center; gap: var(--s2); margin-top: var(--s2); color: var(--text-2); }
+.t-last__re .i { color: var(--ink); }
+
+/* Следующая тренировка: строка-карточка (DESIGN.md 5.4) */
+.t-next { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: var(--s3); min-height: 64px; padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--surface); text-decoration: none; }
+.t-next:hover { background: var(--surface-2); }
+.t-next__d { display: flex; flex-direction: column; align-items: center; }
+.t-next__d b { font: var(--t-h2); letter-spacing: var(--ls-h2); }
+.t-next__w { display: flex; flex-direction: column; min-width: 0; }
+.t-next__w b { font-weight: 700; }
+
+/* Неделя закрыта и история отключённого клиента */
+.good__d { color: var(--accent); font-weight: 800; }
+.t-good-more { margin-top: var(--s2); color: var(--on-dark); }
+.t-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2); }
+.t-stats .card { display: flex; flex-direction: column; gap: var(--s1); }
+.t-acts { display: flex; flex-direction: column; gap: var(--s2); margin-top: var(--s3); }

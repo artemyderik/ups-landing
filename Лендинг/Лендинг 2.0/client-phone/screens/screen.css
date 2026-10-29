@@ -1,0 +1,43 @@
+/* Превью «Клиент отмечает - вы видите», телефон: слой сцены поверх настоящего экрана C 2.0 на 390.
+   Экран - разметка и стили прототипа (design/client/prototype, design/directions/c2), здесь только то, чего в продукте нет:
+   нажатие касанием (зеркало :hover системы), появление данных на шаге сцены, сброс без переходов.
+   Образец - Лендинг/Превью - телефон/screens/ep-screen.css. Значения - токены C 2.0 (DESIGN.md 3.14). */
+
+/* Экран не прокручивается пользователем: прокрутку ведёт сцена */
+html.ev-scr { overflow: hidden; scrollbar-width: none; scroll-behavior: auto; }
+html.ev-scr::-webkit-scrollbar { display: none; }
+/* Фон документа под экраном - оболочка, как фон страницы под листом (DESIGN.md 3.2): экран в рамке идёт в масштабе 0,7-1,3,
+   и по краю закреплённой панели внизу просвечивал светлый фон документа тонкой линией */
+html.ev-scr { background: var(--shell); }
+/* Панель действий - цвета экрана под ней, без отдельной чёрной полосы (решение пользователя 2026-10-28, только копии на странице;
+   прототипы не меняются): у тренера - лист .work (--bg), у клиента «Выполнение тренировки» целиком на --shell, панель уже его цвета.
+   Поле под жест «домой» - часть панели, того же цвета. Таббара на экранах сцены нет (у тренера экран-форма, .page-form). */
+.ev-scr { --ev-bar: var(--shell); }
+.ev-scr .page-result { --ev-bar: var(--bg); }
+.ev-scr .assign-bar { background: var(--ev-bar); }
+/* Верхний край закреплённой панели при таком масштабе ложится на дробный пиксель, и сквозь него просвечивала строка под панелью -
+   перекрываем этот пиксель цветом самой панели; вид панели не меняется. Нижний край экрана закрывает рамка (client.css) */
+.ev-scr .assign-bar { box-shadow: 0 -1px 0 var(--ev-bar); }
+.theme-fab { display: none; }
+
+/* Поле снизу экрана под жест «домой» - --s8 (DESIGN.md 5.9, рамка телефона): угол экрана 55 не срезает «Как в плане»,
+   «Сохранить» и «Скорректировать следующую». Прототипы отступают снизу на env(safe-area-inset-bottom), в iframe он 0 -
+   здесь тот же отступ полем --s8: панель и лист идут до края стекла, кнопки встают над полем */
+.ev-scr { --ev-home: var(--s8); }
+.ev-scr .assign-bar { padding-bottom: calc(var(--s3) + var(--ev-home)); }
+.ev-scr .sheet__foot { padding-bottom: calc(var(--s4) + var(--ev-home)); }
+.ev-scr .toast { bottom: calc(var(--s16) + var(--s8) + var(--ev-home)); }
+
+/* Нажатие касанием - то же состояние, что :hover в системе (DESIGN.md 5, «Состояния по умолчанию»: active = hover).
+   Источники: app.css прототипов - .btn--primary:hover, .btn--dark:hover, .chips--soft .chip:hover; session.css - .ses-act:hover */
+.btn--primary.ev-down { background: var(--accent); box-shadow: inset 0 0 0 var(--focus-w) var(--on-accent); }
+.btn--dark.ev-down { background: var(--ink-hover); }
+.chips--soft .chip.ev-down:not([aria-checked="true"]) { background: var(--surface-2); }
+.ses-act.ev-down { background: var(--shell-line); }
+
+/* Появление данных на шаге сцены: новое проявляется на своём месте за --dur-slow, без пружины (DESIGN.md 3.14) */
+.ev-in { animation: ev-in var(--dur-slow) var(--easing-out) both; }
+@keyframes ev-in { from { opacity: 0; } }
+
+/* Сброс сцены и кадр без движения */
+.ev-instant *, .ev-instant *::before, .ev-instant *::after { transition: none !important; animation: none !important; }
